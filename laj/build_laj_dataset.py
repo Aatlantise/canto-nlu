@@ -9,8 +9,8 @@ class LabelingConfig:
     semantic_error_types: set = None
     
     min_major_errors: int = 1      # If >= this many Major errors, label=0
-    min_semantic_errors: int = 3   # If >= this many semantic errors, label=0
-    min_total_errors: int = 7      # If >= this many total errors, label=0
+    min_semantic_errors: int = 1   # If >= this many semantic errors, label=0
+    min_total_errors: int = 1      # If >= this many total errors, label=0
     
     def __post_init__(self):
         if self.semantic_error_types is None:
@@ -29,8 +29,8 @@ DEFAULT_CONFIG = LabelingConfig(
         "Grammar",
     },
     min_major_errors=1,
-    min_semantic_errors=3,
-    min_total_errors=7,
+    min_semantic_errors=1,
+    min_total_errors=1,
 )
 
 def compute_label(annotations: Dict[str, Any], config: LabelingConfig) -> int:
