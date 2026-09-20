@@ -101,7 +101,7 @@ def build_comparison_dataset(
     print(f"label 2 count: {label2_count}")
 
 
-if __name__ == "__main__":
+def main():
     script_dir = Path(__file__).resolve().parent
     parent_dir = script_dir.parent
     parser = argparse.ArgumentParser(
@@ -128,3 +128,6 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     build_comparison_dataset(args.input, args.output, seed=args.seed)
+
+if __name__ == "__main__":
+    main()
