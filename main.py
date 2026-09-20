@@ -1,4 +1,4 @@
-from datasets import load_from_disk, Dataset, load_dataset
+from datasets import load_from_disk, Dataset, load_dataset, interleave_datasets
 from transformers import (
     BertForMaskedLM,
     BertTokenizerFast,
@@ -14,10 +14,13 @@ from transformers import (
     BertConfig,
     AutoTokenizer,
     DataCollatorForTokenClassification,
+    DebertaV2Tokenizer,
 )
 from transformers.modeling_outputs import TokenClassifierOutput
 import os
 import numpy as np
+import pandas as pd
+import torch
 from sklearn.metrics import accuracy_score, confusion_matrix, f1_score, precision_recall_fscore_support
 from sklearn.model_selection import KFold, train_test_split
 import evaluate
@@ -132,9 +135,35 @@ class SiniticPreTrainer:
         trainer.save_model(output_dir_name)
 
 class CantoPreTrainer(SiniticPreTrainer):
+    # `canto-corpus`: pre-training over corpus.py's corpus, weighted as in tokenizer.py
+    CORPUS_FILE = "./data/canto-corpus.jsonl"
+    VAL_INDICES_FILE = "./val_indices.txt"
+    TOKENIZER_DIR = "./cantonese_tokenizer/canto_tokenizer_hf"
+    MAX_LENGTH = 128
+    TEMPERATURE = 2.0  # t in tokenizer.py
+    MAX_BOOST = 16  # r in tokenizer.py: no source is sampled past 16x its natural share
+    MAX_STEPS = 250000
+    BATCH_SIZE = 256
+    LEARNING_RATE = 1e-4
+    WARMUP_STEPS = 10000
+
     def __init__(self, lang="yue", model_dir="./models/bert-base-chinese-local", scratch=False, data=None):
         super().__init__(lang, model_dir, scratch, data)
         # checking data happens in run.py
+        if data == "canto-corpus":
+            for path, command in [(self.CORPUS_FILE, "python corpus.py --lang=yue"),
+                                  (self.TOKENIZER_DIR, "python tokenizer.py"),
+                                  (self.VAL_INDICES_FILE, "python tokenizer.py")]:
+                if not os.path.exists(path):
+                    raise FileNotFoundError(f"{path} not found. Please first run `{command}`.")
+            if not self.from_scratch and not os.path.exists(self.model_dir):
+                raise FileNotFoundError(
+                    f"Model directory {self.model_dir} not found."
+                    f"Please first run `python download.py --lang=yue --model_dir={self.model_dir}`."
+                )
+            self.tokenizer = AutoTokenizer.from_pretrained(self.TOKENIZER_DIR)
+            return
+
         if data == "cantonese-sentences":
             if not os.path.exists("./data/cantonese-sentences"):
                 raise FileNotFoundError(
@@ -161,8 +190,11 @@ class CantoPreTrainer(SiniticPreTrainer):
             self.wiki_preprocess_data()
         elif self.data == "cantonese-sentences":
             self.wiki_preprocess_data() # for future use if there's a need to implement something different
+        elif self.data == "canto-corpus":
+            self.canto_corpus_preprocess_data()
         else:
-            raise ValueError(f"{self.data} not supported--please choose between `wiki` or `cantonese-sentences`.")
+            raise ValueError(f"{self.data} not supported--please choose between `wiki`, "
+                             f"`cantonese-sentences` or `canto-corpus`.")
 
 
     def canto_sentences_preprocess_data(self):
@@ -218,6 +250,169 @@ class CantoPreTrainer(SiniticPreTrainer):
 
         # Optional: save preprocessed dataset to disk
         tokenized.save_to_disk(f"data/pretokenized_{self.data}")
+
+    def mixture(self, meta):
+        stats = meta.groupby("source", observed=True)["n_chars"].agg(rows="count", chars="sum")
+
+        p = stats["chars"] / stats["chars"].sum()
+        w = p ** (1 / self.TEMPERATURE)
+        w = w / w.sum()
+
+        capped = pd.Series(False, index=stats.index)
+        while True:
+            over = (~capped) & (w > self.MAX_BOOST * p)
+            if not over.any():
+                break
+            capped |= over
+            w[capped] = self.MAX_BOOST * p[capped]
+            free = ~capped
+            if not free.any():
+                break
+            w[free] = w[free] / w[free].sum() * (1 - w[capped].sum())
+
+        stats["prob"] = p
+        stats["scaled_prob"] = w
+        stats["effective_ratio"] = w / p
+
+        print(f"\n{'source':<16}{'rows':>12}{'chars':>14}{'prob':>10}{'scaled_prob':>14}{'ratio':>8}")
+        for source, row in stats.iterrows():
+            print(f"{source:<16}{row['rows']:>12,.0f}{row['chars']:>14,.0f}{row['prob']:>10.4f}"
+                  f"{row['scaled_prob']:>14.4f}{row['effective_ratio']:>8.2f}")
+        return stats
+
+    def pack(self, ds, desc):
+        # rows arrive as [CLS] ... [SEP], so dropping each row's [CLS] keeps the [SEP]
+        # between neighbours and every block still opens the way fine-tuning expects
+        cls_id, body_size = self.tokenizer.cls_token_id, self.MAX_LENGTH - 1
+
+        def group(batch):
+            flat = [i for ids in batch["input_ids"] for i in ids[1:]]
+            total = (len(flat) // body_size) * body_size  # the tail of each batch is dropped
+            return {"input_ids": [[cls_id] + flat[i:i + body_size]
+                                  for i in range(0, total, body_size)]}
+
+        packed = ds.map(group, batched=True, batch_size=10000, desc=f"Packing {desc}")
+        print(f"{desc}: {len(ds):,} rows -> {len(packed):,} blocks")
+        return packed
+
+    def canto_corpus_preprocess_data(self):
+        cache = f"data/pretokenized_{self.data}"
+        if os.path.exists(cache):
+            tokenized = load_from_disk(cache)
+            print(f"Reusing {cache} ({len(tokenized):,} rows; delete it to rebuild).")
+        else:
+            ds = load_dataset("json", data_files=self.CORPUS_FILE, split="train")
+            print(f"Loaded {len(ds):,} rows from {self.CORPUS_FILE}.")
+
+            def tokenize_function(batch):
+                return {
+                    "input_ids": self.tokenizer(batch["text"], truncation=True,
+                                                max_length=self.MAX_LENGTH)["input_ids"],
+                    "n_chars": [len(text) for text in batch["text"]],
+                }
+
+            tokenized = ds.map(
+                tokenize_function,
+                batched=True,
+                remove_columns=["text", "label"],
+                desc="Tokenizing dataset",
+            )
+            tokenized.save_to_disk(cache)
+
+        meta = tokenized.select_columns(["source", "n_chars"]).to_pandas()
+        meta["source"] = meta["source"].astype("category")
+        tokenized = tokenized.select_columns(["input_ids"])
+
+        # hold out validation set
+        is_train = np.ones(len(tokenized), dtype=bool)
+        is_train[np.loadtxt(self.VAL_INDICES_FILE, dtype=np.int64)] = False
+        stats = self.mixture(meta[is_train])
+
+        parts, validation = [], {}
+        for source in stats.index:
+            of_source = (meta["source"] == source).to_numpy()
+            parts.append(self.pack(tokenized.select(np.flatnonzero(of_source & is_train)),
+                                   f"train/{source}").shuffle(seed=42))
+            validation[source] = self.pack(tokenized.select(np.flatnonzero(of_source & ~is_train)),
+                                           f"val/{source}")
+
+        # create dataset stream
+        train = interleave_datasets(
+            parts,
+            probabilities=list(stats["scaled_prob"] / stats["scaled_prob"].sum()),
+            seed=42,
+            stopping_strategy="all_exhausted",
+        )
+        unique = sum(len(part) for part in parts)
+        print(f"\nTraining stream: {len(train):,} blocks ({len(train) / unique:.2f}x the {unique:,} "
+              f"unique blocks), validation: {sum(len(v) for v in validation.values()):,} blocks "
+              f"over {len(validation)} sources.")
+
+        self.lm_dataset = {"train": train, "validation": validation}
+
+    def train(self):
+        if self.data != "canto-corpus":
+            return super().train()
+
+        self.preprocess_data()
+
+        data_collator = DataCollatorForLanguageModeling(
+            tokenizer=self.tokenizer,
+            mlm=True,
+            mlm_probability=0.15
+        )
+
+        config = BertConfig(
+            vocab_size=len(self.tokenizer),
+            pad_token_id=self.tokenizer.pad_token_id,
+        )
+
+        if self.from_scratch:
+            model = BertForMaskedLM(config=config)
+        else:
+            model = BertForMaskedLM.from_pretrained(self.model_dir)
+        model.resize_token_embeddings(len(self.tokenizer))
+
+        output_dir_name = f"./models/{self.lang}-canto-corpus"
+        print(f"\n{model.num_parameters() / 1e6:.1f}M parameters, {self.MAX_STEPS:,} steps of "
+              f"{self.BATCH_SIZE} blocks, {self.MAX_STEPS * self.BATCH_SIZE * self.MAX_LENGTH / 1e9:.1f}B "
+              f"tokens (~{self.MAX_STEPS * self.BATCH_SIZE / len(self.lm_dataset['train']):.1f} "
+              f"epochs over the stream).")
+
+        training_args = TrainingArguments(
+            output_dir=output_dir_name,
+            max_steps=self.MAX_STEPS,
+            per_device_train_batch_size=self.BATCH_SIZE,
+            per_device_eval_batch_size=self.BATCH_SIZE,
+            dataloader_num_workers=4,
+            learning_rate=self.LEARNING_RATE,
+            warmup_steps=self.WARMUP_STEPS,
+            weight_decay=0.01,
+            save_steps=10000,
+            save_total_limit=2,
+            logging_steps=100,
+            report_to="tensorboard",
+            eval_strategy="steps",
+            eval_steps=5000,
+            fp16=False,
+            bf16=torch.cuda.is_available() and torch.cuda.is_bf16_supported(),
+            load_best_model_at_end=False,
+            seed=42,
+        )
+
+        trainer = Trainer(
+            model=model,
+            args=training_args,
+            train_dataset=self.lm_dataset["train"],
+            eval_dataset=self.lm_dataset["validation"],  # a dict: one eval_<source>_loss each
+            data_collator=data_collator,
+            processing_class=self.tokenizer,
+        )
+
+        trainer.train()
+        trainer.save_model(output_dir_name)
+        self.tokenizer.save_pretrained(output_dir_name)
+        print(f"Saved the model and tokenizer to {output_dir_name}.")
 
 
 class WuPreTrainer(SiniticPreTrainer):

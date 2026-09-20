@@ -6,7 +6,8 @@ def run(args):
     if args.pretrain:
         if args.lang == "yue":
             assert args.data in ["wiki",
-                                "cantonese-sentences"], f"{args.data} is not a valid dataset. Choose between 'wiki', 'cantonese-sentences'"
+                                "cantonese-sentences",
+                                "canto-corpus"], f"{args.data} is not a valid dataset. Choose between 'wiki', 'cantonese-sentences', 'canto-corpus'"
             model = CantoPreTrainer(model_dir=args.model_dir, scratch=args.scratch, data=args.data)
             model.train()
         elif args.lang == "wuu":

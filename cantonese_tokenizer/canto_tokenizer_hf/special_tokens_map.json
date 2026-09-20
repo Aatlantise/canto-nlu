@@ -1,0 +1,7 @@
+{
+  "cls_token": "[CLS]",
+  "mask_token": "[MASK]",
+  "pad_token": "<pad>",
+  "sep_token": "[SEP]",
+  "unk_token": "<unk>"
+}
