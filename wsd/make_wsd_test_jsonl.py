@@ -71,7 +71,7 @@ def build_wsd_test_jsonl(input_csv, output_jsonl):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Build WSD test set JSONL')
-    parser.add_argument('--input', default='output/Filtered Dictionary Senses - cleaned.csv', help='Input CSV')
+    parser.add_argument('--input', default='senses.csv', help='Input CSV')
     parser.add_argument('--output', default='test.jsonl', help='Output JSONL')
     args = parser.parse_args()
     
