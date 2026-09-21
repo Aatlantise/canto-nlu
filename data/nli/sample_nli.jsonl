@@ -1,0 +1,100 @@
+{"id":"743_non_ent","premise":"一個電單車司機過緊個坑。","hypothesis":"駱駝騎手騎過個埞。","label":"not_entailment"}
+{"id":"4019_non_ent","premise":"「我哋住喺中間，住喺洪都拉斯同薩爾瓦多嘅邊境之間。","hypothesis":"「我哋住喺離洪都拉斯同薩爾瓦多幾千英里遠嘅地方。","label":"not_entailment"}
+{"id":"2677_non_ent","premise":"兩個女人喺按摩浴缸裡面輕鬆吓。","hypothesis":"兩個男人浸緊熱水浴。","label":"not_entailment"}
+{"id":"585_ent","premise":"一個著住蘇格蘭裙嘅男人掟咗支長棍出嚟。","hypothesis":"有個男人著住條裙。","label":"entailment"}
+{"id":"3912_ent","premise":"「細路仔開始識講嘢嗰陣，佢哋最關心嘅係講人哋做咩嘢，同埋佢哋行為嘅後果。」","hypothesis":"啲細路講嘢嗰陣，佢哋鍾意講吓人哋做嘅嘢。","label":"entailment"}
+{"id":"3450_ent","premise":"對Miyares嚟講，搵份有意義又有效率嘅工好難。","hypothesis":"「Miyares好難搵到一份令人滿足兼且收入豐厚嘅工。」","label":"entailment"}
+{"id":"2228_ent","premise":"一個男人同一個女人企喺一棟白色建築物前面，望住自己隻手。","hypothesis":"一個男人同一個女人喺一棟建築物前面望住佢哋嘅手。","label":"entailment"}
+{"id":"1535_non_ent","premise":"一隻啡色嘅狗喺田野到狂奔。","hypothesis":"隻狗喺窗外面吠緊。","label":"not_entailment"}
+{"id":"5718_ent","premise":"但即使冇呢啲資料，佢都好肯定會明，93 號航班由紐華克機場延遲起飛，所以世貿中心嘅襲擊已經發生咗。","hypothesis":"佢明嘅，93號航班由紐華克延遲起飛，意味住就算冇佢哋，襲擊都已經發生咗。","label":"entailment"}
+{"id":"4256_ent","premise":"如果存貨持有成本越高，將更多生產轉移到快速生產線工廠就越有利可圖，從而減少在制品和製成品庫存。","hypothesis":"生產可以轉移嚟操控盈利水平。","label":"entailment"}
+{"id":"1575_ent","premise":"一個男人喺空曠嘅田野度試驗模型飛機。","hypothesis":"有個男人試緊模型飛機。","label":"entailment"}
+{"id":"1535_ent","premise":"一隻啡色嘅狗喺田野到狂奔。","hypothesis":"隻狗跑緊步。 ","label":"entailment"}
+{"id":"5712_non_ent","premise":"但係，將一個性別已知嘅人稱為主席係明顯荒謬嘅。「主席」應該係指主席嘅職位，而唔係指擔任呢個職位嘅人。","hypothesis":"叫人做主席，即使我哋知道佢係男係女，都係啱嘅做法。","label":"not_entailment"}
+{"id":"743_ent","premise":"一個電單車司機過緊個坑。","hypothesis":"個電單車司機騎車過咗個坑。","label":"entailment"}
+{"id":"4561_non_ent","premise":"「第三版未刪節詞典」入面嘅定義，比起嗰個嚟講簡潔明瞭好多。","hypothesis":"呢個係呢個詞語第一次出現。","label":"not_entailment"}
+{"id":"683_ent","premise":"一個女仔馬拉松跑手，戴住紅色頭帶，著住紅色背心同黑色短褲，喺一條鋪咗石屎嘅路上慢跑。","hypothesis":"個女士著住紅黑色衫跑緊。 ","label":"entailment"}
+{"id":"2284_non_ent","premise":"隻大隻白色嘅雀仔掠過水面。","hypothesis":"隻雀仔困咗喺個細細個籠到。","label":"not_entailment"}
+{"id":"1741_non_ent","premise":"一個後生，著得好靚嘅黑人，坐喺一套鼓後面，仲笑緊。","hypothesis":"個男人裸體。","label":"not_entailment"}
+{"id":"5340_ent","premise":"「因為，唉，唔係，依尼斯當時爭論緊話——當佢同佢講嘅時候，唔，佢話，嗯，路易斯·阿隆索，我可能就快死啦，佢話，因為失血太多，佢話。」","hypothesis":"佢話佢可能要失血死咗。","label":"entailment"}
+{"id":"960_ent","premise":"一個男人揸住電單車喺條爛路上面行，經過路邊幾架廢車。","hypothesis":"有個男人揸緊電單車。","label":"entailment"}
+{"id":"2899_non_ent","premise":"幾個後生靚仔企喺露台度，激烈咁傾緊計。","hypothesis":"呢啲後生仔完全同意。","label":"not_entailment"}
+{"id":"4650_non_ent","premise":"架飛機冇反應。","hypothesis":"架飛機有反應啦。","label":"not_entailment"}
+{"id":"2284_ent","premise":"隻大隻白色嘅雀仔掠過水面。","hypothesis":"隻雀仔掂到水。","label":"entailment"}
+{"id":"6176_ent","premise":"據報無人收到任何重大回應。","hypothesis":"冇人話收到回覆。","label":"entailment"}
+{"id":"6190_non_ent","premise":"省略號出現嘅地方，我無費事抄晒成個餐牌，淨係揀咗啲我覺得奇怪嘅嘢，因為選擇嘅不協調，或者係我無論點樣憑空想像，都估唔到佢哋點樣揀呢啲嘢出嚟。","hypothesis":"呢啲選擇好合理，完全合乎邏輯。","label":"not_entailment"}
+{"id":"1961_ent","premise":"有個男人喺度燒緊漢堡包。","hypothesis":"個男人喺燒烤架隔離。","label":"entailment"}
+{"id":"4561_ent","premise":"「第三版未刪節詞典」入面嘅定義，比起嗰個嚟講簡潔明瞭好多。","hypothesis":"呢個術語喺之前嘅版本已經定義咗。","label":"entailment"}
+{"id":"3399_non_ent","premise":"基本款嘅衫褲佔所有銷售嘅服裝商品都好大比例。","hypothesis":"畢業舞會禮服佔銷售服裝商品嘅最大百分比。","label":"not_entailment"}
+{"id":"1195_ent","premise":"有個男人舉起雙手，同佢個有鬍鬚嘅朋友講緊笑話。","hypothesis":"啲人傾緊計。","label":"entailment"}
+{"id":"2228_non_ent","premise":"一個男人同一個女人企喺一棟白色建築物前面，望住自己隻手。","hypothesis":"兩個男人望住對方嘅手。","label":"not_entailment"}
+{"id":"4490_ent","premise":"「呢個係我對嗰個男人嘅答案。」人面獅身像解釋道。","hypothesis":"根據獅身人面像所講，呢個係佢畀人類嘅答案。","label":"entailment"}
+{"id":"263_ent","premise":"個著藍衫嘅足球隊，開始喺個著紅衫嘅後衛面前反攻落場。","hypothesis":"著藍衫嗰隊足球隊踢緊波。","label":"entailment"}
+{"id":"6569_non_ent","premise":"呢個詞同概念係積·威廉臣喺1942年嘅故事《Seetee Ship》度提出嘅。","hypothesis":"呢個概念完全係原創嘅。","label":"not_entailment"}
+{"id":"4139_ent","premise":"請用隨函附上嘅回覆卡同已貼郵資嘅信封寄出你嘅捐款。","hypothesis":"請用隨函附上嘅回覆卡同回郵信封捐款。","label":"entailment"}
+{"id":"3127_non_ent","premise":"一個坐喺大象度，有張騎乘座墊嘅男人，同一個女遊客傾緊計。","hypothesis":"有個男人坐喺駱駝上面。","label":"not_entailment"}
+{"id":"2899_ent","premise":"幾個後生靚仔企喺露台度，激烈咁傾緊計。","hypothesis":"「幾個後生仔喺度嘈交。","label":"entailment"}
+{"id":"1471_non_ent","premise":"個左手邊嘅男人，頭髮黑色，戴住眼鏡；右手邊個男人頭髮有點灰白，冇戴眼鏡，雙手合十，兩個都笑緊。","hypothesis":"呢啲人瞓覺喊緊。","label":"not_entailment"}
+{"id":"1961_non_ent","premise":"有個男人喺度燒緊漢堡包。","hypothesis":"個男人喺海底游緊泳。","label":"not_entailment"}
+{"id":"6569_ent","premise":"呢個詞同概念係積·威廉臣喺1942年嘅故事《Seetee Ship》度提出嘅。","hypothesis":"呢個概念嚟自個故事，Seetee Ship (1942)。","label":"entailment"}
+{"id":"1471_ent","premise":"個左手邊嘅男人，頭髮黑色，戴住眼鏡；右手邊個男人頭髮有點灰白，冇戴眼鏡，雙手合十，兩個都笑緊。","hypothesis":"班人笑緊。","label":"entailment"}
+{"id":"4965_ent","premise":"總之就係一大堆嘢囉。","hypothesis":"卷軸係一個好長嘅故事。","label":"entailment"}
+{"id":"4733_ent","premise":"零售商有誘因去儲存大量貨品，因為佢哋想有足夠嘅貨品擺出嚟吸引顧客—空空如也嘅貨架唔吸引人—而且要有貨俾想買嘅人。","hypothesis":"零售商想擺夠貨吸引顧客去佢哋間鋪。","label":"entailment"}
+{"id":"5435_ent","premise":"每個班嘅捐款截止日期係七月三十一日。","hypothesis":"7月31號之後就唔再接受捐款。","label":"entailment"}
+{"id":"585_non_ent","premise":"一個著住蘇格蘭裙嘅男人掟咗支長棍出嚟。","hypothesis":"有個男人喺田上面跳舞。","label":"not_entailment"}
+{"id":"1741_ent","premise":"一個後生，著得好靚嘅黑人，坐喺一套鼓後面，仲笑緊。","hypothesis":"有個男人笑緊。","label":"entailment"}
+{"id":"6190_ent","premise":"省略號出現嘅地方，我無費事抄晒成個餐牌，淨係揀咗啲我覺得奇怪嘅嘢，因為選擇嘅不協調，或者係我無論點樣憑空想像，都估唔到佢哋點樣揀呢啲嘢出嚟。","hypothesis":"呢啲選擇當中，有啲真係幾難明。","label":"entailment"}
+{"id":"960_non_ent","premise":"一個男人揸住電單車喺條爛路上面行，經過路邊幾架廢車。","hypothesis":"有個男人喺行人路度行緊。","label":"not_entailment"}
+{"id":"3827_ent","premise":"呢段時間都好忙，因為我哋有份好進取嘅增長同發展計劃。","hypothesis":"「我哋擴展同發展嘅計劃令呢段時間好忙。」","label":"entailment"}
+{"id":"5340_non_ent","premise":"「因為，唉，唔係，依尼斯當時爭論緊話——當佢同佢講嘅時候，唔，佢話，嗯，路易斯·阿隆索，我可能就快死啦，佢話，因為失血太多，佢話。」","hypothesis":"佢話自己絕對唔會死於失血。","label":"not_entailment"}
+{"id":"5941_ent","premise":"而家啲細路仔仲更加需要你嘅領導。","hypothesis":"啲小朋友需要啲指引。","label":"entailment"}
+{"id":"6300_ent","premise":"我鍾意呀！","hypothesis":"我真係好鍾意呀！","label":"entailment"}
+{"id":"4019_ent","premise":"「我哋住喺中間，住喺洪都拉斯同薩爾瓦多嘅邊境之間。","hypothesis":"「我哋住喺洪都拉斯同薩爾瓦多嘅邊境之間。","label":"entailment"}
+{"id":"5527_ent","premise":"喺想像世界入面，Alison 喺呢個多步驟過程嘅第一步做咗實驗，佢將印度火車意外嘅新聞同埋佢面前嘅玩具救護車融合埋一齊。","hypothesis":"Alison 將火車意外嘅新聞同架玩具救護車融合埋一齊。","label":"entailment"}
+{"id":"4650_ent","premise":"架飛機冇反應。","hypothesis":"航班冇反應。","label":"entailment"}
+{"id":"3787_ent","premise":"「好啦，我估係咁。」","hypothesis":"係呀，我當時幾乎毫無疑問咁覺得係咁。","label":"entailment"}
+{"id":"4139_non_ent","premise":"請用隨函附上嘅回覆卡同已貼郵資嘅信封寄出你嘅捐款。","hypothesis":"我哋冇夾回郵卡或者回郵信封。 ","label":"not_entailment"}
+{"id":"2464_ent","premise":"兩個男人睇緊一個男人喺體育中心嘅片場度打高爾夫球。","hypothesis":"啲人睇緊體育比賽。","label":"entailment"}
+{"id":"5473_non_ent","premise":"「嗯，我好鍾意呢個區，呢度發展得好快，而且我想住近啲屋企人，方便我照顧佢哋，尤其係佢哋年紀大咗嘅時候。」","hypothesis":"我真係好憎住喺呢度，最好可以搬遠啲，唔好咁近啲親戚。","label":"not_entailment"}
+{"id":"496_ent","premise":"一架藍色貨車載住幾個人同好多雜物，喺沙漠公路上面行駛。","hypothesis":"架貨車係咁揸緊。","label":"entailment"}
+{"id":"3450_non_ent","premise":"對Miyares嚟講，搵份有意義又有效率嘅工好難。","hypothesis":"Miyares 喺佢做嘅工作入面一直都好開心。","label":"not_entailment"}
+{"id":"2464_non_ent","premise":"兩個男人睇緊一個男人喺體育中心嘅片場度打高爾夫球。","hypothesis":"啲人喺條路度行緊。","label":"not_entailment"}
+{"id":"4965_non_ent","premise":"總之就係一大堆嘢囉。","hypothesis":"卷軸好短好簡潔。","label":"not_entailment"}
+{"id":"683_non_ent","premise":"一個女仔馬拉松跑手，戴住紅色頭帶，著住紅色背心同黑色短褲，喺一條鋪咗石屎嘅路上慢跑。","hypothesis":"兩個女人喺酒吧度玩臂力比賽。","label":"not_entailment"}
+{"id":"3127_ent","premise":"一個坐喺大象度，有張騎乘座墊嘅男人，同一個女遊客傾緊計。","hypothesis":"一個人騎住一隻好大嘅動物。","label":"entailment"}
+{"id":"4256_non_ent","premise":"如果存貨持有成本越高，將更多生產轉移到快速生產線工廠就越有利可圖，從而減少在制品和製成品庫存。","hypothesis":"生產唔可以轉移嚟操控盈利水平。","label":"not_entailment"}
+{"id":"5527_non_ent","premise":"喺想像世界入面，Alison 喺呢個多步驟過程嘅第一步做咗實驗，佢將印度火車意外嘅新聞同埋佢面前嘅玩具救護車融合埋一齊。","hypothesis":"愛麗森唔明咩係火車相撞。","label":"not_entailment"}
+{"id":"3399_ent","premise":"基本款嘅衫褲佔所有銷售嘅服裝商品都好大比例。","hypothesis":"賣出嘅服裝商品，有相當大嘅比例係基本款。 ","label":"entailment"}
+{"id":"1575_non_ent","premise":"一個男人喺空曠嘅田野度試驗模型飛機。","hypothesis":"個男人喺度剪草坪。","label":"not_entailment"}
+{"id":"4490_non_ent","premise":"「呢個係我對嗰個男人嘅答案。」人面獅身像解釋道。","hypothesis":"獅身人面像拒絕作出任何解釋。","label":"not_entailment"}
+{"id":"263_non_ent","premise":"個著藍衫嘅足球隊，開始喺個著紅衫嘅後衛面前反攻落場。","hypothesis":"一支足球隊喺更衣室傾吓計。","label":"not_entailment"}
+{"id":"5055_non_ent","premise":"「九點十六分冇劫機報告。」","hypothesis":"到咗朝早九點十六分，已經有幾宗劫機案要報告。","label":"not_entailment"}
+{"id":"1559_ent","premise":"一個皮膚黝黑嘅人，蹲低咗係度畫招牌。","hypothesis":"有人喺度畫畫。","label":"entailment"}
+{"id":"3787_non_ent","premise":"「好啦，我估係咁。」","hypothesis":"我對呢樣嘢好驚訝，我之前完全估唔到。","label":"not_entailment"}
+{"id":"5790_ent","premise":"「但係，我哋聽好多關於屋企以前點樣嘅嘢，同埋好似我講過咁，以前要行五哩路返學，同埋——」","hypothesis":"我哋成日都講以前點樣點樣。","label":"entailment"}
+{"id":"5790_non_ent","premise":"「但係，我哋聽好多關於屋企以前點樣嘅嘢，同埋好似我講過咁，以前要行五哩路返學，同埋——」","hypothesis":"我哋聽都未聽過以前係點樣嘅。","label":"not_entailment"}
+{"id":"5435_non_ent","premise":"每個班嘅捐款截止日期係七月三十一日。","hypothesis":"捐款係冇期限嘅。","label":"not_entailment"}
+{"id":"3827_non_ent","premise":"呢段時間都好忙，因為我哋有份好進取嘅增長同發展計劃。","hypothesis":"呢排悶到呢，成日都係咁。","label":"not_entailment"}
+{"id":"1420_ent","premise":"一個藝術家喺街頭擺檔賣佢嘅作品。","hypothesis":"有人賣緊畫。 ","label":"entailment"}
+{"id":"3912_non_ent","premise":"「細路仔開始識講嘢嗰陣，佢哋最關心嘅係講人哋做咩嘢，同埋佢哋行為嘅後果。」","hypothesis":"幼兒對講大人做緊咩嘢完全冇興趣。","label":"not_entailment"}
+{"id":"1195_non_ent","premise":"有個男人舉起雙手，同佢個有鬍鬚嘅朋友講緊笑話。","hypothesis":"兩個男人划住艇出海。","label":"not_entailment"}
+{"id":"5941_non_ent","premise":"而家啲細路仔仲更加需要你嘅領導。","hypothesis":"啲細路而家知自己做緊乜嘢啦，","label":"not_entailment"}
+{"id":"4733_non_ent","premise":"零售商有誘因去儲存大量貨品，因為佢哋想有足夠嘅貨品擺出嚟吸引顧客—空空如也嘅貨架唔吸引人—而且要有貨俾想買嘅人。","hypothesis":"零售商冇誘因用庫存吸引顧客，所以高庫存量就變得無關重要。","label":"not_entailment"}
+{"id":"4956_ent","premise":"「總統同副總統話畀我哋知，佢哋唔知原來係應秘密服務處嘅要求，而且係繞過咗軍事指揮鏈，有戰鬥機由安德魯斯基地緊急起飛。」","hypothesis":"領導層唔知有啲戰機已經由安德魯斯基地緊急起飛。","label":"entailment"}
+{"id":"5055_ent","premise":"「九點十六分冇劫機報告。」","hypothesis":"截至九點十六分，都未有劫機報告。","label":"entailment"}
+{"id":"3167_ent","premise":"兩個人用水牛耕田。","hypothesis":"有兩個人喺出面同啲動物一齊。","label":"entailment"}
+{"id":"6303_non_ent","premise":"不過，呢個部門就設立咗聯合部隊司令部，設喺弗吉尼亞州嘅諾福克，負責應對國內嘅緊急事故，不論係自然災害定係人為災害。","hypothesis":"新總統上任後，部門取消咗維珍尼亞州嘅聯合部隊司令部。","label":"not_entailment"}
+{"id":"5868_ent","premise":"北卡羅來納州？","hypothesis":"關北卡羅來納州事？","label":"entailment"}
+{"id":"6303_ent","premise":"不過，呢個部門就設立咗聯合部隊司令部，設喺弗吉尼亞州嘅諾福克，負責應對國內嘅緊急事故，不論係自然災害定係人為災害。","hypothesis":"部門喺維珍尼亞州設立聯合部隊司令部，協助陸軍更有效應對颶風。","label":"entailment"}
+{"id":"5712_ent","premise":"但係，將一個性別已知嘅人稱為主席係明顯荒謬嘅。「主席」應該係指主席嘅職位，而唔係指擔任呢個職位嘅人。","hypothesis":"叫一個已知性別嘅人做主席，真係唔太聰明。","label":"entailment"}
+{"id":"4956_non_ent","premise":"「總統同副總統話畀我哋知，佢哋唔知原來係應秘密服務處嘅要求，而且係繞過咗軍事指揮鏈，有戰鬥機由安德魯斯基地緊急起飛。」","hypothesis":"「總統話佢完全知啲戰機已經升空。」","label":"not_entailment"}
+{"id":"1559_non_ent","premise":"一個皮膚黝黑嘅人，蹲低咗係度畫招牌。","hypothesis":"一個白人男人正在油漆佢間屋。 ","label":"not_entailment"}
+{"id":"6300_non_ent","premise":"我鍾意呀！","hypothesis":"我真係好憎呀。","label":"not_entailment"}
+{"id":"496_non_ent","premise":"一架藍色貨車載住幾個人同好多雜物，喺沙漠公路上面行駛。","hypothesis":"架貨車停咗不動。","label":"not_entailment"}
+{"id":"1420_non_ent","premise":"一個藝術家喺街頭擺檔賣佢嘅作品。","hypothesis":"有人喺度向人乞錢。","label":"not_entailment"}
+{"id":"2677_ent","premise":"兩個女人喺按摩浴缸裡面輕鬆吓。","hypothesis":"幾個女人喺熱水浴缸到。","label":"entailment"}
+{"id":"5718_non_ent","premise":"但即使冇呢啲資料，佢都好肯定會明，93 號航班由紐華克機場延遲起飛，所以世貿中心嘅襲擊已經發生咗。","hypothesis":"「同佢哋一齊嘅時候，佢唔知世貿中心嘅襲擊事件根本就未發生過。」","label":"not_entailment"}
+{"id":"5868_non_ent","premise":"北卡羅來納州？","hypothesis":"對抗北卡羅來納州？","label":"not_entailment"}
+{"id":"5473_ent","premise":"「嗯，我好鍾意呢個區，呢度發展得好快，而且我想住近啲屋企人，方便我照顧佢哋，尤其係佢哋年紀大咗嘅時候。」","hypothesis":"我好鍾意呢個地方，我比較想住近啲屋企人。","label":"entailment"}
+{"id":"6176_non_ent","premise":"據報無人收到任何重大回應。","hypothesis":"佢哋收到回覆啦。","label":"not_entailment"}
+{"id":"3167_non_ent","premise":"兩個人用水牛耕田。","hypothesis":"有兩個人喺健身室游緊泳。","label":"not_entailment"}
