@@ -1,25 +1,21 @@
-import polars as pl
-import pycantonese
+import argparse
 import warnings
+from hanziconv import HanziConv
+import polars as pl
+from itertools import combinations
+from torch import cosine_similarity
+from termcolor import colored
+from collections import Counter
+import torch
+from transformers import BertForMaskedLM, AlbertTokenizer, BertTokenizer
 
 warnings.filterwarnings('ignore')
 
-corpus = pycantonese.hkcancor()
-df = pl.read_csv("./output/filtered_dictionary_senses.csv")
-skipped = list()
-for row in df.iter_rows(named=True):
-    jyutping = row["jyutping"]
-    # Remove spaces
-    jyutping = "".join(jyutping.split())
-    results = corpus.search(character=row["traditional"], by_utterances=True)
-    if not results:
-        # Skip for now
-        skipped.append(row)
+parser = argparse.ArgumentParser(description="Evaluate a (masked-LM) checkpoint on the WSD task.")
+parser.add_argument("model_dir", help="HF hub model name or local checkpoint directory to evaluate")
+args = parser.parse_args()
 
-from hanziconv import HanziConv
-import polars as pl
-
-df = pl.read_csv("./output/senses.csv")
+df = pl.read_csv("data/wsd/senses.csv")
 
 df = df.with_columns([
     pl.col("traditional").map_elements(
@@ -40,17 +36,8 @@ for row in df.iter_rows(named=True):
     assert row["traditional"] in row["sentence1"]
     assert row["traditional"] in row["sentence2"]
 
-# df.write_csv("./output/filtered_dictionary_senses-traditional.csv")
-import torch
-from transformers import BertForMaskedLM, AlbertTokenizer, BertTokenizer
 
-model_options = {
-    "yue-scratch": "./yue-scratch",
-    "bert-base-chinese": "google-bert/bert-base-chinese",
-    "bert-base-cantonese": "indiejoseph/bert-base-cantonese"
-}
-# NOTE: Update model path before running
-model_path = model_options["yue-scratch"]
+model_path = args.model_dir
 
 if "yue-scratch" in model_path:
     tokenizer_class = AlbertTokenizer
@@ -60,12 +47,9 @@ else:
 model = BertForMaskedLM.from_pretrained(model_path)
 tokenizer = tokenizer_class.from_pretrained(model_path)
 
-import polars as pl
-from itertools import combinations
-from torch import cosine_similarity
-from termcolor import colored
 
-df = pl.read_csv("./output/senses-traditional.csv")
+
+df = pl.read_csv("data/wsd/senses-traditional.csv")
 
 total_pairs = 0
 
@@ -135,7 +119,7 @@ for word, group in df.with_row_index().group_by("traditional"):
 
 # print(predictions)
 
-from collections import Counter
+
 
 result_counter = Counter(predictions)
 acc = result_counter["right"] / (result_counter["right"] + result_counter["wrong"])

@@ -2,6 +2,7 @@ from datasets import load_from_disk, Dataset, load_dataset
 from transformers import (
     BertForMaskedLM,
     BertTokenizerFast,
+    AlbertTokenizer,
     Trainer,
     TrainingArguments,
     DataCollatorForLanguageModeling,
@@ -28,7 +29,7 @@ from tqdm import tqdm
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
 class SiniticPreTrainer:
-    def __init__(self, lang="", model_dir="./models/bert-base-chinese-local", scratch=False, data=None):
+    def __init__(self, lang="", model_dir="./models/yue-monolingual", scratch=False, data=None):
         self.ds = None
         self.tokenizer = None
         self.lang = lang
@@ -130,7 +131,7 @@ class SiniticPreTrainer:
         trainer.save_model(output_dir_name)
 
 class CantoPreTrainer(SiniticPreTrainer):
-    def __init__(self, lang="yue", model_dir="./models/bert-base-chinese-local", scratch=False, data=None):
+    def __init__(self, lang="yue", model_dir="./models/yue-monolingual", scratch=False, data=None):
         super().__init__(lang, model_dir, scratch, data)
         # checking data happens in run.py
         if data == "cantonese-sentences":
@@ -219,7 +220,7 @@ class CantoPreTrainer(SiniticPreTrainer):
 
 
 class WuPreTrainer(SiniticPreTrainer):
-    def __init__(self, lang="wuu", model_dir="./models/bert-base-chinese-local"):
+    def __init__(self, lang="wuu", model_dir="./models/yue-monolingual"):
         super().__init__(lang, model_dir)
         if not os.path.exists("./data/wuu-wiki-local"):
             raise FileNotFoundError(
@@ -234,123 +235,212 @@ class WuPreTrainer(SiniticPreTrainer):
         self.tokenizer = BertTokenizerFast.from_pretrained(self.model_dir)
 
 
-def compute_nli_metrics(eval_pred):
-    logits, labels = eval_pred
-    preds = np.argmax(logits, axis=1)
+def compute_classification_metrics(num_labels):
+    """Shared accuracy/F1/confusion-matrix metrics for single-label sequence classification."""
+    def compute_metrics(eval_pred):
+        logits, labels = eval_pred
+        preds = np.argmax(logits, axis=1)
 
-    acc = accuracy_score(labels, preds)
-    cm = confusion_matrix(labels, preds, labels=[0, 1])
-    macro_f1 = f1_score(labels, preds, average='macro')
-    weighted_f1 = f1_score(labels, preds, average='weighted')
+        acc = accuracy_score(labels, preds)
+        cm = confusion_matrix(labels, preds, labels=list(range(num_labels)))
+        macro_f1 = f1_score(labels, preds, average='macro')
+        weighted_f1 = f1_score(labels, preds, average='weighted')
 
-    return {
-        "accuracy": acc,
-        "confusion_matrix": cm.tolist(),
-        "macro_f1": macro_f1,
-        "weighted_f1": weighted_f1
-    }
+        return {
+            "accuracy": acc,
+            "confusion_matrix": cm.tolist(),
+            "macro_f1": macro_f1,
+            "weighted_f1": weighted_f1,
+        }
+    return compute_metrics
 
 
-class CantoNLIFineTuner(CantoPreTrainer):
-    def __init__(self, lang, model_dir, eval_only=False):
+def load_jsonl_splits(paths):
+    """Load {split_name: jsonl_path} into HF Datasets, keyed by split name."""
+    return {split: load_dataset("json", data_files=str(path), split="train") for split, path in paths.items()}
+
+
+class CantoFineTuningBase:
+    """Lightweight base for fine-tuning tasks: only needs a tokenizer and the base model
+    directory, unlike CantoPreTrainer, which also requires the Cantonese Wikipedia corpus."""
+
+    def __init__(self, lang="yue", model_dir="./models/yue-monolingual"):
+        self.lang = lang
+        self.model_dir = model_dir
+        if not os.path.exists(self.model_dir):
+            raise FileNotFoundError(
+                f"Model directory {self.model_dir} not found."
+                f"Please first run `python download.py --lang={lang} --model_dir={model_dir}`."
+            )
+        self.tokenizer = AutoTokenizer.from_pretrained(self.model_dir)
+
+
+class CantoSequenceClassificationFineTuner(CantoFineTuningBase):
+    """Shared base for single- and paired-sentence classification tasks (nli, sentiment,
+    ld, laj), all of which use BertForSequenceClassification and differ only in input
+    shape, label space, and where their data lives."""
+
+    task_name = None
+    text_fields = ("sentence",)
+    id2label = {}
+    split_paths = {}
+    learning_rate = 2e-5
+    num_train_epochs = 3
+    per_device_batch_size = 64
+    max_length = 128
+
+    def __init__(self, lang="yue", model_dir="./models/yue-monolingual", eval_only=False):
         super().__init__(lang, model_dir)
+        self.label2id = {v: k for k, v in self.id2label.items()}
+        self.num_labels = len(self.id2label)
+        self.model = BertForSequenceClassification.from_pretrained(
+            self.model_dir,
+            num_labels=self.num_labels,
+            id2label=self.id2label,
+            label2id=self.label2id,
+        )
         self.finetune_dataset = None
         self.preprocess_data(eval_only=eval_only)
-        self.model = BertForSequenceClassification.from_pretrained(self.model_dir)
+
+        model_basename = [f for f in self.model_dir.split('/') if f][-1]
         self.training_args = TrainingArguments(
-            output_dir=f"./models/{self.lang}-nli-{[f for f in self.model_dir.split('/') if f][-1]}",
+            output_dir=f"./models/{self.lang}-{self.task_name}-{model_basename}",
             overwrite_output_dir=True,
-            num_train_epochs=3,
+            num_train_epochs=self.num_train_epochs,
             optim="adamw_torch",
-            learning_rate=2e-5,
-            per_device_train_batch_size=16,
-            per_device_eval_batch_size=16,
-            save_steps=5000,
-            save_total_limit=2,
-            logging_steps=5000,
+            learning_rate=self.learning_rate,
+            per_device_train_batch_size=self.per_device_batch_size,
+            per_device_eval_batch_size=self.per_device_batch_size,
+            logging_steps=100,
             report_to="tensorboard",
-            eval_strategy="steps",
-            eval_steps=10000,
-            load_best_model_at_end=False,
-            metric_for_best_model="loss",
-            greater_is_better=False,
+            eval_strategy="epoch",
+            save_strategy="epoch",
+            save_total_limit=2,
+            load_best_model_at_end=True,
+            metric_for_best_model="eval_macro_f1",
+            greater_is_better=True,
         )
+
+    def load_raw_splits(self, eval_only=False):
+        """Return {'train', 'validation', 'test'} raw (untokenized) examples. Default
+        implementation reads self.split_paths; subclasses with unusual data sources
+        (e.g. nli) override this entirely."""
+        paths = {"test": self.split_paths["test"]}
+        if not eval_only:
+            paths.update({k: v for k, v in self.split_paths.items() if k != "test" and v is not None})
+
+        raw = load_jsonl_splits(paths)
+        for split in ("train", "validation", "test"):
+            raw.setdefault(split, None)
+        return raw
+
+    def _map_label(self, example):
+        label = example["label"]
+        if isinstance(label, str):
+            example["label"] = self.label2id[label]
+        return example
 
     def preprocess_data(self, eval_only=False):
-        nli_data = load_from_disk("./data/yue-nli-local")
+        raw = self.load_raw_splits(eval_only=eval_only)
 
-        def tokenize_function(examples):
-            return self.tokenizer(examples["input_text"], return_special_tokens_mask=True, truncation=True,
-                                  padding="max_length", max_length=256)
+        def tokenize(examples):
+            args = [examples[field] for field in self.text_fields]
+            return self.tokenizer(*args, truncation=True, padding="max_length", max_length=self.max_length)
 
-        def yue_nli_collator(split):
-            nested_nli_list = [
-                [
-              {"input_text": f"{s['anchor']} [SEP] {s['positive']}", "label": 0},
-              {"input_text": f"{s['anchor']} [SEP] {s['negative']}", "label": 1}
-              ]
-                               for s in split]
-
-            return Dataset.from_list([e for s in nested_nli_list for e in s])
-
-        if eval_only:
-            test = get_subset(nli_data["test"])
-            test_set = yue_nli_collator(test).map(tokenize_function, batched=True)
-            print(f"{len(test_set)} test examples.")
-            self.finetune_dataset = {
-                "train": None,
-                "validation": None,
-                "test": test_set
-            }
-        else:
-            train, val, test = (
-                nli_data["train"],
-                nli_data["dev"],
-                get_subset(nli_data["test"])
-            )
-
-            train_set, val_set, test_set = [
-                yue_nli_collator(train).map(tokenize_function, batched=True),
-                yue_nli_collator(val).map(tokenize_function, batched=True),
-                yue_nli_collator(test).map(tokenize_function, batched=True)
-            ]
-
-            print(f"A total of {len(train_set)} training examples,")
-            print(f"{len(val_set)} validation examples,")
-            print(f"{len(test_set)} test examples.")
-
-            self.finetune_dataset = {
-                "train": train_set,
-                "validation": val_set,
-                "test": test_set
-            }
-
-    def eval(self, trainer):
-        trainer.compute_metrics = compute_nli_metrics
-        metrics = trainer.evaluate(
-            eval_dataset=self.finetune_dataset["test"],
-        )
-        print(f"Accuracy: {metrics['eval_accuracy']}")
-        print(f"Confusion_matrix: {metrics['eval_confusion_matrix']}")
+        self.finetune_dataset = {}
+        for split, ds in raw.items():
+            if ds is None:
+                self.finetune_dataset[split] = None
+                continue
+            ds = ds.map(self._map_label)
+            ds = ds.map(tokenize, batched=True)
+            self.finetune_dataset[split] = ds
 
     def finetune(self):
-        if any({split not in self.finetune_dataset for split in ["train", "validation", "test"]}):
-            raise ValueError(f"'train' and 'validation' splits must be present in finetune_dataset."
-                             f"Found: {self.finetune_dataset.keys()}")
+        eval_dataset = self.finetune_dataset["validation"]
+        if eval_dataset is None:
+            eval_dataset = self.finetune_dataset["test"]
 
         trainer = Trainer(
             model=self.model,
             args=self.training_args,
             train_dataset=self.finetune_dataset["train"],
-            eval_dataset=self.finetune_dataset["validation"],
+            eval_dataset=eval_dataset,
+            compute_metrics=compute_classification_metrics(self.num_labels),
         )
 
         trainer.train()
-        trainer.save_model(f"./models/{self.lang}-nlu-{[f for f in self.model_dir.split('/') if f][-1]}")
+        model_basename = [f for f in self.model_dir.split('/') if f][-1]
+        trainer.save_model(f"./models/{self.lang}-{self.task_name}-{model_basename}")
         self.eval(trainer)
 
+    def eval(self, trainer):
+        trainer.compute_metrics = compute_classification_metrics(self.num_labels)
+        metrics = trainer.evaluate(eval_dataset=self.finetune_dataset["test"])
+        print(f"Accuracy: {metrics['eval_accuracy']}")
+        print(f"Macro F1: {metrics['eval_macro_f1']}")
+        print(f"Confusion matrix: {metrics['eval_confusion_matrix']}")
 
-class CantoPOSFineTuner(CantoPreTrainer):
+
+class CantoNLIFineTuner(CantoSequenceClassificationFineTuner):
+    task_name = "nli"
+    text_fields = ("premise", "hypothesis")
+    id2label = {0: "entailment", 1: "not_entailment"}
+
+    def load_raw_splits(self, eval_only=False):
+        nli_data = load_from_disk("./data/yue-nli-local")
+
+        def unroll(split):
+            rows = []
+            for s in split:
+                rows.append({"premise": s["anchor"], "hypothesis": s["positive"], "label": 0})
+                rows.append({"premise": s["anchor"], "hypothesis": s["negative"], "label": 1})
+            return Dataset.from_list(rows)
+
+        test = unroll(get_subset(nli_data["test"]))
+        if eval_only:
+            return {"train": None, "validation": None, "test": test}
+        return {
+            "train": unroll(nli_data["train"]),
+            "validation": unroll(nli_data["dev"]),
+            "test": test,
+        }
+
+
+class CantoSentimentFineTuner(CantoSequenceClassificationFineTuner):
+    task_name = "sentiment"
+    text_fields = ("sentence",)
+    id2label = {0: "smile", 1: "ok", 2: "cry"}
+    split_paths = {
+        "train": "data/sentiment/train.jsonl",
+        "validation": "data/sentiment/valid.jsonl",
+        "test": "data/sentiment/test.jsonl",
+    }
+
+
+class CantoLangDetectFineTuner(CantoSequenceClassificationFineTuner):
+    task_name = "ld"
+    text_fields = ("sentence",)
+    id2label = {0: "cantonese", 1: "mandarin", 2: "corrupted"}
+    split_paths = {
+        "train": "data/ld/ld_train.jsonl",
+        "validation": "data/ld/ld_val.jsonl",
+        "test": "data/ld/ld_test.jsonl",
+    }
+
+
+class CantoLAJFineTuner(CantoSequenceClassificationFineTuner):
+    task_name = "laj"
+    text_fields = ("sentence",)
+    id2label = {0: "unacceptable", 1: "acceptable"}
+    split_paths = {
+        "train": "data/laj/laj_finetune/finetune_train.jsonl",
+        "validation": None,
+        "test": "data/laj/laj_finetune/finetune_test.jsonl",
+    }
+
+
+class CantoPOSFineTuner(CantoFineTuningBase):
     def __init__(self, lang, model_dir):
         super().__init__(lang, model_dir)
         self.finetune_dataset = None
@@ -367,13 +457,15 @@ class CantoPOSFineTuner(CantoPreTrainer):
         self.id2tag = {i: tag for tag, i in self.tag2id.items()}
 
     def preprocess_data(self):
-        # Load raw dataset (adjust this path to your actual source)
-        raw_data = load_from_disk("./data/yue-pos")  # Should return DatasetDict
-        # Expected format: {"train": [{"sentence": [...], "labels": [...]}], ...}
+        # Expected format: {"train": [{"tokens": [...], "upos": [...]}], ...}
+        raw_data = load_jsonl_splits({
+            "train": "data/pos/pos_train.jsonl",
+            "test": "data/pos/pos_test.jsonl",
+        })
 
         def align_labels_with_tokens(examples):
             tokenized = self.tokenizer(
-                examples["sentence"],
+                examples["tokens"],
                 is_split_into_words=True,
                 truncation=True,
                 padding="max_length",
@@ -381,8 +473,8 @@ class CantoPOSFineTuner(CantoPreTrainer):
             )
 
             labels = []
-            for i, word_ids in enumerate(tokenized.word_ids(batch_index=i) for i in range(len(examples["sentence"]))):
-                word_labels = examples["labels"][i]
+            for i, word_ids in enumerate(tokenized.word_ids(batch_index=i) for i in range(len(examples["tokens"]))):
+                word_labels = examples["upos"][i]
                 label_ids = []
                 previous_word_idx = None
                 for word_idx in word_ids:
@@ -399,7 +491,7 @@ class CantoPOSFineTuner(CantoPreTrainer):
             return tokenized
 
         # Tokenize and align labels
-        tokenized_data = raw_data.map(align_labels_with_tokens, batched=True)
+        tokenized_data = {split: ds.map(align_labels_with_tokens, batched=True) for split, ds in raw_data.items()}
         self.finetune_dataset = {
             "train": tokenized_data["train"],
             "test": tokenized_data.get("test", tokenized_data["train"])
@@ -424,8 +516,8 @@ class CantoPOSFineTuner(CantoPreTrainer):
             overwrite_output_dir=True,
             num_train_epochs=3,
             learning_rate=2e-5,
-            per_device_train_batch_size=32,
-            per_device_eval_batch_size=32,
+            per_device_train_batch_size=64,
+            per_device_eval_batch_size=64,
             eval_strategy="epoch",
             save_strategy="epoch",
             logging_dir="./logs",
@@ -521,7 +613,7 @@ class BertForDependencyParsing(BertPreTrainedModel):
         return {"loss": loss, "logits": (head_logits, rel_logits)}
 
 
-class CantoDEPSFineTuner(CantoPreTrainer):
+class CantoDEPSFineTuner(CantoFineTuningBase):
     def __init__(self, lang, model_dir):
         super().__init__(lang, model_dir)
         self.finetune_dataset = None
@@ -541,20 +633,23 @@ class CantoDEPSFineTuner(CantoPreTrainer):
     def preprocess_data(self):
         """
         Expect dataset with fields:
-          - 'sentence': list[str] words
+          - 'tokens':  list[str] words
           - 'heads':   list[int] UD heads (0=ROOT, 1..n word indices)
-          - 'rels':    list[str] dependency relations, 'root' for head==0
+          - 'deprels': list[str] dependency relations, 'root' for head==0
         We align to subwords and:
           - place gold labels only on first subword of each word
           - map head word index -> tokenized sequence index of that head's FIRST subword
           - map ROOT (0) -> [CLS] position index (usually 0)
         """
-        raw = load_from_disk("./data/yue-deps")
+        raw = load_jsonl_splits({
+            "train": "data/deps/deps_train.jsonl",
+            "test": "data/deps/deps_test.jsonl",
+        })
 
         def align(examples):
             # Tokenize with word alignment
             enc = self.tokenizer(
-                examples["sentence"],
+                examples["tokens"],
                 is_split_into_words=True,
                 truncation=True,
                 padding="max_length",
@@ -562,15 +657,15 @@ class CantoDEPSFineTuner(CantoPreTrainer):
                 return_offsets_mapping=False,
             )
 
-            B = len(examples["sentence"])
+            B = len(examples["tokens"])
             labels_head = []
             labels_rel  = []
 
             for i in range(B):
                 word_ids = enc.word_ids(batch_index=i)  # len = seq_len (incl CLS/SEP/PAD)
-                words = examples["sentence"][i]
+                words = examples["tokens"][i]
                 heads = examples["heads"][i]  # UD heads: 0..len(words)
-                rels  = examples["deps"][i]
+                rels  = examples["deprels"][i]
 
                 # Build map: word_idx -> token_idx of FIRST subword
                 # word indices in UD are 1-based; we'll keep that in mind
@@ -631,7 +726,7 @@ class CantoDEPSFineTuner(CantoPreTrainer):
             enc["labels_rel"]  = labels_rel
             return enc
 
-        tokenized = raw.map(align, batched=True)
+        tokenized = {split: ds.map(align, batched=True) for split, ds in raw.items()}
         self.finetune_dataset = {
             "train": tokenized["train"],
             "test": tokenized.get("test", tokenized["train"]),
@@ -650,8 +745,8 @@ class CantoDEPSFineTuner(CantoPreTrainer):
             overwrite_output_dir=True,
             num_train_epochs=20,
             learning_rate=2e-5,
-            per_device_train_batch_size=16,
-            per_device_eval_batch_size=16,
+            per_device_train_batch_size=64,
+            per_device_eval_batch_size=64,
             eval_strategy="epoch",
             save_strategy="epoch",
             logging_dir="./logs",
@@ -730,7 +825,7 @@ class CantoDEPSFineTuner(CantoPreTrainer):
 
 
 class CantoTokenClassificationFineTuner(CantoNLIFineTuner):
-    def __init__(self, lang="yue", model_dir="./bert-base-chinese-local"):
+    def __init__(self, lang="yue", model_dir="./yue-monolingual"):
         super().__init__(lang, model_dir)
 
     def preprocess_data(self):
@@ -822,8 +917,8 @@ class CantoTokenClassificationFineTuner(CantoNLIFineTuner):
             num_train_epochs=3,
             optim="adamw_torch",
             learning_rate=1e-5,
-            per_device_train_batch_size=8,
-            per_device_eval_batch_size=8,
+            per_device_train_batch_size=64,
+            per_device_eval_batch_size=64,
             logging_steps=50,
             report_to="tensorboard",
         )
@@ -873,111 +968,3 @@ class CantoTokenClassificationFineTuner(CantoNLIFineTuner):
         print(f"Average F1: {np.mean(cross_validation_results['f1'])}")
         print(f"Average F1 Positive: {np.mean(cross_validation_results['f1_positive'])}")
 
-class CantoAcceptabilityFineTuner(CantoNLIFineTuner):
-    def __init__(self, lang="yue", model_dir="./bert-base-chinese-local", eval_only=False):
-        super().__init__(lang, model_dir, eval_only)
-
-    def preprocess_data(self, eval_only=False):
-        data = load_from_disk('data/acceptability-dataset-2')
-        data = data.shuffle(seed=42)
-
-        def tokenize(example):
-            return self.tokenizer(example["text"], return_special_tokens_mask=True, truncation=True, padding="max_length", max_length=128)
-
-        train_set, temp_set = data.train_test_split(test_size=0.1, seed=42).values()
-        valid_set, test_set = temp_set.train_test_split(test_size=0.5, seed=42).values()
-
-        if not eval_only:
-            train_set, temp_set = data.train_test_split(test_size=0.1, seed=42).values()
-            train_set = train_set.map(tokenize, batched=True, remove_columns=["text"])
-            valid_set = valid_set.map(tokenize, batched=True, remove_columns=["text"])
-
-        test_set = test_set.map(tokenize, batched=True, remove_columns=["text"])
-
-        if not eval_only:
-            self.finetune_dataset = {
-                "train": train_set,
-                "validation": valid_set,
-                "test": test_set
-            }
-        else:
-            self.finetune_dataset = {
-                "test": test_set
-            }
-          
-        model = BertForSequenceClassification.from_pretrained(
-            self.model_dir,
-            num_labels=3,
-            id2label={0: "unacceptable", 1: "acceptable", 2: "mix"},
-            label2id={"unacceptable": 0, "acceptable": 1, "mix": 2}
-        )
-
-        def compute_metrics(eval_pred):
-            logits, labels = eval_pred
-            preds = np.argmax(logits, axis=1)
-
-            acc = accuracy_score(labels, preds)
-            cm = confusion_matrix(labels, preds, labels=[0, 1, 2])
-            macro_f1 = f1_score(labels, preds, average='macro')
-            weighted_f1 = f1_score(labels, preds, average='weighted')
-
-            # Get per-class precision, recall, f1
-            _, _, f1s, _ = precision_recall_fscore_support(labels, preds, labels=[0, 1])
-            f1_positive = f1s[1]  # label=1
-
-            return {
-                "accuracy": acc,
-                "confusion_matrix": cm.tolist(),
-                "macro_f1": macro_f1,
-                "weighted_f1": weighted_f1,
-                # "f1_positive": f1_positive  # new key
-            }
-
-        for param in model.bert.parameters():
-            param.requires_grad = False
-        for param in model.bert.encoder.layer[-2:].parameters():
-            param.requires_grad = True
-        for param in model.bert.pooler.parameters():
-            param.requires_grad = True
-        for param in model.classifier.parameters():
-            param.requires_grad = True
-        for name, param in model.named_parameters():
-            print(name, param.requires_grad)
-
-        training_args = TrainingArguments(
-            output_dir=f"./models/{self.lang}-acceptability2-{[f for f in self.model_dir.split('/') if f][-1]}",
-            overwrite_output_dir=True,
-            num_train_epochs=3,
-            optim="adamw_torch",
-            learning_rate=1e-5,
-            per_device_train_batch_size=16,
-            per_device_eval_batch_size=16,
-            logging_steps=20,
-            report_to="tensorboard",
-            eval_strategy="steps",
-            eval_steps=100,
-            load_best_model_at_end=True,
-            # metric_for_best_model="eval_f1_positive",
-            metric_for_best_model="eval_macro_f1",
-            greater_is_better=True,
-            save_steps=1000,
-        )
-        seqeval = evaluate.load("seqeval")
-
-        trainer = Trainer(
-            model=model,
-            args=training_args,
-            train_dataset=self.finetune_dataset["train"],
-            eval_dataset=self.finetune_dataset["validation"],
-            compute_metrics=compute_metrics,
-            callbacks=[EarlyStoppingCallback(early_stopping_patience=5)],
-        )
-
-        trainer.train()
-
-        metrics = trainer.evaluate(
-            eval_dataset=self.finetune_dataset["test"],
-        )
-        print(f"Accuracy: {metrics['eval_accuracy']}")
-        print(f"Macro F1: {metrics['eval_macro_f1']}")     
-          

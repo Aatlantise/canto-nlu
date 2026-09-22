@@ -1,6 +1,25 @@
-from main import WuPreTrainer, CantoPreTrainer, CantoNLIFineTuner, CantoPOSFineTuner, CantoDEPSFineTuner, CantoTokenClassificationFineTuner, CantoAcceptabilityFineTuner
+from main import (
+    WuPreTrainer,
+    CantoPreTrainer,
+    CantoSequenceClassificationFineTuner,
+    CantoNLIFineTuner,
+    CantoPOSFineTuner,
+    CantoDEPSFineTuner,
+    CantoSentimentFineTuner,
+    CantoLangDetectFineTuner,
+    CantoLAJFineTuner,
+)
 from argparse import ArgumentParser
 from transformers import Trainer
+
+FINETUNE_TASKS = {
+    "nli": CantoNLIFineTuner,
+    "pos": CantoPOSFineTuner,
+    "deps": CantoDEPSFineTuner,
+    "sentiment": CantoSentimentFineTuner,
+    "ld": CantoLangDetectFineTuner,
+    "laj": CantoLAJFineTuner,
+}
 
 def run(args):
     if args.pretrain:
@@ -16,34 +35,30 @@ def run(args):
             print(f"{args.lang} pre-training is not supported. Please choose from: yue, wuu")
     if args.finetune:
         if args.lang == "yue":
-            if args.task == "nli":
-                model = CantoNLIFineTuner(args.lang, model_dir=args.model_dir)
-                model.finetune()
-            elif args.task == "pos":
-                model = CantoPOSFineTuner(args.lang, model_dir=args.model_dir)
-                model.finetune()
-            elif args.task == "deps":
-                model = CantoDEPSFineTuner(args.lang, model_dir=args.model_dir)
-                model.finetune()
-            elif args.task == "accept":
-                model = CantoAcceptabilityFineTuner(args.lang, model_dir=args.model_dir)
-                model.finetune()
+            fine_tuner_cls = FINETUNE_TASKS.get(args.task)
+            if fine_tuner_cls is None:
+                print(f"{args.task} fine-tuning is not supported. Please choose from: {', '.join(FINETUNE_TASKS)}")
             else:
-                print(f"{args.task} fine-tuning is not supported. Please choose from: pos, nli, deps, accept")
-
+                model = fine_tuner_cls(args.lang, model_dir=args.model_dir)
+                model.finetune()
         else:
             print(f"{args.lang} fine-tuning is not supported. Please choose from: yue")
     if args.eval_only:
         if args.lang == "yue":
-            model = CantoNLIFineTuner(args.lang, model_dir=args.model_dir, eval_only=True)
+            fine_tuner_cls = FINETUNE_TASKS.get(args.task)
+            if fine_tuner_cls is None or not issubclass(fine_tuner_cls, CantoSequenceClassificationFineTuner):
+                eval_only_tasks = [t for t, cls in FINETUNE_TASKS.items() if issubclass(cls, CantoSequenceClassificationFineTuner)]
+                print(f"{args.task} evaluating is not supported. Please choose from: {', '.join(eval_only_tasks)}")
+            else:
+                model = fine_tuner_cls(args.lang, model_dir=args.model_dir, eval_only=True)
 
-            trainer = Trainer(
-                model=model.model,
-                args=model.training_args,
-                eval_dataset=model.finetune_dataset["test"]
-            )
+                trainer = Trainer(
+                    model=model.model,
+                    args=model.training_args,
+                    eval_dataset=model.finetune_dataset["test"]
+                )
 
-            model.eval(trainer)
+                model.eval(trainer)
         else:
             print(f"{args.lang} evaluating is not supported. Please choose from: yue")
 
@@ -62,6 +77,8 @@ if __name__ == "__main__":
     """
     Add your custom arguments for IDE tests here
     """
+    args.task = "laj"
+    args.model_dir = "./models/yue-monolingual"
 
     if args.task:
         args.finetune = True
