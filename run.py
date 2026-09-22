@@ -65,7 +65,7 @@ def run(args):
 if __name__ == "__main__":
     parser = ArgumentParser()
     parser.add_argument("--lang", default="yue")
-    parser.add_argument("--model_dir", default="./models/bert-base-chinese-local")
+    parser.add_argument("--model_dir", default="./models/yue-monolingual")
     parser.add_argument("--pretrain", action="store_true", default=False)
     parser.add_argument("--scratch", action="store_true", default=False)
     parser.add_argument("--finetune", action="store_true", default=False)
@@ -77,8 +77,6 @@ if __name__ == "__main__":
     """
     Add your custom arguments for IDE tests here
     """
-    args.task = "laj"
-    args.model_dir = "./models/yue-monolingual"
 
     if args.task:
         args.finetune = True

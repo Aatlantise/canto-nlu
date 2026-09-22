@@ -1,8 +1,6 @@
 from datasets import load_from_disk, Dataset, load_dataset
 from transformers import (
     BertForMaskedLM,
-    BertTokenizerFast,
-    AlbertTokenizer,
     Trainer,
     TrainingArguments,
     DataCollatorForLanguageModeling,
@@ -232,7 +230,7 @@ class WuPreTrainer(SiniticPreTrainer):
                 f"Please first run `python download.py --lang=wuu --model_dir={self.model_dir}`."
             )
         self.ds = load_from_disk("./data/wuu-wiki-local")
-        self.tokenizer = BertTokenizerFast.from_pretrained(self.model_dir)
+        self.tokenizer = AutoTokenizer.from_pretrained(self.model_dir)
 
 
 def compute_classification_metrics(num_labels):
@@ -444,7 +442,7 @@ class CantoPOSFineTuner(CantoFineTuningBase):
     def __init__(self, lang, model_dir):
         super().__init__(lang, model_dir)
         self.finetune_dataset = None
-        self.tokenizer = BertTokenizerFast.from_pretrained(model_dir,
+        self.tokenizer = AutoTokenizer.from_pretrained(model_dir,
                                                            unk_token="[UNK]",
                                                            pad_token="[PAD]",
                                                            cls_token="[CLS]",
@@ -510,6 +508,8 @@ class CantoPOSFineTuner(CantoFineTuningBase):
             id2label=self.id2tag,
             label2id=self.tag2id
         )
+
+        model.resize_token_embeddings(len(self.tokenizer))
 
         training_args = TrainingArguments(
             output_dir=f"./models/{self.lang}-pos-{self.model_dir.strip('/').split('/')[-1]}",
@@ -617,7 +617,7 @@ class CantoDEPSFineTuner(CantoFineTuningBase):
     def __init__(self, lang, model_dir):
         super().__init__(lang, model_dir)
         self.finetune_dataset = None
-        self.tokenizer = BertTokenizerFast.from_pretrained(model_dir)
+        self.tokenizer = AutoTokenizer.from_pretrained(model_dir)
 
         # You can expand/adjust to your UD label set (incl. language-specific subtypes like discourse:sp)
         self.dep_labels = [
@@ -740,10 +740,12 @@ class CantoDEPSFineTuner(CantoFineTuningBase):
             num_rel_labels=len(self.rel2id),
         )
 
+        model.resize_token_embeddings(len(self.tokenizer))
+
         args = TrainingArguments(
             output_dir=f"./models/{self.lang}-deps-{self.model_dir.strip('/').split('/')[-1]}",
             overwrite_output_dir=True,
-            num_train_epochs=20,
+            num_train_epochs=3,
             learning_rate=2e-5,
             per_device_train_batch_size=64,
             per_device_eval_batch_size=64,
@@ -817,8 +819,8 @@ class CantoDEPSFineTuner(CantoFineTuningBase):
         trainer.train()
 
         metrics = trainer.evaluate(self.finetune_dataset["test"])
-        print(f"Final test accuracy: {metrics['eval_uas']}")
-        print(f"Final test macro F1: {metrics['eval_las']}")
+        print(f"Final UAS: {metrics['eval_uas']}")
+        print(f"Final LAS: {metrics['eval_las']}")
 
         trainer.save_model(f"./models/{self.lang}-deps-{self.model_dir.strip('/').split('/')[-1]}")
 
@@ -949,7 +951,7 @@ class CantoTokenClassificationFineTuner(CantoNLIFineTuner):
             )
 
             trainer.train()
-            # trainer.save_model(f"./models/{self.lang}-nlu-{[f for f in self.model_dir.split('/') if f][-1]}-fold-{fold}")
+            # trainer.save_model(f"./models/{self.lang}-nli-{[f for f in self.model_dir.split('/') if f][-1]}-fold-{fold}")
 
             metrics = trainer.evaluate(
                 eval_dataset=dataset["validation"],
