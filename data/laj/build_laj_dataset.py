@@ -1,7 +1,52 @@
 import json
+import re
 from pathlib import Path
 from typing import Dict, List, Any
 from dataclasses import dataclass
+
+
+_CJK = r'一-鿿㐀-䶿'
+_HALF_TO_FULL_PUNCT = {
+    ',': '，',
+    '.': '。',
+    '!': '！',
+    '?': '？',
+    ';': '；',
+    ':': '：',
+}
+_TRAILING_PUNCT_RE = re.compile(r'[。！？，；：.!?,;:]+$')
+_CJK_GAP_RE = re.compile(rf'(?<=[{_CJK}])\s+(?=[{_CJK}])')
+
+
+def normalize_punctuation(text: str) -> str:
+    """Regularize ref/mt sentences so punctuation/spacing style can't leak label info.
+
+    `ref` sentences are professionally typeset (fullwidth punctuation, no stray
+    spacing) while raw `mt` output uses halfwidth ASCII punctuation, often omits
+    terminal punctuation entirely, and has leftover detokenization spaces between
+    CJK words. Left as-is, those surface differences (not translation quality)
+    would be a near-perfect predictor of the acceptability label. This makes both
+    sides look alike: fullwidth punctuation when adjacent to CJK text, no
+    CJK-to-CJK spacing, and no trailing punctuation on either side.
+    """
+    if not text:
+        return text
+
+    text = _CJK_GAP_RE.sub('', text)
+
+    chars = list(text)
+    for i, ch in enumerate(chars):
+        if ch not in _HALF_TO_FULL_PUNCT:
+            continue
+        prev_cjk = i > 0 and re.match(f'[{_CJK}]', chars[i - 1])
+        next_cjk = i + 1 < len(chars) and re.match(f'[{_CJK}]', chars[i + 1])
+        if prev_cjk or next_cjk:
+            chars[i] = _HALF_TO_FULL_PUNCT[ch]
+    text = ''.join(chars)
+
+    text = _TRAILING_PUNCT_RE.sub('', text)
+
+    return text.strip()
 
 
 @dataclass
@@ -102,8 +147,8 @@ def build_laj_dataset(
                 continue
             
             entry_id = entry.get("id")
-            ref = entry.get("ref", "")
-            mt = entry.get("mt", "")
+            ref = normalize_punctuation(entry.get("ref", ""))
+            mt = normalize_punctuation(entry.get("mt", ""))
             annotations = entry.get("annotations", {})
             
             ref_example = {
