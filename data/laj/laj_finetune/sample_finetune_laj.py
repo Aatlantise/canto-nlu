@@ -2,7 +2,7 @@ import pandas as pd
 
 # Input and output file paths
 input_jsonl = "laj_test.jsonl"  # Replace with your input filename
-output_csv = "laj.csv"
+output_csv = "laj_sample.csv"
 
 # 1. Read the JSONL file
 df = pd.read_json(input_jsonl, lines=True)

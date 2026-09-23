@@ -21,6 +21,9 @@ directory if it is not already present, then parses it.
 ## Artifacts
 `pos_train.jsonl` and `pos_test.jsonl`.
 
+There is no sample .csv file here; instead, use the first ten sentences to annotate on an
+annotation interface like [Arborator](https://gucorpling.org/arborator/q.cgi).
+
 ## Note
 `deps` (`../deps`) is built from the same source CoNLL-U file with the same
 split, so `pos_{split}.jsonl` and `deps_{split}.jsonl` share `id` and `tokens`

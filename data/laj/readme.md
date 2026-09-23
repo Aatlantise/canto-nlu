@@ -18,5 +18,5 @@ Download the file, place it in this directory and run `build_laj.sh`.
 
 ## Artifacts
 * An intermediate full-dataset file `laj_dataset.jsonl`
-* Test and train splits for CoLA-style ([Warstadt et al. 2019](https://aclanthology.org/Q19-1040/)) fine-tuned evaluation in `lab_finetune`
-* Test split for BLiMP-style ([Warstadt et al. 2020](https://aclanthology.org/2020.tacl-1.25/)) comparison evaluation in `laj_comparison`
+* Test and train splits and a human annotation sample for CoLA-style ([Warstadt et al. 2019](https://aclanthology.org/Q19-1040/)) fine-tuned evaluation in `lab_finetune`
+* Test split for BLiMP-style and a human annotation sample for BLiMP-style ([Warstadt et al. 2020](https://aclanthology.org/2020.tacl-1.25/)) comparison evaluation in `laj_comparison`

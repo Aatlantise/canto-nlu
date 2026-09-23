@@ -7,7 +7,8 @@ from torch import cosine_similarity
 from termcolor import colored
 from collections import Counter
 import torch
-from transformers import BertForMaskedLM, AlbertTokenizer, BertTokenizer
+from transformers import AutoModel, AutoTokenizer
+from sklearn.metrics import f1_score
 
 warnings.filterwarnings('ignore')
 
@@ -39,15 +40,8 @@ for row in df.iter_rows(named=True):
 
 model_path = args.model_dir
 
-if "yue-scratch" in model_path:
-    tokenizer_class = AlbertTokenizer
-else:
-    tokenizer_class = BertTokenizer
-
-model = BertForMaskedLM.from_pretrained(model_path)
-tokenizer = tokenizer_class.from_pretrained(model_path)
-
-
+model = AutoModel.from_pretrained(model_path)
+tokenizer = AutoTokenizer.from_pretrained(model_path)
 
 df = pl.read_csv("data/wsd/senses-traditional.csv")
 
