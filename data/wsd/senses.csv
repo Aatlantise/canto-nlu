@@ -1,112 +1,437 @@
 traditional,jyutping,definition,sentence1,sentence1_source,sentence2,sentence2_source
-啲,di1,some/few/a little,佢订嗰啲餸有啲肥腻呀。,KaiFang,但我知有哩啲嘢睇。,HKCanCor
-啲,di1,indefinite article before a noun,扣好啲纽，唔好咁咧气。,KaiFang,好似幾靚喎啲風景。,HKCanCor
+啲,di1,some/few/a little,佢訂嗰啲餸有啲肥膩呀。,KaiFang,但我知有哩啲嘢睇。,HKCanCor
+啲,di1,indefinite article before a noun,扣好啲紐，唔好咁咧氣。,KaiFang,好似幾靚喎啲風景。,HKCanCor
 啲,di1,converts base adjective to a comparative,佢去使好多錢買佢啲碟。,HKCanCor,鍾意狗大隻啲。,HKCanCor
-咩,me1,final particle which transforms statements into questions that indicate doubt or surprise ,澳洲你都未去過咩？,HKCanCor,唔用得𡃉咩，啲郵票？,HKCanCor
-咩,me1,what?,美國餐有咩好食啫。,Wikitionary,嗰陣時好似有咩龍船啊。,HKCanCor
-𠺘,long2,"rinse, spread thin",記得𠺘乾淨個口。,Wikitionary,有时候就算冇热水都要𠺘几嘢。,KaiFang
-𠺘,long2,"frame, shell, skeleton (of a structure or knowledge)",呢啲題目你唔使讀得太深入，大概知個𠺘就得㗎喇。,Words.HK,起樓要起個𠺘出嚟就好快，但做埋內部裝修就要多好多時間。,Words.HK
-㗎,gaa2/gaa3/gaa4,final particle indicating emphasis or surprise,噉你一日都係飲奶茶先返工㗎?,HKCanCor,咪以為係拖板就插幾多嘢都得𠿪，會燒fuse㗎。,Words.HK
+𠺘,long2,"rinse, spread thin",記得𠺘乾淨個口。,Wikitionary,有時候就算冇熱水都要𠺘幾嘢。,KaiFang
+𠺘,long2,"frame, shell, skeleton (of a structure or knowledge)",呢啲題目你唔使讀得太深入，大概知個𠺘就得㗎喇。,Words.HK,起樓要起個𠺘齣嚟就好快，但做埋內部裝修就要多好多時間。,Words.HK
+㗎,gaa2/gaa3/gaa4,final particle indicating emphasis or surprise,噉你一日都係飲奶茶先返工㗎?,HKCanCor,咪以為係拖闆就插幾多嘢都得𠿪，會燒fuse㗎。,Words.HK
 㗎,gaa2/gaa3/gaa4,sentence-final particle used in a question seeking information or confirmation,日本卡通來㗎？,HKCanCor,講廣東話㗎？,HKCanCor
-櫼,cim1,thin strips of bamboo or wood,瘦仔表示好介意用自己條竹櫼腳對比啲小腿粗女會覺得好似象腿。,LIHKG,拎枝牙櫼嚟撩牙。,Words.HK
-櫼,cim1,wedge,呢条罅要櫼实佢先至得。,KaiFang,榫頭鬆了就加個櫼。,Wikitionary
-抰,joeng2,uncover,我依家就抰晒你啲衰嘢出嚟俾人睇！,Words.HK,唔通我哋啲嘢抰咗？,KaiFang
-抰,joeng2,shake off,你唔抰开嚟点睇得真呢？,KaiFang,件衫好多尘，抰吓佢干净啲。,KaiFang
-撚,nan2,play tricks on or toy with,将佢撚咗一次又一次，翳到佢死。,KaiFang,你仲咁信佢？畀人撚緊都唔知啊，傻仔！,Words.HK
-撚,nin2,"twirl / twist with fingers/ hold/a wick/a type of plucking method for the pipa, a traditional chinese instrument",撚住个胶喉，瀄到鬼死咁远。,KaiFang,佢撚爆咗个波。,Words.HK
+櫼,cim1,thin strips of bamboo or wood,瘦仔錶示好介意用自己條竹櫼腳對比啲小腿粗女會覺得好似象腿。,LIHKG,拎枝牙櫼嚟撩牙。,Words.HK
+櫼,cim1,wedge,呢條罅要櫼實佢先至得。,KaiFang,榫頭鬆瞭就加個櫼。,Wikitionary
+抰,joeng2,uncover,我依傢就抰曬你啲衰嘢齣嚟俾人睇！,Words.HK,唔通我哋啲嘢抰咗？,KaiFang
+抰,joeng2,shake off,你唔抰開嚟點睇得真呢？,KaiFang,件衫好多塵，抰嚇佢乾淨啲。,KaiFang
 㨢,lang3,"bunch, a quantifier",一纊㨢鎖匙。,Words.HK,乜你一抽二㨢噉呀？快啲入嚟坐。,Words.HK
 㨢,nang3,"rip open flesh/ cut flesh/  join, link, connect",隻狗條頸㨢住條繩。,Wikitionary,聖誕節㨢住新年，總共有十日假。,Words.HK
-㨢,nang3,"to bring along, to carry along",兩公婆㨢住個仔一齊返鄉下。,Wikitionary,一张票可以㨢两个细蚊仔。,KaiFang
-細佬,sai3 lou2,A term of address for boys whom one does not know well.,细佬初初入行，以后请各位多多关照。,KaiFang,细佬姓陈。,Words.HK
+㨢,nang3,"to bring along, to carry along",兩公婆㨢住個仔一齊返鄉下。,Wikitionary,一張票可以㨢兩個細蚊仔。,KaiFang
+細佬,sai3 lou2,A term of address for boys whom one does not know well.,細佬初初入行，以後請各位多多關照。,KaiFang,細佬姓陳。,Words.HK
 細佬,sai3 lou2,of sibling younger brother,我有個同學個細佬啊。,HKCanCor,細佬咁夜都未返屋企，唔怪之得阿媽心掛掛啦！,Words.HK
 冚,kam2,"cover, lid / hide",你冚住張氈都凍呀？,HKCanCor,一個大浪冚埋嚟。,Words.HK
-冚,ham6,all/whole/everyone,我自己儲，冚唪唥一路收返起晒。,HKCanCor,冚世界都走晒，你做咩仲喺度呀？,Words.HK
-度,dou2,roughly/approximately/almost,呢个壶斟满咗有五斤度啦。,KaiFang,"嗱,你上網每部機一百蚊度,每個鐘頭兩蚊度。",HKCanCor
-度,dou6,"used in location words , here / there / where/mandarin equivalent: 里lǐ 里",我哋喺度住咗咁耐，滚搅晒！,KaiFang,噉而家去边度好呀？,KaiFang
-唔,m4,doesn't / not,佢噚晚唔夠瞓，搞到今日失晒魂。,Words.HK,今晚我唔喺屋企食飯。,Words.HK
+冚,ham6,all/whole/everyone,我自己儲，冚唪唥一路收返起曬。,HKCanCor,冚世界都走曬，你做咩仲喺度呀？,Words.HK
+唔,m4,doesn't / not,佢噚晚唔夠瞓，搞到今日失曬魂。,Words.HK,今晚我唔喺屋企食飯。,Words.HK
 唔,m4,expression of agreement or surprise,唔... 其實這個問題真的這麼多年都是沒有變過囉。,Youglish,唔...不如去嗰間餐廳吖！,Wikitionary
-唔,m4,"used to form an A-not-A question, by reduplicating a word in a question",你可唔可以车我去地铁站呀？,Wikitionary,出面冻唔冻？,Words.HK
-冇,mou2,"""not"" in yes-no questions about the current state or perfective aspect; used at the end of such questions",呢處有燈冇？開下燈睇下啦。,Words.HK,聽朝先陪你飲茶啦，好冇？,Words.HK
-冇,mou5,to not have; to not own; to not possess,你冇女朋友？梗系唔信啦！……或者有。你唔知啫。,Words.HK,你份人冇啲同情心㗎！,Words.HK
-冇,mou5,do not; have not done (at a temporal point); used before verbs or adjectives,落雨冇办法打波，唔知几吊瘾。,KaiFang,佢几个月都冇嚟。,Words.HK
-冇,mou5,(in responses) it doesn't matter; no big deal; nothing important; nothing worth mentioning,冇，睇吓我畀你啲嘢用晒未啫。,Words.HK,冇啊，咪又系咁，简简单单又一日。,Words.HK
-眼矇矇,ngaan5 mung4 mung4,bleary-eyed,睇清楚先啦眼矇矇咁。,LIHKG,瞓到眼矇矇嘅我原本諗住問佢而家幾點，但係把口就問咗個唔同嘅問題。,LIHKG
-眼矇矇,ngaan5 mung4 mung4,blurring of vision,有時望嘢左眼矇矇哋合埋隻眼再打返開又好番。,LIHKG,覆診而家話眼角膜好翻晒，但睇遠野眼矇矇，係咪永遠恢復唔到正常視力？,LIHKG
+唔,m4,"used to form an A-not-A question, by reduplicating a word in a question",你可唔可以車我去地鐵站呀？,Wikitionary,齣麵凍唔凍？,Words.HK
+眼矇矇,ngaan5 mung4 mung4,bleary-eyed,睇清楚先啦眼矇矇咁。,LIHKG,瞓到眼矇矇嘅我原本諗住問佢而傢幾點，但係把口就問咗個唔同嘅問題。,LIHKG
+眼矇矇,ngaan5 mung4 mung4,blurring of vision,有時望嘢左眼矇矇哋閤埋隻眼再打返開又好番。,LIHKG,覆診而傢話眼角膜好翻曬，但睇遠野眼矇矇，係咪永遠恢復唔到正常視力？,LIHKG
 西北風,sai1 bak1 fung1,northwest wind,西北風係由西北吹來嘅風。,Wikipedia,西北風有呢個威力都好勁啦。,LIHKG
-西北風,sai1 bak1 fung1,means 'air / nothing' when used in the expression ' eat northwest wind',阿松佢唔识煮饭又冇嗮杯面，今晚实系食西北风啦。,Words.HK,等揭不開鍋，大人孩子喝西北風去！,ZDic
+西北風,sai1 bak1 fung1,means 'air / nothing' when used in the expression ' eat northwest wind',阿鬆佢唔識煮飯又冇嗮杯麵，今晚實係食西北風啦。,Words.HK,等揭不開鍋，大人孩子喝西北風去！,ZDic
 𧨾,tam3,to cheer up; to make someone happy,奀咕咕，姐姐你唔好嬲啦，𧨾返𧨾返！,Words.HK,佢今日好唔開心呀，我要諗辦法𧨾返佢至得。,Words.HK
 𧨾,tam3,to cajole; to coax,條契弟話咁易又𧨾到個鬼妹上牀。,Words.HK,佢終於𧨾掂佢老細加佢人工。,Words.HK
-油瓶,jau4 ping4,oil bottle,舊時茶樓食嘅燒賣，其實都都幾大隻，佢重有個花名叫做油瓶枳。,Source,採用重力設計嘅油瓶，傾斜時自動打開，不會溢出，抬起時自動關閉。,Source
-油瓶,jau4 peng2,step children,油瓶仔女係繼親嘅一種，書面語叫繼子女，係兩公婆嘅後代，但係冇血緣關係，亦唔係通過領養拎返嚟。,Wikipedia,又唔係油瓶仔怕咩?,LIHKG
-𦧲,loe1,"dribble, spit",張糖紙唔食得㗎，快啲𦧲返出嚟啦！,Words.HK,食鱼要𦧲骨。,KaiFang
-𦧲,loe2,to manipulate someone by behaving in a coquettish or childishly whining manner,细佬成日都𦧲我去同佢食雪糕。,Wikitionary,攞份表都要俾黑錢，死𦧲難𦧲先𦧲入個交易場。,HKCanCor
+油瓶,jau4 ping4,oil bottle,舊時茶樓食嘅燒賣，其實都都幾大隻，佢重有個花名叫做油瓶枳。,Source,採用重力設計嘅油瓶，傾斜時自動打開，不會溢齣，抬起時自動關閉。,Source
+油瓶,jau4 peng2,step children,油瓶仔女係繼親嘅一種，書麵語叫繼子女，係兩公婆嘅後代，但係冇血緣關係，亦唔係通過領養拎返嚟。,Wikipedia,又唔係油瓶仔怕咩?,LIHKG
+𦧲,loe1,"dribble, spit",張糖紙唔食得㗎，快啲𦧲返齣嚟啦！,Words.HK,食魚要𦧲骨。,KaiFang
+𦧲,loe2,to manipulate someone by behaving in a coquettish or childishly whining manner,細佬成日都𦧲我去同佢食雪糕。,Wikitionary,攞份錶都要俾黑錢，死𦧲難𦧲先𦧲入個交易場。,HKCanCor
 繑,kiu5,entwine,我個耳筒繑埋咗一嚿。,Words.HK,嘩，你寫嗰啲代碼，好似麵條噉繑埋一嚿嘅。,Wikipedia
-繑,kiu5,cross one's arms or legs/ loop one's arm into the crook of someone's arm,最後大家一齊繑手跳舞，再為逝去嘅日子再飲多杯。,Wikipedia,佢畀嗮啲嘢你做，你忙到踢嗮腳嗰陣佢仲可以繑埋雙手䟴䟴腳等你幫佢做埋，唔通噉樣真係對佢好咩？,Wikitionary
-禁,kam1 ,durable,呢种电池好禁。,Words.HK,對鞋好禁著。,Words.HK
-禁,gam3 ,to prohibit; to forbid; to ban,呢个国家禁咗香口胶㗎。,Words.HK,乜而家中學已經冇左髮禁？,LIHKG
-禁,kam1 ,to bear; to endure,我唔禁激㗎。,Words.HK,身子好嘅人禁冷又禁热。,KaiFang
-禁,kam1 ,something that requires much time or money,十年咁耐，禁等咯。,KaiFang,贵利唔能够借㗎，利沓利，好禁还㗎。,KaiFang
-禁,gam3,prison; jail; confinement,佢又畀屋企人禁足，冇得出街玩。,Words.HK,我寻晚犯咗门禁呀，阿爸今日唔比我出街，所以我今日嚟唔到啦，对唔住呀。,Words.HK
-岌,ngap6,shaky,嗰张凳𢳆𢳆岌噉，边个敢坐？,KaiFang,風吹度門岌得好犀利。,Words.HK
-岌,ngap6,nod,你问佢得唔得，佢实岌头嘅。,Words.HK,你一岌头，我就去马。,Words.HK
-㗎啦,gaa3 laa3,modal particle used as a reminder or when giving advice,唔好嬲啦，嗰啲人系噉㗎啦。,KaiFang,最好系各自写平安纸，写清楚啲就得㗎啦。,KaiFang
-㗎啦,gaa3 laa4,modal particle  express a slight surprise  something or with a questioning tone,你哋咁快就做完㗎啦？,KaiFang,咁早就瞓觉㗎啦？,KaiFang
-㗎啦,gaa3 laa1,modal particle used  assert a fact  imply that there are no alternatives,我哋穷人都系天生天养㗎啦。,KaiFang,睇死你系噉㗎啦！,KaiFang
-摵,cik1,to pick up; to lift up,绑到松佊佊噉，一摵唔系散啰。,KaiFang,你仲趴喺地下度，我就摵你起身。,KaiFang
-摵,mit1,to pinch; to nip; to tweak,你唔好摵佢塊面啦！,Words.HK,好痛啊，你做乜摵我啊？,Words.HK
-摵,mit1,to peel; to tear,佢好嬲噉摵爛封信。,Words.HK,好多人食包嗰陣都會先摵咗表面嗰層薄皮然後先再食入面啲叉燒。,Wikipedia
-冧,lam1,coax / sweet talk,亞明冧女仔好叻㗎。,Words.HK,慢慢冧吓佢，就会应承。,KaiFang
-冧,lam3,topple/ collapse/ kill someone,香港就嚟冧啦。,Words.HK,隔篱街冧楼呀！,Words.HK
-冧,lam1,get drunk,佢真系好易醉，饮多两杯啤酒就冧咗喇。,Wikitionary,佢哋夾埋隊冧咗個同事。,Words.HK
-冧,lam1,in love,佢收到男朋友送嘅花，成个样冧晒。,KaiFang,佢成日𥄫實你，仲唔係冧你？,Words.HK
-炮,paau3,lie,细路仔唔准车大炮㗎。,KaiFang,噉嘅大炮你都信？,KaiFang
-炮,paau3,"empty and big/boasting, exaggerating/archaic form of cannon",唔好咁大炮咯。,KaiFang,我讲嘅唔系大炮，真㗎。,KaiFang
-落台,lok6 toi4,to step down (from office); to fall from a position of prestige,即係而家已經冇人有能力拉到佢落台?,LIHKG,肯落台唔係小事至少知道自己唔應該繼續害人。,LIHKG
-落台,lok6 toi4,to leave the stage,未讲得几句就畀人闹咗落台。,Shyyp,嗰名藝人落台表演，親近觀眾。,Words.HK
-落台,lok6 toi4,to get out of a predicament or an embarrassing situation,你當眾鬧佢，搞到佢好難落台。,Words.HK,一定都有啲雙方好落台嘅方法。,LIHKG
-掹,mang1,pull,唔好掹住我个袋。,Words.HK,佢哋输咗粒波就开始矛嘞，掹衫踢人乜都出齐。,KaiFang
-掹,mang1,pull out/pluck,你應該去睇牙醫，掹咗隻牙佢。,Tatoeba,连咁细条嘅亦都要掹埋。,KaiFang
-𢺳,maan1,"hold , cling",𢺳住块大石爬上去。,KaiFang,你𢺳住个扶手就唔惊啦。,KaiFang
-𢺳,maan1,win back,下半场一定要将啲分𢺳翻。,KaiFang,最后又𢺳翻几分？,KaiFang
-𢺳,maan1,retract,依单嘢睇嚟都系冇得𢺳㗎嘞。,KaiFang,呢件事硬晒舦，冇法子𢺳啰。,KaiFang
-新地,san1 dei6,a new found empty area,我個角色升級之後，開咗個新地圖出嚟。,Words.HK,雖然無新地，但將爛地變成人用得嘅地，都算係新填地嘅一種。,Wikipedia
-新地,san1 dei2,sundae loanword,得杯新地，好似齋齋哋。,Words.HK,士多啤梨新地甜得嚟冇朱古力咁腻。,Words.HK
+繑,kiu5,cross one's arms or legs/ loop one's arm into the crook of someone's arm,最後大傢一齊繑手跳舞，再為逝去嘅日子再飲多杯。,Wikipedia,佢畀嗮啲嘢你做，你忙到踢嗮腳嗰陣佢仲可以繑埋雙手䟴䟴腳等你幫佢做埋，唔通噉樣真係對佢好咩？,Wikitionary
+禁,kam1 ,durable,呢種電池好禁。,Words.HK,對鞋好禁著。,Words.HK
+禁,gam3 ,to prohibit; to forbid; to ban,呢個國傢禁咗香口膠㗎。,Words.HK,乜而傢中學已經冇左髮禁？,LIHKG
+禁,kam1 ,to bear; to endure,我唔禁激㗎。,Words.HK,身子好嘅人禁冷又禁熱。,KaiFang
+禁,kam1 ,something that requires much time or money,十年咁耐，禁等咯。,KaiFang,貴利唔能夠藉㗎，利遝利，好禁還㗎。,KaiFang
+禁,gam3,prison; jail; confinement,佢又畀屋企人禁足，冇得齣街玩。,Words.HK,我尋晚犯咗門禁呀，阿爸今日唔比我齣街，所以我今日嚟唔到啦，對唔住呀。,Words.HK
+岌,ngap6,shaky,嗰張凳𢳆𢳆岌噉，邊個敢坐？,KaiFang,風吹度門岌得好犀利。,Words.HK
+岌,ngap6,nod,你問佢得唔得，佢實岌頭嘅。,Words.HK,你一岌頭，我就去馬。,Words.HK
+㗎啦,gaa3 laa3,modal particle used as a reminder or when giving advice,唔好嬲啦，嗰啲人係噉㗎啦。,KaiFang,最好係各自寫平安紙，寫清楚啲就得㗎啦。,KaiFang
+㗎啦,gaa3 laa4,modal particle  express a slight surprise  something or with a questioning tone,你哋咁快就做完㗎啦？,KaiFang,咁早就瞓覺㗎啦？,KaiFang
+㗎啦,gaa3 laa1,modal particle used  assert a fact  imply that there are no alternatives,我哋窮人都係天生天養㗎啦。,KaiFang,睇死你係噉㗎啦！,KaiFang
+摵,cik1,to pick up; to lift up,綁到鬆佊佊噉，一摵唔係散囉。,KaiFang,你仲趴喺地下度，我就摵你起身。,KaiFang
+摵,mit1,to pinch; to nip; to tweak,你唔好摵佢塊麵啦！,Words.HK,好痛啊，你做乜摵我啊？,Words.HK
+摵,mit1,to peel; to tear,佢好嬲噉摵爛封信。,Words.HK,好多人食包嗰陣都會先摵咗錶麵嗰層薄皮然後先再食入麵啲叉燒。,Wikipedia
+冧,lam1,coax / sweet talk,亞明冧女仔好叻㗎。,Words.HK,慢慢冧嚇佢，就會應承。,KaiFang
+冧,lam3,topple/ collapse/ kill someone,香港就嚟冧啦。,Words.HK,隔籬街冧樓呀！,Words.HK
+冧,lam1,get drunk,佢真係好易醉，飲多兩杯啤酒就冧咗喇。,Wikitionary,佢哋夾埋隊冧咗個同事。,Words.HK
+冧,lam1,in love,佢收到男朋友送嘅花，成個樣冧曬。,KaiFang,佢成日𥄫實你，仲唔係冧你？,Words.HK
+炮,paau3,lie,細路仔唔準車大炮㗎。,KaiFang,噉嘅大炮你都信？,KaiFang
+炮,paau3,"empty and big/boasting, exaggerating/archaic form of cannon",唔好咁大炮咯。,KaiFang,我講嘅唔係大炮，真㗎。,KaiFang
+落颱,lok6 toi4,to step down (from office); to fall from a position of prestige,即係而傢已經冇人有能力拉到佢落颱?,LIHKG,肯落颱唔係小事至少知道自己唔應該繼續害人。,LIHKG
+落颱,lok6 toi4,to leave the stage,未講得幾句就畀人鬧咗落颱。,Shyyp,嗰名藝人落颱錶演，親近觀眾。,Words.HK
+落颱,lok6 toi4,to get out of a predicament or an embarrassing situation,你當眾鬧佢，搞到佢好難落颱。,Words.HK,一定都有啲雙方好落颱嘅方法。,LIHKG
+掹,mang1,pull,唔好掹住我個袋。,Words.HK,佢哋輸咗粒波就開始矛嘞，掹衫踢人乜都齣齊。,KaiFang
+掹,mang1,pull out/pluck,你應該去睇牙醫，掹咗隻牙佢。,Tatoeba,連咁細條嘅亦都要掹埋。,KaiFang
+𢺳,maan1,"hold , cling",𢺳住塊大石爬上去。,KaiFang,你𢺳住個扶手就唔驚啦。,KaiFang
+𢺳,maan1,win back,下半場一定要將啲分𢺳翻。,KaiFang,最後又𢺳翻幾分？,KaiFang
+𢺳,maan1,retract,依單嘢睇嚟都係冇得𢺳㗎嘞。,KaiFang,呢件事硬曬舦，冇法子𢺳囉。,KaiFang
+新地,san1 dei6,a new found empty area,我個角色升級之後，開咗個新地圖齣嚟。,Words.HK,雖然無新地，但將爛地變成人用得嘅地，都算係新填地嘅一種。,Wikipedia
+新地,san1 dei2,sundae loanword,得杯新地，好似齋齋哋。,Words.HK,士多啤梨新地甜得嚟冇硃古力咁膩。,Words.HK
 孭,me1,carry on the back or shoulders,我孭住個背囊好重呀，行快兩步啦！,Words.HK,咁大個人重要人孭呀?,HKCanCor
-孭,me1,take on responsibility,呢个计划我孭嘅。,Words.HK,咁大隻鑊揾邊個孭啊？,Words.HK
-啹,goe4,to accept; to not protest; to not feel offended; usually with reference to a decision or action made by an adversary,我對眼就係法庭，你哋而家啹唔啹先？,Words.HK,我家姐上年年尾俾人無理炒魷，覺得好唔啹。,Words.HK
-啹,goe4,to accept somebody; to not treat somebody as an adversary,佢唔啹我好耐啦，今次公報私仇咋嘛！,Words.HK,佢哋兩個都唔啹對方，開親會都鬧交，點合作？,Words.HK
-啹,goe4,feel better,頭先搬嘢又熱又攰，飲完杯嘢成個人啹晒！,Words.HK,爸爸锡咗佢两啖，佢个心都啹晒啦。,KaiFang
-啹,goe4,burp,我個胃好脹，又啹唔到啲胃氣出嚟，谷住谷住好辛苦。,Words.HK,你啹氣嗰陣揞住個口啦，如果唔係好冇禮貌㗎。,Words.HK
-𨂾,naam3,step across,𨂾过个水氹。,KaiFang,你喺醫院住咗咁耐，入屋企門口之前要𨂾過火盆先。,Words.HK
-𨂾,naam3,alternate time,𨂾日见一次面。,KaiFang,我通常𨂾一個禮拜去健身房一次。,CantoDict
+孭,me1,take on responsibility,呢個計劃我孭嘅。,Words.HK,咁大隻鑊揾邊個孭啊？,Words.HK
+啹,goe4,to accept; to not protest; to not feel offended; usually with reference to a decision or action made by an adversary,我對眼就係法庭，你哋而傢啹唔啹先？,Words.HK,我傢姐上年年尾俾人無理炒魷，覺得好唔啹。,Words.HK
+啹,goe4,to accept somebody; to not treat somebody as an adversary,佢唔啹我好耐啦，今次公報私仇咋嘛！,Words.HK,佢哋兩個都唔啹對方，開親會都鬧交，點閤作？,Words.HK
+啹,goe4,feel better,頭先搬嘢又熱又攰，飲完杯嘢成個人啹曬！,Words.HK,爸爸锡咗佢兩啖，佢個心都啹曬啦。,KaiFang
+啹,goe4,burp,我個胃好脹，又啹唔到啲胃氣齣嚟，榖住榖住好辛苦。,Words.HK,你啹氣嗰陣揞住個口啦，如果唔係好冇禮貌㗎。,Words.HK
+𨂾,naam3,step across,𨂾過個水氹。,KaiFang,你喺醫院住咗咁耐，入屋企門口之前要𨂾過火盆先。,Words.HK
+𨂾,naam3,alternate time,𨂾日見一次麵。,KaiFang,我通常𨂾一個禮拜去健身房一次。,CantoDict
 當我,dong1 ngo5,when i,嗰陣當我無搵佢幾日之後，我地再傾返計。,LIHKG,當我開始覺得係咪有返機會時，又話都係朋友。,LIHKG
 當我,dong3 ngo5,treat me as,你當我傻架?,Tatoeba,佢喺街度見到我都當我冇到。,Tatoeba
 當我,dong3 ngo5,pretend that (never said it),就當我哋之前冇講過啦。,Tatoeba,對唔住呀，我知我之前講過嘅嘢，就當我冇講過啦。,Tatoeba
-㷫,hing3,angry/furious/ferocious,一讲到呢样佢就㷫嘞。,KaiFang,帮咗佢仲畀佢闹，系人都㷫啦！,KaiFang
-㷫,hing3,excited/energized (while drunk),佢㷫起嚟一气唱咗十几只歌。,KaiFang,佢一㷫起嚟就几好嘅。,KaiFang
-㷫,hing3,hot/scalding,你个额头好㷫，系唔系发烧呀？,KaiFang,如果你摸落去重係㷫嘅話呢，即係其實你係未好返𡃉啝。,HKCanCor
+㷫,hing3,angry/furious/ferocious,一講到呢樣佢就㷫嘞。,KaiFang,幫咗佢仲畀佢鬧，係人都㷫啦！,KaiFang
+㷫,hing3,excited/energized (while drunk),佢㷫起嚟一氣唱咗十幾隻歌。,KaiFang,佢一㷫起嚟就幾好嘅。,KaiFang
+㷫,hing3,hot/scalding,你個額頭好㷫，係唔係發燒呀？,KaiFang,如果你摸落去重係㷫嘅話呢，即係其實你係未好返𡃉啝。,HKCanCor
 㷫,hing3,bake or dry by fire,俾啲牛油同埋哩個蠟燭㷫住嘅。,HKCanCor,隻手冰凍，響火爐㷫下。,JyutNet
-嘥,saai1,debase,唔应该嘥人哋。,KaiFang,畀人当面嘥。,KaiFang
-嘥,saai1,waste/wasteful,食埋個麪包，唔好嘥嘢呀。,Words.HK,嘥咗好多时间。,KaiFang
-嘥,saai1,to miss; to lose (an opportunity),个名师讲座你冇去听真系嘥晒。,KaiFang,咁好嘅机会嘥咗。,KaiFang
+嘥,saai1,debase,唔應該嘥人哋。,KaiFang,畀人當麵嘥。,KaiFang
+嘥,saai1,waste/wasteful,食埋個麪包，唔好嘥嘢呀。,Words.HK,嘥咗好多時間。,KaiFang
+嘥,saai1,to miss; to lose (an opportunity),個名師講座你冇去聽真係嘥曬。,KaiFang,咁好嘅機會嘥咗。,KaiFang
 揈,fang4,hit,一拳揈埋去。,Words.HK,你咁大力，畀你揈一拳得 嘅！,Shyyp
-揈,fing6,swing,以后只手唔好周围揈啦。,KaiFang,佢揈吓条竹嗰啲水。,KaiFang
-揈,fing6,throw,我自己都唔知揈咗條鎖匙去邊。,Words.HK,細個玩氹氹轉嗰陣，試過揈咗出嚟，跌親個下巴要連針。,Words.HK
-咁,gam2,this; in this manner; in this way,你咁讲就唔公平喇。,Words.HK,所以我一直都冇咁做。,Words.HK
-咁,gam2,seems (added after the predicate),好似会好多人咁。,Words.HK,佢就會剪到一層層咁樣。,HKCanCor
-咁,gam2,aspect market for incompleteness,趁住有啲钱，快啲还咁啲利息。,Words.HK,而家已经走咁啲人喇。,Words.HK
-咁,gam2,well;then,咁呀，聽日先算囉。,Words.HK,你一個人住喺香港呀？咁你有冇掛住屋企人啊？,Words.HK
-咁,gam3,so;that,妳幾時變到咁成熟㗎？,Words.HK,咁耐冇見，應該好多嘢傾。,Words.HK
-咁,gam3,"so, to such an extent",做咩你咁冇腦㗎？,Wikitionary,𠮶碌棍好似青瓜咁粗。,Words.HK
-嚫,can1,aspect marker of every time/whenever,打嚫畀佢都唔接電話。,Wikitionary,阿明次次飲嚫酒都會出事。,Wikitionary
-嚫,can1,aspect marker of injury,畀蚊咬嚫，痕到死。,KaiFang,我跌嚫，个膝头哥损咗。,KaiFang
-撠,gik1,stuck,上便撠住，你褪落啲就过得嘞。,KaiFang,嗰条棍撠实喺里头，拎唔出。,KaiFang
-撠,gik1,difficult; troublesome,呢个人都几恶撠㗎。,KaiFang,你份人真系好撠啊，一啲都唔识变通嘅。,Words.HK
-撠,gik1,to stumble; to trip over,你伸隻腳出嚟想撠死人咩！,Wikitionary,佢撠咗吓，就躀低咗。,KaiFang
-嗱,naa4,Used when calling someone's attention to something: there!; here!; look!,嗱，佢咪就係鍾意呢隻錶囉。,Wikitionary,嗱，大家不妨睇吓另一组数据。,KaiFang
-嗱,naa4,Used when giving something to someone: here!,嗱，送畀你㗎！,Wikitionary,嗱，呢啲利是系舅公畀你责年嘅。,KaiFang
-嗱,naa4,Used (accusingly) to remind someone of a warning: see!,嗱，都叫咗你唔好食得咁急㗎啦。,Wikitionary,好啦！嗱，一次咋㖞，冇下次㗎㖞。,KaiFang
+揈,fing6,swing,以後隻手唔好周圍揈啦。,KaiFang,佢揈嚇條竹嗰啲水。,KaiFang
+揈,fing6,throw,我自己都唔知揈咗條鎖匙去邊。,Words.HK,細個玩氹氹轉嗰陣，試過揈咗齣嚟，跌親個下巴要連針。,Words.HK
+嚫,can1,aspect marker of every time/whenever,打嚫畀佢都唔接電話。,Wikitionary,阿明次次飲嚫酒都會齣事。,Wikitionary
+嚫,can1,aspect marker of injury,畀蚊咬嚫，痕到死。,KaiFang,我跌嚫，個膝頭哥損咗。,KaiFang
+撠,gik1,stuck,上便撠住，你褪落啲就過得嘞。,KaiFang,嗰條棍撠實喺裏頭，拎唔齣。,KaiFang
+撠,gik1,difficult; troublesome,呢個人都幾惡撠㗎。,KaiFang,你份人真係好撠啊，一啲都唔識變通嘅。,Words.HK
+撠,gik1,to stumble; to trip over,你伸隻腳齣嚟想撠死人咩！,Wikitionary,佢撠咗嚇，就躀低咗。,KaiFang
+嗱,naa4,Used when calling someone's attention to something: there!; here!; look!,嗱，佢咪就係鍾意呢隻錶囉。,Wikitionary,嗱，大傢不妨睇嚇另一組數據。,KaiFang
+嗱,naa4,Used when giving something to someone: here!,嗱，送畀你㗎！,Wikitionary,嗱，呢啲利是係舅公畀你責年嘅。,KaiFang
+嗱,naa4,Used (accusingly) to remind someone of a warning: see!,嗱，都叫咗你唔好食得咁急㗎啦。,Wikitionary,好啦！嗱，一次咋喎，冇下次㗎喎。,KaiFang
 睩,luk1,look/stare,你睩住我做乜嘢呀？,KaiFang,睩咗佢一眼。,KaiFang
-睩,luk1,open wide,睩大只眼睇清楚，上面写明唔可以退款。,Words.HK,對你有好感會成日眼睩睩咁望住。,LIHKG
-點,dim2,how; in what way; in what manner,個面試點啊？,Words.HK,呢件事应该点做，你谂真啲。,KaiFang
-點,dim2,"whatever; however; used in conditionals to substitute a situation, a method, or some way of doing things",應該點做就點做，唔使問我㗎嘞。,Words.HK,佢想點都好，唔好麻煩到我就得。,Words.HK
+睩,luk1,open wide,睩大隻眼睇清楚，上麵寫明唔可以退款。,Words.HK,對你有好感會成日眼睩睩咁望住。,LIHKG
+一,jat1,"do a bit of something, an infix between the duplication of the first syllable of a verb, meaning the action occurs for a short amount of time, the syllable 一 jat1 may be reduced to a shorter sound or a floating tone that raises the pitch of the previous syllabl",入房同我傾一傾吖。,Words.HK,請你等一等。,Words.HK
+一,jat1,"a diminutive infix between the duplication of a monosyllabic gradable adjective, meaning ""really""",化到個妝靚一靚,Words.HK,質到個書包重一重,Words.HK
+上,soeng5,to board; to get on a vehicl,弊，上錯車添！,Words.HK,你睇清楚有啲咩唔帶得上飛機喎。,Words.HK
+上,soeng5,to go ahead; to forge ahead,快啲上，射籃喇！,Words.HK,兄弟，我哋一齊上！,Words.HK
+中間,zung1 gaan1,between; in betw,喺兩堂中間，有一個五分鐘嘅小息。,Words.HK,佢坐喺爸爸同哥哥中間。,Words.HK
+中間,zung1 gaan1,centre; middl,啲牙籤喺張枱中間。,Words.HK,個mon中間裂咗。,Words.HK
+了,liu5,"then; usually used with pre-verbal #就 zau6, to indicate the consequence under certain conditions; equivalent to Cantonese #喇 (laa3) or #嘞 (laak3)",下雨我就不出門了。,Words.HK,早點來就可以見着他了。,Words.HK
+了,liu5,used in urge or persuasion; equivalent to Cantonese #喇 (laa3) or #啦 (laa1),不要再打了！,Words.HK,好了！不要再説了！,Words.HK
+了,liu5,"used after the verb or adjective in the first clause of a conditional sentence (e.g. the if-, after-, or once-clause)",我下了班就去你那兒。,Words.HK,他知道了肯定會很高興。,Words.HK
+位,wai2,seat; place to sit,我行咗成日都冇位坐，好攰。,Words.HK,入面仲有兩個位。,Words.HK
+位,wai2,place; spot; position; geographic part,呢個位背光喎。,Words.HK,你喺站裏面邊個位啊？,Words.HK
+位,wai2,part of a thing or matter; point in a continuum,張相排錯位喎，搬去頭嗰段嘅右邊啦。,Words.HK,套片後半段勁多笑位啊。,Words.HK
+住,zyu6,to live or to settle somewhere long term,我住喺香港。,Words.HK,我喺呢區住咗超過十年。,Words.HK
+住,zyu6,"to stay at a place, treating it as a temporary hom",住院、住醫院,Words.HK,你今次去東京旅行會住邊間酒店啊？,Words.HK
+來,lai4,to arrive; to com,細佬半夜先返嚟屋企。,Words.HK,你幾點嚟啊？,Words.HK
+來,lai4,to bring somethi,嚟啦！我唔驚你。,Words.HK,嚟多兩籠燒賣！,Words.HK
+係,hai6,"""is"", ""is equal to"", ""means"", indicating the subject and object are the same thi",二加二係四。,Words.HK,1微米係1000000分之1米。,Words.HK
+係,hai6,to be; used as a grammatical construct to describe the subject,阿力係叻仔，我對佢有信心。,Words.HK,愛因斯坦係二十世紀嘅著名物理學家。,Words.HK
+係,hai6,used to state that the subject falls within a category or set,我係香港人。,Words.HK,西瓜係夏天食嘅生果。,Words.HK
+係,hai6,"added in front of the main verb in the subordinate clause, in order to set up a contrasting (i.e. ""but"") main claus",我係識做，不過我唔會幫手㗎。,Words.HK,佢係靚女，不過性格麻麻囉。,Words.HK
+保養,bou2 joeng5,to maintain; to keep something in good condition by checking or repairing it regularly,單車保養心得,Words.HK,保養得好嘅話，部相機可以用返三五七年㗎。,Words.HK
+保養,bou2 joeng5,to take care of one's health; to nourish,皮膚保養心得,Words.HK,佢好識得保養自己，成六十歲望落都仲好後生。,Words.HK
+倒數,dou3 sou2,"to count down, usually in anticipation of an event",請各位嘉賓喺我倒數三聲之後一齊剪綵。,Words.HK,我而家倒數三聲，三聲之內你好即刻起身。,Words.HK
+倒數,dou3 sou2,"to count down to special occasions or important dates, usually in terms of days",世界盃倒數一百日,Words.HK,我倒數緊佢返嚟嘅日子。,Words.HK
+倒數,dou3 sou2,to attend countdown celebrations on the eve of special occasions,你平安夜有冇去倒數？,Words.HK,新年就快到，我哋一齊倒數咯。,Words.HK
+假,gaa2,false; untru,佢講嘅嘢係假㗎，唔好信佢呀！,Words.HK,好多謠言都係假嘅，我哋唔應該咁易就信人講咩。,Words.HK
+假,gaa2,counterfeit; fak,呢張一千蚊紙假㗎！,Words.HK,我唔小心買咗個假嘅名牌手袋。,Words.HK
+做,zou6,to do; to act; to perform,你做緊乜啊？,Words.HK,我哋應該點做？,Words.HK
+做,zou6,to be; to becom,佢做咗有錢人老婆。,Words.HK,今次輪到我做莊。,Words.HK
+做,zou6,to be as,天做被地做牀,Words.HK,我諗住攞呢篇文嚟做教材。,Words.HK
+做,zou6,to work in a particular professio,你大個咗想做咩？,Words.HK,做護士好辛苦㗎。,Words.HK
+先,sin1,first; earlier; befor,佢先過你嚟到。,Words.HK,我哋出發先喇，陣間嗰度見啦！,Words.HK
+先,sin1,temporarily; tentatively; for the time being; for now,咪住先，呢度有啲問題。,Words.HK,傾住咁多先，聽日繼續。,Words.HK
+先,sin1,(usually preceded by an expression of time) not until,乜你咁遲先嚟㗎？,Words.HK,佢九點先嚟，晏唔晏啲啊？,Words.HK
+先,sin1,(usually preceded by an expression of reason or condition) not unless; not until; then and only then; for no other reaso,佢要食三碗飯先飽。,Words.HK,佢話得先得。,Words.HK
+先,sin1,only,而家先五點，好早啫！,Words.HK,廣東話先有得咁講，英文冇囉。,Words.HK
+先,sin1,actually; really; in fact; used in an assertive tone for emphasizing a fact that contradicts a prior claim,你以為佢咁蠢咩？佢先唔蠢啊！,Words.HK,你估我好想理嘎？我先唔想理啊！,Words.HK
+先,sin1,used to express a desire for complementary information or approval,你心入面想揀咩先？而家拖拖拉拉算點先？,Words.HK,你話係咪先？,Words.HK
+先,sin1,to indicate the imperative mood that the speaker oneself or others could realize an action earlier than other ones; often used with #等 dang2 or #要 jiu3,等我食個下午茶先。,Words.HK,你要等我唞下先。,Words.HK
+兜,dau1,"to turn around a bad situation; especially, to make amends for a wrong or impolite remark",頭先講錯嘢，好彩兜得返啫。,Words.HK,佢同另一個女仔嘅情慾短訊俾女朋友發現咗，今次真係冇得兜喇。,Words.HK
+兜,dau1,to direct towards,兜心口打佢一拳,Words.HK,你傻嘎？兜頭拍落嚟！痛㗎。,Words.HK
+兜,dau1,ten dollars or years old,我就嚟七兜喇。,Words.HK,呢個一人份量嘅煮食煲都只係七兜嘢。,Words.HK
+入,jap6,to be admitted into; to become a member of,我入咗十大呀！,Words.HK,你個仔入唔入到第一志願學校呀？,Words.HK
+入,jap6,to buy; to stock up o,我入咗十手匯豐。,Words.HK,我入咗十箱即食麪，就算封城一個月都唔怕餓親。,Words.HK
+冇,mou5,do not; have not done (at a temporal point); used before verbs or adjectives,佢冇食晚飯。,Words.HK,我冇再發燒喇。,Words.HK
+冇,mou5,don't have; there is/are not; to not exist; to not be related; in no relationship with,佢哋冇小朋友。,Words.HK,呢度冇咗你唔掂㗎。,Words.HK
+冇,mou5,to not have; to not own; to not possess,佢冇晒錢嘞。,Words.HK,做人咩煩惱都冇就好喇。,Words.HK
+出去,ceot1 heoi3,to go out; to go to a farther place; to leave a plac,唔該你出去，唔好煩住我。,Words.HK,你出去等下先。,Words.HK
+出去,ceot1 heoi3,to go downtow,今晚出去食飯嘍。,Words.HK,搭巴士出去可能仲快啲喎。,Words.HK
+出口,ceot1 hau2,to speak; to utter,精人出口，笨人出手,Words.HK,説話出咗口就收唔返㗎喇。,Words.HK
+出口,ceot1 hau2,"xit; the way out of a building, room, etc.",我哋喺A出口等啦。,Words.HK,呢間餐廳有冇緊急出口㗎？,Words.HK
+分,fan1,to distinguish,糯米同白米你都唔識分？,Words.HK,水其實都有軟硬之分。,Words.HK
+分,fan1,minute (often denoting the time instead of duration),我哋要分秒必爭。,Words.HK,而家嘅時間係下午兩點三十五分。,Words.HK
+分明,fan1 ming4,obviously; clearly; plainly; evidently,個答案分明錯啦，四乘六點會係單數呀？,Words.HK,個學生分明講大話唔交功課，一個月壞幾次打印機？,Words.HK
+分明,fan1 ming4,"unabashedly; obviously, clearly as above, showing somebody's feeling or attitude without concealment",佢日日遲到，分明搏炒啫。,Words.HK,佢分明玩你喇！,Words.HK
+剒,cok3,to exert a sudden pulling force; to yank; to tu,我尋日chok親條頸入咗廠，聽日同唔到你哋打波喇。,Words.HK,佢唔小心chok斷咗條電線。,Words.HK
+剒,cok3,to shake; to jiggle; to lurch,chok水樽,Words.HK,部相機壞咗，你chok佢都唔會好返㗎啦。,Words.HK
+剒,cok3,to coax a secret out of somebody; to sound out,你聽日去chok吓佢，睇吓佢會唔會知啲嘢。,Words.HK,佢開頭唔肯講啲同黨匿埋喺邊，最後都俾個差人chok咗出嚟。,Words.HK
+剒,cok3,to try until one succeeds doing somethi,chok cheat,Words.HK,我今日誓要喺部機度chok到隻公仔出嚟。,Words.HK
+勉強,min5 koeng5,unwilli,你個樣好似好勉強噉喎，唔願做就出聲啦！,Words.HK,咁勉強，由佢嘞。,Words.HK
+勉強,min5 koeng5,barely enough; reluctantly enough,一個人拎好似好勉強。,Words.HK,兩千蚊用一個月有啲勉強喎。,Words.HK
+包,baau1,to pack up; to wrap up; to surround; to enclos,攞條毛巾包住隻腳,Words.HK,我哋包緊餃子，今晚有得食。,Words.HK
+包,baau1,to guarantee; to assur,呢個女仔，我包你鍾意。,Words.HK,今日包佢落雨。,Words.HK
+包,baau1,to include; to contain; to come with somethi,呢個套餐包一杯熱飲。,Words.HK,租金一萬，包水電煤,Words.HK
+印,jan3,to mark; to trace; to engrav,佢個笑容深深咁印喺我腦海入面。,Words.HK,佢琴日倒瀉咗杯奶茶，印到我件衫周圍都係漬。,Words.HK
+印,jan3,to print,印我個名喺件T後面。,Words.HK,我印咗份表格出嚟俾你。,Words.HK
+去,heoi3,to go to; to depart for,你去咗邊呀？,Words.HK,由呢度去機場要一個鐘。,Words.HK
+去,heoi3,"in order to (do something); used between two verbal expressions, and/or after the second expressio",佢攞咗啲錢去買嘢。,Words.HK,你攞我本passport去做咩呀？,Words.HK
+去,heoi3,an euphemism for dying; to be gone; to pass away,老黃上個月去咗喇。,Words.HK,佢阿爸去得好安祥。,Words.HK
+去,heoi3,"move quickly, smoothly and efficiently",你噉游水唔去㗎。,Words.HK,架車咁樣就會去㗎喇。,Words.HK
+向,hoeng3,facing a directio,呢間睡房個窗向東北。,Words.HK,個賊向東面逃走。,Words.HK
+向,hoeng3,towards (a person or direction at which an action is targeted); to; at,呢個演員嘅演技好差，我好想向佢掟雞蛋。,Words.HK,你做完之後，記得向我報告。,Words.HK
+吓,haa2,"""What?""; ""Huh?""; an interjection used to express disagreement, question, puzzlement, astonishment or new discovery",吓，原來你仲細過我㗎？,Words.HK,吓，要成三千蚊？,Words.HK
+吓,haa2,"""Sorry?"", ""Excuse me?""; used to request the other person to repeat or clarify",吓？你講咩話？,Words.HK,吓？呢度收得好差呀。,Words.HK
+吖,aa1,used after the topic to express criticism or belittlement,睇下佢吖，緊張成噉喎！,Words.HK,你吖！噉樣對我？,Words.HK
+吖,aa1,"used after the adjective + #到 dou3 construction in place of where a description or comparison is expected, to express that something is indescribabl",你班友貪心到吖！,Words.HK,佢女朋友靚到吖，真係！,Words.HK
+吖,aa1,"added after the a clause with words like ""tell"" or ""speak"" to express sincerity (the syllable must be lengthened and followed by a pause)",老實講吖，⋯,Words.HK,講開又講吖，⋯,Words.HK
+吖,aa1,used in questions to express doubts,你試過未吖？,Words.HK,佢而家去咗未吖？,Words.HK
+吖,aa1,"used to soften the force of requests or suggestions, usu. with a sense of seeking the hearer's complianc",你示範一次俾我睇吖。,Words.HK,開門俾我吖。,Words.HK
+吖,aa1,actually; in fact (only used with positive comments),呢條裙幾好睇吖。,Words.HK,其實你一啲都唔肥吖。,Words.HK
+吖,aa1,used to blame someone mildly,吖，冇大冇細都有嘅？,Words.HK,吖，你硬係揾藉口㗎噃。,Words.HK
+咁,gam2,this; in this manner; in this way,點解會係噉嘅？,Words.HK,你噉講就唔公平喇。,Words.HK
+咁,gam2,used with a phrase to describe an actio,佢放慢晒動作噉做。,Words.HK,我靜靜雞噉鼠走咗。,Words.HK
+咁,gam2,seems (added after the predicate),好似會好多人噉。,Words.HK,幾得意噉喎。,Words.HK
+咁,gam2,"used after a verb or an adjective, often monosyllabic, to signify incompleteness of the process regarding the object; when placed after an adjective, it precedes the suffix #啲 di1 (""a bit"") which forms comparatives; when the object is a noun phrase, it must be modified with a classifier",幫我食噉啲飯吖。,Words.HK,趁住有啲錢，快啲還噉啲利息。,Words.HK
+咁,gam2,"to fall behind or to fail to meet the expectation, though there is already a certain amount or extent",齊人未？好似爭噉個喎。,Words.HK,隻蕉唔見噉橛嘅？你食咗呀？,Words.HK
+咩,me1,"used to form yes-no questions and to indicate doubt, challenge or surprise; uttered in a short and abrupt manner",你良心過意得去咩？,Words.HK,你唔驚佢嬲咩？,Words.HK
+咩,me1,used in rhetorical questions to express negation; uttered with a high-falling tone and could be prolonged,我呃你有獎咩？,Words.HK,同你有親咩！黐到咁埋！,Words.HK
+咩,me1,"interrogative pronoun: what, who, when, etc.; contraction of #乜嘢 mat1 je5",企喺佢隔籬嗰個係咩人嚟㗎？,Words.HK,你睇唔睇到佢拎緊咩呀？,Words.HK
+咩,me1,"used to replace a syllable, a word or a number which the speaker has forgotten or chooses to omit",大陸唔係叫佢做碧咸㗎，叫貝克咩咩咁㗎！,Words.HK,你話四咩八二話？,Words.HK
+咩,me1,"when placed before a word, indicates that the speaker can hardly remember or is rather unwilling to mention it (perhaps out of disdain)",「慈禧」係簡稱嚟㗎，全名係咩「孝欽慈禧端佑康頤昭豫莊誠壽恭欽獻崇熙配天興聖顯皇后」呀。,Words.HK,佢寫咗本書，叫咩《後現代深層結構的非本位解讀》喎。,Words.HK
+咩,me1,"used as a euphemism to substitute something that one is unwilling to say (often something taboo, embarrassing, inappropriate, etc.)",你同佢有冇咩到呀？,Words.HK,聽聞陳伯上個月因為肺癌咩咗喇。,Words.HK
+咩,me1,"universal quantifier: ""every""",呢間舖咁細，咩都冇得買嘅。,Words.HK,咩人都可以參加呢個活動㗎。,Words.HK
+唧,zek1,used to convey a persuasive to,你唔好去唧！,Words.HK,佢咁衰，我哋杯葛佢唧！,Words.HK
+唧,zek1,used to intensify a query or to strongly call something into question so as to almost blame the other for not answeri,究竟點解唧？你重未話我知噃。,Words.HK,你制唔制唧？,Words.HK
+啊,aa3,"used at the end of a response to signal that the utterance reflects the speaker's knowledge, view or feeling (this can be seen as the default particle if no other intonation or final particle is more appropriate)",我買咗部相機啊。,Words.HK,唔係啊，你搭錯車喇。,Words.HK
+啊,aa3,used at the end of the utterance for plain questions,條裙靚唔靚啊？,Words.HK,你係咪唔舒服啊？,Words.HK
+啊,aa3,"used as an enumeration marker, added to the end of each item",咖啡呀，奶茶呀，檸茶呀，一般嘅飲品我哋都有。,Words.HK,我哋都係行街呀，食飯呀，睇戲呀噉囉。,Words.HK
+啊,aa3,used to express annoyance when pronounced in an elongated way,你呀，同我做晒啲嘢呀～,Words.HK,仲有啊，唔好再跟住我啊。,Words.HK
+喎,wo5,"reported speech; to transmit somebody's message, usually clarifying that it is none of the business of the speaker; ""it was said that""; ""somebody (but not I) said that""",媽咪話唔好飲汽水喎！,Words.HK,佢話係噉喎，我唔知㗎。,Words.HK
+喎,wo5,"used for irony, to emphasise the contrast with the reality",嗰位朋友喇喎，就冇乜風度喇。,Words.HK,咁容易畀人呃，仲話係大學教授喎。,Words.HK
+單,daan1,quantifier to count cases or occurrences,呢單案有十一個女仔死咗。,Words.HK,呢單意外導致六人死亡。,Words.HK
+單,daan1,quantifier of news or informatio,連爆三單大鑊嘢,Words.HK,記者鍥而不捨掘到呢單獨家新聞。,Words.HK
+嗄,haa2,"""What?""; ""Huh?""; an interjection used to express disagreement, question, puzzlement, astonishment or new discovery",吓，原來你仲細過我㗎？,Words.HK,吓，要成三千蚊？,Words.HK
+嗄,haa2,"""Sorry?"", ""Excuse me?""; used to request the other person to repeat or clarify",吓？你講咩話？,Words.HK,吓？呢度收得好差呀。,Words.HK
+嘅,ge3,used to express confidence or assert a fact,我知道你一定會幫我嘅。,Words.HK,唔使用劍嘅，用黑旋風（牌子）就得啦。,Words.HK
+嘅,ge3,"used with two noun phrases to indicate possession; denotes that the latter belongs to, or is a part of, the former; similar to English "" 's """,嗰本係我嘅書。,Words.HK,商場嘅廁所喺一樓。,Words.HK
+嘅,ge3,"inserted between the modifying clause/phrase and the noun; often translated as ""that"" or ""which"" in English",佢係呢度最靚嘅女仔。,Words.HK,今日嚟唔到開會嘅成員，記得要睇返會議記錄呀！,Words.HK
+噉,gam2,this; in this manner; in this way,點解會係噉嘅？,Words.HK,你噉講就唔公平喇。,Words.HK
+噉,gam2,used with a phrase to describe an actio,佢放慢晒動作噉做。,Words.HK,我靜靜雞噉鼠走咗。,Words.HK
+噉,gam2,seems (added after the predicate),好似會好多人噉。,Words.HK,幾得意噉喎。,Words.HK
+噉,gam2,"used after a verb or an adjective, often monosyllabic, to signify incompleteness of the process regarding the object; when placed after an adjective, it precedes the suffix #啲 di1 (""a bit"") which forms comparatives; when the object is a noun phrase, it must be modified with a classifier",幫我食噉啲飯吖。,Words.HK,趁住有啲錢，快啲還噉啲利息。,Words.HK
+噉,gam2,"to fall behind or to fail to meet the expectation, though there is already a certain amount or extent",齊人未？好似爭噉個喎。,Words.HK,隻蕉唔見噉橛嘅？你食咗呀？,Words.HK
+嚟,lai4,to arrive; to com,細佬半夜先返嚟屋企。,Words.HK,你幾點嚟啊？,Words.HK
+嚟,lai4,to bring somethi,嚟啦！我唔驚你。,Words.HK,嚟多兩籠燒賣！,Words.HK
+垃圾,laap6 saap3,rubbish; garbage; trash,好多老人家都係靠執垃圾維生。,Words.HK,一地垃圾，好唔衞生。,Words.HK
+垃圾,laap6 saap3,ibberish; unworthy; nonc,我真係覺得自己係垃圾。,Words.HK,寫啲垃圾落去就得，唔使咁認真。,Words.HK
+埋,maai4,to hid,喂，阿Sir啤緊你呀。醒水少少，快啲收埋本漫畫啦。,Words.HK,唔好收收埋埋喇，一定又識咗女仔啦。,Words.HK
+埋,maai4,to shut; to close; to join; to stitch two parts together,我要瞓喇，順手同我閂埋道門。,Words.HK,唔准講嘢，合埋把口。,Words.HK
+埋,maai4,to come close; to approach; to shorten the distance betw,唔好埋嚟，你成身都係汗。,Words.HK,你咪再行埋嚟呀，我叫㗎！,Words.HK
+埋,maai4,to add up,佢話要男女平等，餐餐食飯張單咪又係我埋。,Words.HK,埋好條數咪知賺幾多囉。,Words.HK
+埋,maai4,used after a verb to express a sense of inclusion and additio,你買餸嗰陣，記得順手幫我去郵局交埋水電單。,Words.HK,我同埋你一齊去釣魚。,Words.HK
+埋,maai4,to express continuation until the completion of an ongoing actio,我打埋呢鋪機就出來食飯。,Words.HK,我講埋呢句，之後先到你。,Words.HK
+埋,maai4,to indicate disapproval,佢成日做埋啲噉嘅嘢，遲早有報應㗎！,Words.HK,佢成日群埋啲賭徒，最後輸晒啲錢。,Words.HK
+外便,ngoi6 bin6,outside; exterior,出去外面玩啦，唔好阻住我做嘢！,Words.HK,外面啲人好嘈呀！,Words.HK
+外便,ngoi6 bin6,figuratively: the outside world; away from hom,年輕人應該去外面擴闊視野。,Words.HK,一個人喺外面讀書好孤獨。,Words.HK
+外面,ngoi6 min6,outside; exterior,出去外面玩啦，唔好阻住我做嘢！,Words.HK,外面啲人好嘈呀！,Words.HK
+外面,ngoi6 min6,figuratively: the outside world; away from hom,年輕人應該去外面擴闊視野。,Words.HK,一個人喺外面讀書好孤獨。,Words.HK
+夠,gau3,as well; too (sometimes used before contrast),佢怨我？我夠怨佢咯！,Words.HK,我夠想開開心心過日子啦，冇得揀吖嘛。,Words.HK
+夠,gau3,ough; sufficient; as much as necessary or qualified,我夠錢買新電話喇。,Words.HK,我就係鍾意佢夠特別。,Words.HK
+夠,gau3,as ... as someo,點夠你哋玩呀？,Words.HK,我邊夠佢咁靚吖？,Words.HK
+大,daai6,to grow up,我以前同佢係鄰居，睇住佢大㗎！,Words.HK,以前幾乎每家每户都買「生命麪包」，我都係食佢大㗎。,Words.HK
+大,daai6,old in age; older; senior,佢大我十年。,Words.HK,佢婆婆年紀好大，今年九十六歲。,Words.HK
+大,daai6,"reater in intensity, eg more heavy, high, loud, strong etc.",你可唔可以開大啲部冷氣啊？,Words.HK,佢把聲太大喇。,Words.HK
+好,hou2,ood; fi,你肯噉做就最好！,Words.HK,我啱啱收到好消息。,Words.HK
+好,hou2,to get well; to recover from illness,希望你快啲好返啦。,Words.HK,我病咗幾日，啲咳仲未好。,Words.HK
+好,hou2,"placed before a verb to indicate that an action is easy, convenient, suitable or pleasant under certain circumstances; easy to; good for; suitable for; pleasant to",條友勁好呃，人哋講乜佢都信。,Words.HK,張新梳化幾好坐喎！,Words.HK
+好,hou2,placed after a verb to indicate the proper completion of an actio,記得摺好枱面啲衫啊。,Words.HK,你諗好食咩未呀？,Words.HK
+好,hou2,"(exclamative or emphatic) what; such; quite; similar to ""相當"", used before ""the numeral #一 + classifier + noun (phrase)""",我哋好一段日子冇見喇。,Words.HK,佢潛咗好一排水。,Words.HK
+對,deoi3,to; as for; with regard to; in connection with,一千萬對佢嚟講只不過係一個細數目。,Words.HK,我對呢個問題有啲保留。,Words.HK
+對,deoi3,to; used to bring out to whom an action is do,對管理層表達不滿,Words.HK,佢對我笑呀！,Words.HK
+就,zau6,almost; soo,餐飯就食得喇。,Words.HK,就搞掂喇，俾多少少時間我啦。,Words.HK
+就,zau6,precisely; exactly,呢個人就係佢男朋友喇！,Words.HK,隻錶咪就係佢送俾我㗎囉。,Words.HK
+就,zau6,"used to indicate determination, confrontation or antagonism",我就唔信我學唔識。,Words.HK,就揀呢隻色啦。,Words.HK
+屈機,wat1 gei1,"xtremely overpowered, as if breaking the rules",佢好屈機㗎，次次考試都滿分。,Words.HK,曲奇餅都可以整到成幅砌圖出嚟，會唔會太屈機？,Words.HK
+屈機,wat1 gei1,"to win dishonourably by exploiting some known flaws, especially in games or competitions",嘩，原來呢個位可以屈到機㗎？早知唔使打餐死啦。,Words.HK,你唔好屈佢機啦。,Words.HK
+屌,diu2,to express unpleasant surpris,又做乜撚嘢呀，屌！,Words.HK,嘩屌，今日恒指跌咗 8% 呀！,Words.HK
+屌,diu2,to admonish; to scold; to reprimand,今次實俾老闆屌鑊甘。,Words.HK,唔好屌佢啦。,Words.HK
+差,caa1,"to differ, in terms of qualities or quantities",你同我嘅智商差太遠喇！,Words.HK,大家成績好接近，最低同最高都係差幾分啫。,Words.HK
+差,caa1,to lack; to miss out; to fall short of a certain standard,我差一分先至合格呀！,Words.HK,呢個候選人差咗啲經驗。,Words.HK
+幾,gei2,"an interrogative pronoun for the time, duration of a period of time, or extent of an adjective or adverb",BB幾大呀？,Words.HK,佢幾大力打落嚟呀？,Words.HK
+幾,gei2,"how many; how much; an interrogative pronoun; it can only be followed by a single-character noun or measure word, but it can be preceded by the ordinal prefixes #第 dai6 and #初 co1; this is unlike its longer counterpart #幾多 gei2 do1, which can represent a group of atomic and base numbers in a numeric sequence, and which cannot be preceded by the aforementioned ordinal prefixes",一九幾年？（對比「一九幾多年？」）,Words.HK,幾點出門好？,Words.HK
+度,dou6,quantifier for degrees of temperatur,攝氏二十度即係華氏六十八度。,Words.HK,水一百度就會滾。,Words.HK
+度,dou6,quantifier for angular degrees,直角係九十度。,Words.HK,香港大約喺北緯廿二度，東經一百一十四度。,Words.HK
+度,dou6,quantifier for the volume ratio of an alcohol solutio,支酒成五十幾度好掯。,Words.HK,酒精搓手液通常係七十至八十度。,Words.HK
+廢,fai3,useless; worthless; good-for-nothi,呢個講座真係好廢，去唔去都罷啦。,Words.HK,呢部電腦廢到核爆，用兩用就壞。,Words.HK
+廢,fai3,unsatisfactory; poor; bad at doing something; to suck,我讀書好廢㗎，你教下我啦！,Words.HK,乜你咁廢㗎，咁簡單都唔識。,Words.HK
+廢,fai3,to abolish; to get rid of,應該廢咗聯儲局佢。,Words.HK,與其傾電車存廢問題，不如廢咗條高鐵先啦。,Words.HK
+張,zoeng1,measure word used for flat objects,冚多張被啦，翻風啊。,Words.HK,佢前兩日買咗爵士小天后張唱片。,Words.HK
+張,zoeng1,"measure word used to count some furniture with large, flat surfaces",我約咗班朋友嚟玩，要買多幾張凳先夠坐。,Words.HK,張新梳化幾好坐喎！,Words.HK
+張,zoeng1,"sheet; measure word used thin, paper-like objects",我收到幾張傳單。,Words.HK,張啤牌唔見咗。,Words.HK
+得,dak1,"used after a verb to mean ""it is okay"" or ""it is alright"" to do somethi",我唔飲得酒。,Words.HK,俾我抖下得唔得呀。,Words.HK
+得,dak1,a structural particle used to join a verb with various kinds of complements showing degree or result of an actio,佢跑得好快。,Words.HK,啲貨去得好快。,Words.HK
+得,dak1,to have even done; to have gone so far as to (only used in subordinate clauses to emphasise the importance of an action),應承得，就唔可以反口。,Words.HK,報得名嘅人，我都預咗嚟㗎喇。,Words.HK
+得,dak1,"used to express ability, possibility of or permitted to doing something; can; able to",得！我即刻嚟。,Words.HK,信我啦，你得嘅。,Words.HK
+得,dak1,reat; good,嗰條女好得呀！,Words.HK,呢隻藥好得呀，食完好咗好多。,Words.HK
+得,dak1,to only hav,呢度得返五個人。,Words.HK,我而家得十蚊喺身，唔夠俾錢喎。,Words.HK
+想,soeng2,to want; to hop,佢成日想中六合彩，但係廿年嚟連安慰獎都未中過。,Words.HK,我想你教我游水呀。,Words.HK
+想,soeng2,to want to; to have the desire to; to plan to,你想唔想學廣東話啊？,Words.HK,我而家好想瞓覺。,Words.HK
+戳,cok3,to exert a sudden pulling force; to yank; to tu,我尋日chok親條頸入咗廠，聽日同唔到你哋打波喇。,Words.HK,佢唔小心chok斷咗條電線。,Words.HK
+戳,cok3,to shake; to jiggle; to lurch,chok水樽,Words.HK,部相機壞咗，你chok佢都唔會好返㗎啦。,Words.HK
+戳,cok3,to coax a secret out of somebody; to sound out,你聽日去chok吓佢，睇吓佢會唔會知啲嘢。,Words.HK,佢開頭唔肯講啲同黨匿埋喺邊，最後都俾個差人chok咗出嚟。,Words.HK
+戳,cok3,to try until one succeeds doing somethi,chok cheat,Words.HK,我今日誓要喺部機度chok到隻公仔出嚟。,Words.HK
+才,coi4,just,我第一次見他，他才五歲。,Words.HK,節目才剛開始。,Words.HK
+才,coi4,under particular circumstances to be able to do sth (compare 先 Sin1 sense 3; 先至 Siun1Zi3),我要怎樣做才能得到她的芳心？,Words.HK,這間酒店只有富豪才可入住。,Words.HK
+抵,dai2,(of things) cheap; valued below its worth; inexpensive; undervalued,呢間舖頭賣嘅嘢好抵。,Words.HK,廿蚊一串魚蛋，抵到爛啦。,Words.HK
+抵,dai2,"deserving, 抵你+verb can be used to mean 'you deserve to be' + verb; worthwhil",你做嘢咁勤力，抵你升職嘅。,Words.HK,佢時時遲到，真係抵鬧。,Words.HK
+接,zip3,to catch; to take hold of,子明打羽毛球成日接唔住個波。,Words.HK,子明，接好啲啦。,Words.HK
+接,zip3,to pick somebody up,我今晚接你放工。,Words.HK,我而家去接我個仔放學。,Words.HK
+撇,pit3,to forsake; to abandon; often extended to mean dumping of somebody in a relationship,出面咁大風，你點可以撇低佢自己一個返屋企㗎？,Words.HK,我撇咗佢喇！,Words.HK
+撇,pit3,to leave; to depart hassle-fr,我一攪掂就撇。,Words.HK,有警察嚟啊，撇啦！,Words.HK
+撚,lan2,intensifier following verbs which are usually monosyllabic and transitive; should be placed closer to the verb than suffixes,做撚完先講？,Words.HK,食撚屎啦你！,Words.HK
+撚,lan2,"infix between adverbs, including #咁 gam3, #好 hou2, #幾 gei2, #勁 ging6 or #最 zeoi3, and adjectives to denote a strong degr",呢條女幾撚正喎。,Words.HK,咁撚仆街都有嘅！,Words.HK
+撚,lan2,"infix used to strengthen the negative connotation after the first syllable of certain non-positive adjectives, adverbs, pronouns, or predicate-object compound verbs (In the senses above, the affix precedes its equivalents #柒 cat6, #鳩 gau1 and #閪 hai1.)",邊撚個搞到亂晒？,Words.HK,個政府都荒撚謬嘅！,Words.HK
+擢,cok3,to exert a sudden pulling force; to yank; to tu,我尋日chok親條頸入咗廠，聽日同唔到你哋打波喇。,Words.HK,佢唔小心chok斷咗條電線。,Words.HK
+擢,cok3,to shake; to jiggle; to lurch,chok水樽,Words.HK,部相機壞咗，你chok佢都唔會好返㗎啦。,Words.HK
+擢,cok3,to coax a secret out of somebody; to sound out,你聽日去chok吓佢，睇吓佢會唔會知啲嘢。,Words.HK,佢開頭唔肯講啲同黨匿埋喺邊，最後都俾個差人chok咗出嚟。,Words.HK
+擢,cok3,to try until one succeeds doing somethi,chok cheat,Words.HK,我今日誓要喺部機度chok到隻公仔出嚟。,Words.HK
+整,zing2,to make; to creat,我整咗個蛋糕送俾女朋友。,Words.HK,我整咗個PowerPoint喇。,Words.HK
+整,zing2,to exert a force to cause an outcome or a cha,按摩師整到我膊頭鬆晒，好舒服。,Words.HK,阿輝唔小心整跌阿欣最鍾意嗰隻杯。,Words.HK
+整,zing2,to provide somethi,小心佢整件杰嘅俾你嘆。,Words.HK,伙記，整兩籠燒賣過嚟吖。,Words.HK
+方便,fong1 bin6,to make something easy or convenient; to be helpful,我擺部釘書機喺枱面方便你哋用。,Words.HK,人哋需要幫手咪方便吓人囉。,Words.HK
+方便,fong1 bin6,be able to; ca,借錢？我而家手頭唔方便。,Words.HK,你方唔方便幫我拎支筆？,Words.HK
+春,ceon1,"affixed to negate any adjective or verb with a positive or affirmative connotation, after its first syllable; ""not ... at all""; ""extremely not""",單靠努力打工有春用咩！,Words.HK,佢識春做你啲嘢咩？佢都未學過。,Words.HK
+春,ceon1,"affixed after negation adverbs like #唔 m4 and #咪 mai5 to intensify negation; ""not ... at all""; ""extremely not""",唔請就咪春話招聘啦！,Words.HK,咪春問啊！我乜都唔春知、唔春識啊！,Words.HK
+春,ceon1,"infix between adverbs, including #咁 gam3, #好 hou2, #幾 gei2, #勁 ging6, and adjectives to denote a strong degr",咁春多點心，點食得晒啊？,Words.HK,甲：「好春廢啊你，仲話自己係羽毛球王子。」乙：「咩啊！今鋪讓你咋，我平時不知幾春勁！」,Words.HK
+春,ceon1,"can be inserted after a question word, a derogatory verb or adjective to show irritatio",你喺度搞乜春呀？,Words.HK,今日所有舖頭都閂晒門，乜春都買唔到。,Words.HK
+晒,saai3,to show off; to flaunt,你哋日日都貼啲拍拖相上網，仲唔係曬幸福？,Words.HK,啲闊太去親呢啲場合，都係鬥曬名牌衫同名牌袋咋嘛。,Words.HK
+晒,saai3,tirely; completely; all,做晒嘢未呀？,Words.HK,佢哋去晒旅行，冇人喺屋企。,Words.HK
+晒,saai3,to a large or even full extent,嘩！多謝晒！,Words.HK,呢幾日辛苦晒大家！,Words.HK
+曬,saai3,to show off; to flaunt,你哋日日都貼啲拍拖相上網，仲唔係曬幸福？,Words.HK,啲闊太去親呢啲場合，都係鬥曬名牌衫同名牌袋咋嘛。,Words.HK
+曬,saai3,tirely; completely; all,做晒嘢未呀？,Words.HK,佢哋去晒旅行，冇人喺屋企。,Words.HK
+曬,saai3,to a large or even full extent,嘩！多謝晒！,Words.HK,呢幾日辛苦晒大家！,Words.HK
+有,jau5,to have; used to indicate a social or interpersonal relationship or affiliatio,我有兩個仔。,Words.HK,佢有好多朋友㗎。,Words.HK
+有,jau5,to have; to ow,我屋企有三架車，兩層樓。,Words.HK,我呢度有啲朱古力，你食住頂下肚先啦。,Words.HK
+有,jau5,to exist; can be found,火星上可能有生命。,Words.HK,地鐵站有洗手間。,Words.HK
+有,jau5,added in front of another verb to emphasise that the said action has been do,我有做功課㗎！,Words.HK,我有打過俾你㗎。,Words.HK
+望,mong6,to look; to gaz,你望下嗰個女仔，幾靚噉喎。,Words.HK,你望咁耐㗎？望到入晒神呀？,Words.HK
+望,mong6,to hope; to expect,而家望就望佢冇事啦。,Words.HK,望就噉望啦。,Words.HK
+格,gaak3,to count boxes,第二行第三格,Words.HK,隻棋擺喺邊格好呢？,Words.HK
+格,gaak3,used for space or entities with rectangular boundary,廁所得返最入面嗰格冇人用。,Words.HK,藥水半格等如幾多毫升？,Words.HK
+格,gaak3,"stronger variant of #㗎 gaa3 to show full certainty, support or confidence and also to express a connotation that something is undoubtedly as it should be, after negating the presupposition of the other; often used together with #梗 gang2, #實 sat6 and #一定 jat1ding6",你實幫住佢𠺝。,Words.HK,人終須一死，梗𠺝。,Words.HK
+格,gaak3,"used to repeat the speaker's understanding, and so as to bring out any question, doubt or contrast, when the speaker finds something unusual; often used together with #明明 ming4ming4, #應該 jing1goi1 and #照計 ziu3gai3",明明唔係噉樣𠺝！,Words.HK,我記得噉行去到𠺝，搞咩呢？,Words.HK
+格,gaak3,used in some negation forms to mean that something is no big deal or does not matter,冇𠺝，咪用盡所有辦法照做囉。,Words.HK,佢大你喳嘛，冇乜嘢𠺝。,Words.HK
+條,tiu4,measure word for longer things that are composed of an arrangement of smaller items,基本法廿三條,Words.HK,我連條題目都睇唔明。,Words.HK
+條,tiu4,measure word for certain nouns involving lifespans or humans,十八年後又係一條好漢。,Words.HK,條女好正呀。,Words.HK
+極,gik6,"added after the main verb, no matter how much; no matter how many times; usually followed by 都 dou1 and a negatio",啲飯多到我食極都食唔曬。,Words.HK,你咁蠢㗎，學極都唔識。,Words.HK
+極,gik6,"at most; added after a verb and followed by the limitation of the previous description, to express a sense of ""really not that much""",功課多極至多咪三份？,Words.HK,你叻極都有限啦。,Words.HK
+死,sei2,very; extremely,個老師超無聊，就嚟悶死。,Words.HK,今日有得去玩，開心死！,Words.HK
+死,sei2,(to result in) death or extreme suffering; to kill (metaphorically),咁多嘢要做，真係做死人。,Words.HK,咪走來走去，就嚟畀你煩死。,Words.HK
+死,sei2,fixed; rigid; inflexibl,道門鎖死咗。,Words.HK,個渠塞死晒。,Words.HK
+死,sei2,(of rules or terms) rigid; inflexible; stiff; (of a work routine) conventional and stuck in the same old rut; same old same old,張約寫得好死，唔做唔得。,Words.HK,呢份工好死嘅啫，日日都係倒模咁倒就得。,Words.HK
+段,dyun6,measure word for words,第五課嘅第一段,Words.HK,佢啱啱講咗一大段廢話，我根本就冇留心聽。,Words.HK
+段,dyun6,"measure word for relationships, especially romantic relationships",估唔到呢段感情就噉冇咗。,Words.HK,我會好好珍惜呢段關係。,Words.HK
+每,mui5,very; all of,每次叫佢幫手做家務，佢都話唔得閒。,Words.HK,每個學生放完假返嚟要交一份閲讀報告。,Words.HK
+每,mui5,"per; every; for each; with respect to every member of a specified group; used to denote equal spacing at a stated interval, or a proportion corresponding to such a spaci",北大嶼山公路限速為每小時110公里。,Words.HK,佢每分鐘打到100字。,Words.HK
+水,seoi2,classifier for trips/journeys or batches of goods,啲走水貨嘅一日走幾水先夠皮。,Words.HK,一水船去珠海要幾耐？,Words.HK
+水,seoi2,classifier for job shifts or rotations,你點都要喺呢個部門留一水㗎喇。,Words.HK,我上水喺內科、今水嚟外科、下水去骨科。,Words.HK
+浸,zam3,to soak; to immers,啲豆要浸過夜先煮。,Words.HK,「你識唔識游水㗎？」「識識哋啦，跌落海浸唔死噉囉。」,Words.HK
+浸,zam3,to immerse oneself in a particular environment to gain knowledge or experienc,語言呢家嘢係要浸出嚟㗎。,Words.HK,唓，你喺外國浸完返嚟，啲英文咪又係咁廢。,Words.HK
+添,tim1,"sentence final particle, usually used with #仲 zung6, to imply an additive meaning as in ""also"", ""still"", ""as well"", ""too"" or ""and""",佢唔止高，仲好瘦添。,Words.HK,佢唔止做嘢慢，仲好唔小心添。,Words.HK
+添,tim1,used when the speaker has just become aware of his/her minor mistak,吖！唔記得咗拎手提㖭！,Words.HK,哎吔！遲咗㖭！,Words.HK
+減,gaam2,"used after a verb or an adjective, often monosyllabic, to signify incompleteness of the process regarding the object; when placed after an adjective, it precedes the suffix #啲 di1 (""a bit"") which forms comparatives; when the object is a noun phrase, it must be modified with a classifier",幫我食噉啲飯吖。,Words.HK,趁住有啲錢，快啲還噉啲利息。,Words.HK
+減,gaam2,"to fall behind or to fail to meet the expectation, though there is already a certain amount or extent",齊人未？好似爭噉個喎。,Words.HK,隻蕉唔見噉橛嘅？你食咗呀？,Words.HK
+照,ziu3,to follow; to accord to; with reference to; to abide by,你照住個指示做啦。,Words.HK,我照足程序去做，有咩事唔好賴落我度。,Words.HK
+照,ziu3,to look after; to take care of; to keep an eye on; to protect,唔使擔心，我會照住佢㗎㗎。,Words.HK,佢表現好，入職冇耐就有阿頭照。,Words.HK
+生,saang1,raw; uncooked,啲豬肉生嘅，食咗會生蟲㗎。,Words.HK,仲係好生喎，煮多陣添啦。,Words.HK
+生,saang1,to give birth to; to bear,生咗喇，係女嚟。,Words.HK,個肚好痛，我諗就生得喇。,Words.HK
+用,jung6,to use; to employ a tool or method to achieve an end,呢幅畫我用電腦畫嘅。,Words.HK,我用廣東話講多次俾你聽啦。,Words.HK
+用,jung6,"to use up; to expend resources, whether physical or temporal",支牙膏用咗一半。,Words.HK,佢用咗三年時間寫呢本書。,Words.HK
+番,faan1,placed after a verb to describe the resumption of an interrupted actio,做返你應該做嘅嘢。,Words.HK,你着返件衫先啦。,Words.HK
+番,faan1,placed after a verb or adjective to show that something is getting better or reverting to its original stat,我身體好返好多喇。,Words.HK,啲人走晒之後，呢度終於靜返。,Words.HK
+番,faan1,placed after a verb to show that an action is for the speaker's own good or for the sake of someone els,食返餐好嘅！,Words.HK,介紹返隻產品俾你。,Words.HK
+發現,faat3 jin6,to discover; to find,天文學家最近發現咗一個新星球。,Words.HK,佢哋發現咗個寶藏。,Words.HK
+發現,faat3 jin6,to know something previously unknown; to realise; to figure out,我發現自己其實唔係咁鍾意呢科。,Words.HK,我發現佢有啲古怪。,Words.HK
+等,dang2,after a condition is met; usually followed by a statement about subsequent actions or predictions,等佢嚟到嗰陣時，我哋傾一傾呢件事。,Words.HK,等你做完功課之後，我哋出去玩下。,Words.HK
+等,dang2,"a structure used to express that something was mistaken, misunderstood, or turned out to be wasted effort; used with the adverb #仲 zung6",原來你食咗嘢嗱，等我仲幫你買咗早餐添。,Words.HK,我以為今晚食自助餐，等我仲專登唔食嘢添！,Words.HK
+等於,dang2 jyu1,to be the same as; to be equal to; to have no difference from,做得咁hea，做咗等於冇做。,Words.HK,瘋狗症100%死亡率，有得預防冇得醫，發病等於被判死刑。,Words.HK
+等於,dang2 jyu1,to imply; to mea,失去法治，唔等於會失去香港。,Words.HK,現實中有山，唔等於人心中有山。,Words.HK
+組織,zou2 zik1,organisation; organised system,三合會係一個黑社會組織。,Words.HK,呢個慈善組織致力於幫助弱勢社群。,Words.HK
+組織,zou2 zik1,to organise a group of people so as to achieve some end,一班義工組織咗個長者探訪團。,Words.HK,佢負責組織呢次聖誕義賣會。,Words.HK
+組織,zou2 zik1,to arrange something in a more orderly fashion; to organis,考生有幾分鐘時間組織發言內容。,Words.HK,你組織下思路先好講嘢。,Words.HK
+緊,gan2,"placed after a verb to describe an ongoing action, often equivalent to the continuous tense in English; sometimes used with #喺度 hai2 dou6 for emphasis",你而家做緊咩呀？,Words.HK,我拍緊拖呀，唔好阻住晒啦！,Words.HK
+緊,gan2,placed after a verb to describe a stable state that is unlikely to change in the near future; usually translated into the simple present tense in English,我喺小學教緊中文。,Words.HK,我返緊份好忙嘅工，冇乜機會見朋友。,Words.HK
+緊,gan2,tight; not relaxed,你要跟緊啲先得！,Words.HK,小朋友要空間㗎，唔好迫得太緊呀。,Words.HK
+緊,gan2,"used after a verb or an adjective, often monosyllabic, to signify incompleteness of the process regarding the object; when placed after an adjective, it precedes the suffix #啲 di1 (""a bit"") which forms comparatives; when the object is a noun phrase, it must be modified with a classifier",幫我食噉啲飯吖。,Words.HK,趁住有啲錢，快啲還噉啲利息。,Words.HK
+緊,gan2,"to fall behind or to fail to meet the expectation, though there is already a certain amount or extent",齊人未？好似爭噉個喎。,Words.HK,隻蕉唔見噉橛嘅？你食咗呀？,Words.HK
+翻,faan1,placed after a verb to describe the resumption of an interrupted actio,做返你應該做嘅嘢。,Words.HK,你着返件衫先啦。,Words.HK
+翻,faan1,placed after a verb or adjective to show that something is getting better or reverting to its original stat,我身體好返好多喇。,Words.HK,啲人走晒之後，呢度終於靜返。,Words.HK
+翻,faan1,placed after a verb to show that an action is for the speaker's own good or for the sake of someone els,食返餐好嘅！,Words.HK,介紹返隻產品俾你。,Words.HK
+肯定,hang2 ding6,definite; firm; determined,作出更肯定嘅承諾,Words.HK,俾一個肯定嘅答覆我。,Words.HK
+肯定,hang2 ding6,to be sur,我肯定佢冇見到我。,Words.HK,我唔肯定㗎。,Words.HK
+至,zi3,the most,我至憎人食煙！,Words.HK,我至叻就係煮飯㗎嘞。,Words.HK
+至,zi3,ot until; used to describe an action or event that will take place only at a certain point of time and not earlier,我聽日至嚟。,Words.HK,聽日至要交，唔使急。,Words.HK
+至,zi3,"in order to; inserted before the verb in the second clause of a two-clause sentence, to express that the result (as stated in the second clause) can be achieved only if the condition in the first clause is met",你勤力啲至攞到好成績㗎。,Words.HK,你要點至開心？,Words.HK
+落,lok6,to fall; to drop,而家落緊雨。,Words.HK,佢跌咗落地下。,Words.HK
+落,lok6,to go dow,我想落街行下。,Words.HK,我落一落地牢。,Words.HK
+行,hong2,perfunctory; without trying seriously; without putting in much effort,呢個設計好行囉，改改佢得唔得。,Words.HK,答得咁行嘅？,Words.HK
+行,hong2,(of a good) licensed for import (as opposed to parallel imports),呢部手機係行定水？,Words.HK,有行版有水版，水就平三嚿。,Words.HK
+衰,seoi1,bad; mean; being a jerk; rott,邊個咁衰搞我啲嘢？,Words.HK,佢衰到阿媽都打。,Words.HK
+衰,seoi1,bad; terrible; poor,呢個app做得好衰，成日死。,Words.HK,呢架衰機，點解硬係唔着㗎！,Words.HK
+補,bou2,to fill; to supply; to make up for,你要喺呢個星期之內補返啲文件俾我哋。,Words.HK,個空缺已經有人補上。,Words.HK
+補,bou2,to tutor,我幫緊一個學生補數學同英文。,Words.HK,我喺補習社補中文。,Words.HK
+要,jiu3,to need; to want; negative: #唔使 m4 sai2,你仲有冇嘢要呀？,Words.HK,我要你幫手呀。,Words.HK
+要,jiu3,to be determined to,佢要輸錢，咪由得佢囉。,Words.HK,大家都反對，不過佢係都要去。,Words.HK
+要求,jiu1 kau4,demand,你嘅要求並唔合理。,Words.HK,你有咩要求，即管講出嚟。,Words.HK
+要求,jiu1 kau4,requirement,你著嘅衫唔符合我哋餐廳嘅要求。,Words.HK,佢揀女朋友嘅要求好高。,Words.HK
+要求,jiu1 kau4,to give order,我要求你哋每星期睇一本書。,Words.HK,我要求再見到你。,Words.HK
+識,sik1,to know someo,你識唔識佢？,Words.HK,你識唔識得晒啲同學呀？,Words.HK
+識,sik1,to get to know someo,我識咗好多朋友。,Words.HK,得閒食下飯，去識下人都好。,Words.HK
+識,sik1,to know how to do somethi,你識唔識講廣東話呀？,Words.HK,佢唔識用電腦㗎。,Words.HK
+起,hei2,to build; to set up,起新team,Words.HK,佢哋起緊新樓。,Words.HK
+起,hei2,verbal suffix indicating upwards motion; up,佢攞起個手袋就走嘞。,Words.HK,我拎唔起呢個箱。,Words.HK
+起,hei2,(preceded by #得 dak1 or #唔 m4) up to a certain standard,我買唔起呢個手袋。,Words.HK,佢睇唔起我。,Words.HK
+車,ce1,to give a rid,我順路車你去大埔吖。,Words.HK,真係可以車埋我？,Words.HK
+車,ce1,to sew (with a sewing machine),你識唔識得車衫㗎？,Words.HK,車返好件衫先。,Words.HK
+車,ce1,to hit; to crash,一拳車埋佢塊面度。,Words.HK,嗰架 Benz 失控衝上行人路，車到途人。,Words.HK
+返,faan1,placed after a verb to describe the resumption of an interrupted actio,做返你應該做嘅嘢。,Words.HK,你着返件衫先啦。,Words.HK
+返,faan1,placed after a verb or adjective to show that something is getting better or reverting to its original stat,我身體好返好多喇。,Words.HK,啲人走晒之後，呢度終於靜返。,Words.HK
+返,faan1,placed after a verb to show that an action is for the speaker's own good or for the sake of someone els,食返餐好嘅！,Words.HK,介紹返隻產品俾你。,Words.HK
+通,tung1,open; through; connected,條路通咗嘍！,Words.HK,佢個電話打唔通。,Words.HK
+通,tung1,logical; coherent; reasonabl,呢句句子唔通喎。,Words.HK,你噉講唔通喎。,Words.HK
+通,tung1,tire; whol,我俾雨淋到通身濕晒。,Words.HK,佢啲衰嘢通行都知㗎啦。,Words.HK
+連,lin4,one after another; in successio,連打三場波，要唞唞。,Words.HK,今次有一連五晚嘅活動。,Words.HK
+連,lin4,ven; indicates that someone or something is no exception; usually precedes #都 dou1,佢設計出一個連老人家都鍾意嘅遊戲。,Words.HK,連你都噉對我，真係好失望。,Words.HK
+過,gwo3,"added after a verb to describe an event or action that has happened, or a past experienc",我琴日去過間學校。,Words.HK,你去過美國未啊？,Words.HK
+過,gwo3,over again; anew,阿慈決定咗疊埋心水揾過份工。,Words.HK,不如我哋由頭嚟過。,Words.HK
+過,gwo3,to spend time (followed by a special occasion),今年你喺邊度過聖誕呀？,Words.HK,你週末打算點過呢？,Words.HK
+過,gwo3,to surpass; to pass a plac,估唔到架車夠膽過架小巴頭。,Words.HK,過咗呢度，行多幾分鐘就到。,Words.HK
+邊,bin1,"""which"" or ""what""; added in front of the classifier (the specification of objects is optional), to enquire what it is. The question could be either open-ended or closed-end with certain options mentioned. Could be used with place, objects, people and time (i.e. where; which; whom; when).",呢隻手錶邊度有得賣啊？,Words.HK,你打俾邊個啊？,Words.HK
+邊,bin1,"When used alone and placed in the object, it is to enquire the place, same as ""where"" or ""which place(s)"" meant by #邊度 bin1 dou6, #邊處 bin1 syu3 or 邊個/啲地方 bin1 go3/di1 dei6 fong1.",呢兩本詞典嘅分別喺邊呢？,Words.HK,你泊咗架車喺邊啊？,Words.HK
+邊,bin1,"When used alone and placed in the beginning of a sentence or near the subject, it is no longer an interrogative to seek information but a rhetorical question word as a construction of a negative meaning to oppose the hearer's belief. Could be replaced with #邊度 bin1 dou6 or #點 dim2",間舖靜英英，邊有人吖？,Words.HK,邊夠你好彩啊？,Words.HK
+邊,bin1,party; side; opposing groups,將啲學生分成兩邊。,Words.HK,你幫邊邊㗎？,Words.HK
+酸,syun1,sour; tart,個橙好酸啊！,Words.HK,老豆一返到屋企我就聞到佢對襪又酸又臭。,Words.HK
+酸,syun1,"to be angry by envy, to feel upset by jealousy; a variant of the expression ""sour grapes"" originating from ""The Fox and the Grapes"" in Aesop's Fables",一聽到舊男友結識到新歡，你睇佢個樣酸到呢。,Words.HK,唔駛咁酸喎，遲下一定好快到你啦。,Words.HK
+重,zung6,still; to indicate that the action or status is unchanged or is repeati,佢喺呢間公司做咗五六年都冇升過職，仲係一個辦公室助理。,Words.HK,仲有啲問題要解決。,Words.HK
+重,zung6,"still; to indicate that the time has not come yet, or to indicate something is not yet ready",距離交卷時間仲有十五分鐘。,Words.HK,你嘅演説技巧仲有進步空間，繼續努力！,Words.HK
+重,zung6,ven mor,今日仲潮濕過尋日。,Words.HK,落雨仲好，可以留喺屋企休息下。,Words.HK
+重,zung6,in addition; and; last but not least,雞蛋六隻，糖呢就兩茶匙，仲有啲橙皮添。,Words.HK,仲有啲咩要帶啊？,Words.HK
+釘,deng1,to nail; to pi,將張告示釘上塊板度。,Words.HK,將兩張紙釘埋一齊。,Words.HK
+釘,deng1,to di,佢舊年心臟病發釘咗。,Words.HK,「但係你老母講你就快釘？」,Words.HK
+閃,sim2,bright and shiny; also used to describe such a happy and sweet relationship that it is the subject of envy,粒鑽石好閃啊！,Words.HK,日日都post拍拖嘅相，使唔使咁閃呀？,Words.HK
+閃,sim2,to flash; to twinkle; to sparkl,天上嘅星星閃吓閃吓。,Words.HK,嗰盞燈閃緊，可能係求救訊號！,Words.HK
+閃,sim2,"to leave, especially quickly or secretly",點呀？閃得未？,Words.HK,我趁佢嚟到之前閃咗喇。,Words.HK
+開,hoi1,away; elsewher,畀啲膽，游開啲。,Words.HK,拎開晒啲電腦啦！,Words.HK
+開,hoi1,to issue; to dispens,醫生開咗張病假紙俾你。,Words.HK,醫生有冇開藥俾你？,Words.HK
+開,hoi1,to discover; to explore; to expos,我個角色升級之後，開咗個新地圖出嚟。,Words.HK,我未開電郵睇喎，好急㗎？,Words.HK
+閪,hai1,shitty; annoyingly bad; to suck; crappy,你正一閪女人嚟。,Words.HK,佢性格好撚閪。,Words.HK
+閪,hai1,describes a bitch face; (of a look) dirty; scowli,個侍應面口好閪。,Words.HK,佢成日閪口閪面。,Words.HK
+面,min6,face (showing one's appearance and facial expressions); appearanc,佢塊面好滑。,Words.HK,快啲洗面啦。,Words.HK
+面,min6,"side; aspect; only used with #一 jat1 ""one""",不為人知嘅一面,Words.HK,呢層只係問題嘅其中一面。,Words.HK
+頂,ding2,to hang on; to bear; to withstand,頂住呀！就快到醫院喇。,Words.HK,近排心力交瘁，唔知可以頂到幾耐。,Words.HK
+頂,ding2,to change the ownership of a business,陳生頂咗間舖嚟做。,Words.HK,間公司頂咗俾人。,Words.HK
+鬼,gwai2,ot (after monosyllabic verbs except #冇 mou5); used in a relatively heightened emotional state to negate the patient,佢都 short short 哋嘅，我理鬼佢。,Words.HK,甲：「粉紅色真係好靚囉！」乙：「係鬼…… 」,Words.HK
+鬼,gwai2,"used in a relatively heightened emotional state to focus on the negation of the action and, when without subjects, to denote the absence of agents, as an equivalent of indefinite pronouns ""nobody"" and ""no one"" in English",鬼同你講笑呀而家！,Words.HK,鬼知佢搞咩唧！,Words.HK
+鬼,gwai2,"intensifier following verbs which are usually monosyllabic and transitive, closer than #死 sei2 and suffices to the verb",佢哋走鬼晒，攋低我一個。,Words.HK,封信晨早掉鬼咗啦！,Words.HK
+鬼,gwai2,"infix between adverbs, including #咁 gam3, #好 hou2, #幾 gei2, #勁 ging6 or #最 zeoi3, and adjectives to denote a strong degr",佢真係勁鬼搞嘢嘅唧。,Words.HK,我最鬼鍾意食叉燒㗎嘞。,Words.HK
+鬼,gwai2,"infix between negation adverbs like #唔 m4 and #咪 mai5, and verbs / adjectives to intensify negation; ""not ... at all""; ""extremely not""",唔鬼知佢嚟唔嚟啊！,Words.HK,睇佢個樣就知佢唔鬼掂啦！,Words.HK
+鬼,gwai2,"affixed to negate any adjective or verb with a positive or affirmative connotation, after its first syllable; ""not ... at all""; ""extremely not""",你唔喺佢身邊，佢開鬼心呀！,Words.HK,冇練咁耐，退步咗好多喇，犀鬼利咩。,Words.HK
+鬼,gwai2,"infix used to strengthen the negative connotation after the first syllable of certain non-positive adjectives, adverbs, pronouns, or predicate-object compound verbs",一諗起佢就激鬼氣。,Words.HK,封信同張相留嚟棧谷鬼氣！,Words.HK
+鬼,gwai2,traitor; spy within an organisation or a camp; the rat,我懷疑我哋部門有鬼放料畀佢哋。,Words.HK,做咩唔聽指示行動啊？講！你係咪鬼？,Words.HK
+點,dim2,"o'clock; can be followed by more fine-grained units like #正 zing3 (on the dot), #半 bun3 (half-past), 個骨 go3 gwat1 (quarter hour), #沓 daap6 and 個字 go3 zi6 (5-minute increments), or #分 fan1 (minutes)",十二點十一分,Words.HK,「而家幾點啊？」「八點三。」,Words.HK
+點,dim2,how; in what way; in what manner,郵局點去㗎？,Words.HK,個面試點啊？,Words.HK
+點,dim2,"ostensibly asking how something is done, but in fact used to express annoyance at how it is done incompetently",有冇搞錯，你哋點做生意㗎？,Words.HK,嘩，佢點揸車㗎？過線唔打燈都有嘅？,Words.HK
+點,dim2,"whatever; however; used in conditionals to substitute a situation, a method, or some way of doing things",應該點做就點做，唔使問我㗎嘞。,Words.HK,你想點咪點囉。,Words.HK
+𡳞,lan2,intensifier following verbs which are usually monosyllabic and transitive; should be placed closer to the verb than suffixes,做撚完先講？,Words.HK,食撚屎啦你！,Words.HK
+𡳞,lan2,"infix between adverbs, including #咁 gam3, #好 hou2, #幾 gei2, #勁 ging6 or #最 zeoi3, and adjectives to denote a strong degr",呢條女幾撚正喎。,Words.HK,咁撚仆街都有嘅！,Words.HK
+𡳞,lan2,"infix used to strengthen the negative connotation after the first syllable of certain non-positive adjectives, adverbs, pronouns, or predicate-object compound verbs (In the senses above, the affix precedes its equivalents #柒 cat6, #鳩 gau1 and #閪 hai1.)",邊撚個搞到亂晒？,Words.HK,個政府都荒撚謬嘅！,Words.HK
+𨳒,diu2,to express unpleasant surpris,又做乜撚嘢呀，屌！,Words.HK,嘩屌，今日恒指跌咗 8% 呀！,Words.HK
+𨳒,diu2,to admonish; to scold; to reprimand,今次實俾老闆屌鑊甘。,Words.HK,唔好屌佢啦。,Words.HK
+𨶙,lan2,intensifier following verbs which are usually monosyllabic and transitive; should be placed closer to the verb than suffixes,做撚完先講？,Words.HK,食撚屎啦你！,Words.HK
+𨶙,lan2,"infix between adverbs, including #咁 gam3, #好 hou2, #幾 gei2, #勁 ging6 or #最 zeoi3, and adjectives to denote a strong degr",呢條女幾撚正喎。,Words.HK,咁撚仆街都有嘅！,Words.HK
+𨶙,lan2,"infix used to strengthen the negative connotation after the first syllable of certain non-positive adjectives, adverbs, pronouns, or predicate-object compound verbs (In the senses above, the affix precedes its equivalents #柒 cat6, #鳩 gau1 and #閪 hai1.)",邊撚個搞到亂晒？,Words.HK,個政府都荒撚謬嘅！,Words.HK
