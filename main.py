@@ -1,16 +1,15 @@
 from datasets import load_from_disk, Dataset, load_dataset
 from transformers import (
-    BertForMaskedLM,
     Trainer,
     TrainingArguments,
     DataCollatorForLanguageModeling,
     EarlyStoppingCallback,
-    BertForSequenceClassification,
-    BertForTokenClassification,
-    BertPreTrainedModel,
-    BertModel,
-    BertConfig,
+    AutoConfig,
+    AutoModel,
+    AutoModelForSequenceClassification,
+    AutoModelForTokenClassification,
     AutoTokenizer,
+    AutoModelForMaskedLM,
     DataCollatorForTokenClassification,
 )
 from transformers.modeling_outputs import TokenClassifierOutput
@@ -76,23 +75,35 @@ class SiniticPreTrainer:
             mlm_probability=0.15
         )
 
-        config = BertConfig(
-            vocab_size=len(self.tokenizer),
-            hidden_size=768,
-            num_hidden_layers=12,
-            num_attention_heads=12,
-            intermediate_size=3072,
-            max_position_embeddings=514,  # 512 + 2
-            type_vocab_size=2,
-            pad_token_id=self.tokenizer.pad_token_id,
-)
-
         if self.from_scratch:
-            model = BertForMaskedLM(config=config)
-            model.resize_token_embeddings(len(self.tokenizer))
+            if os.path.exists(os.path.join(self.model_dir, "config.json")):
+                # Reuse the architecture (BERT, XLM-R, ModernBERT, ...) of model_dir, with fresh weights
+                config = AutoConfig.from_pretrained(
+                    self.model_dir,
+                    vocab_size=len(self.tokenizer),
+                    pad_token_id=self.tokenizer.pad_token_id,
+                    trust_remote_code=True,
+                )
+            else:
+                # model_dir only holds a tokenizer: fall back to a BERT-base architecture
+                config = AutoConfig.for_model(
+                    "bert",
+                    vocab_size=len(self.tokenizer),
+                    hidden_size=768,
+                    num_hidden_layers=12,
+                    num_attention_heads=12,
+                    intermediate_size=3072,
+                    max_position_embeddings=514,  # 512 + 2
+                    type_vocab_size=2,
+                    pad_token_id=self.tokenizer.pad_token_id,
+                )
+            model = AutoModelForMaskedLM.from_config(config, trust_remote_code=True)
         else:
-            model = BertForMaskedLM.from_pretrained(self.model_dir)
-            model.resize_token_embeddings(len(self.tokenizer))
+            model = AutoModelForMaskedLM.from_pretrained(
+                self.model_dir,
+                trust_remote_code=True,
+            )
+        model.resize_token_embeddings(len(self.tokenizer))
 
         output_dir_name = f"./{self.lang}-scratch" if self.from_scratch else f"./{self.lang}-transfer"
 
@@ -151,7 +162,8 @@ class CantoPreTrainer(SiniticPreTrainer):
                 f"Please first run `python download.py --lang=yue --model_dir={self.model_dir}`."
             )
 
-        self.tokenizer = AutoTokenizer.from_pretrained(self.model_dir)
+        self.tokenizer = AutoTokenizer.from_pretrained(self.model_dir,
+            trust_remote_code=True,)
 
     def preprocess_data(self):
         if self.data == "wiki":
@@ -230,7 +242,8 @@ class WuPreTrainer(SiniticPreTrainer):
                 f"Please first run `python download.py --lang=wuu --model_dir={self.model_dir}`."
             )
         self.ds = load_from_disk("./data/wuu-wiki-local")
-        self.tokenizer = AutoTokenizer.from_pretrained(self.model_dir)
+        self.tokenizer = AutoTokenizer.from_pretrained(self.model_dir,
+            trust_remote_code=True,)
 
 
 def compute_classification_metrics(num_labels):
@@ -270,12 +283,13 @@ class CantoFineTuningBase:
                 f"Model directory {self.model_dir} not found."
                 f"Please first run `python download.py --lang={lang} --model_dir={model_dir}`."
             )
-        self.tokenizer = AutoTokenizer.from_pretrained(self.model_dir)
+        self.tokenizer = AutoTokenizer.from_pretrained(self.model_dir,
+            trust_remote_code=True,)
 
 
 class CantoSequenceClassificationFineTuner(CantoFineTuningBase):
     """Shared base for single- and paired-sentence classification tasks (nli, sentiment,
-    ld, laj), all of which use BertForSequenceClassification and differ only in input
+    ld, laj), all of which use AutoModelForSequenceClassification and differ only in input
     shape, label space, and where their data lives."""
 
     task_name = None
@@ -291,11 +305,12 @@ class CantoSequenceClassificationFineTuner(CantoFineTuningBase):
         super().__init__(lang, model_dir)
         self.label2id = {v: k for k, v in self.id2label.items()}
         self.num_labels = len(self.id2label)
-        self.model = BertForSequenceClassification.from_pretrained(
+        self.model = AutoModelForSequenceClassification.from_pretrained(
             self.model_dir,
             num_labels=self.num_labels,
             id2label=self.id2label,
             label2id=self.label2id,
+            trust_remote_code=True,
         )
         self.finetune_dataset = None
         self.preprocess_data(eval_only=eval_only)
@@ -442,13 +457,6 @@ class CantoPOSFineTuner(CantoFineTuningBase):
     def __init__(self, lang, model_dir):
         super().__init__(lang, model_dir)
         self.finetune_dataset = None
-        self.tokenizer = AutoTokenizer.from_pretrained(model_dir,
-                                                           unk_token="[UNK]",
-                                                           pad_token="[PAD]",
-                                                           cls_token="[CLS]",
-                                                           sep_token="[SEP]",
-                                                           mask_token="[MASK]",
-                                                           )
         self.pos_tags = ['ADJ', 'ADP', 'ADV', 'AUX', 'CCONJ', 'DET', 'INTJ', 'NOUN', 'NUM',
                     'PART', 'PRON', 'PROPN', 'PUNCT', 'SCONJ', 'SYM', 'VERB', 'X']
         self.tag2id = {tag: i for i, tag in enumerate(self.pos_tags)}
@@ -502,11 +510,12 @@ class CantoPOSFineTuner(CantoFineTuningBase):
             raise ValueError(f"'train' and 'validation' splits must be present in finetune_dataset."
                              f"Found: {self.finetune_dataset.keys()}")
 
-        model = BertForTokenClassification.from_pretrained(
+        model = AutoModelForTokenClassification.from_pretrained(
             self.model_dir,
             num_labels=len(self.tag2id),
             id2label=self.id2tag,
-            label2id=self.tag2id
+            label2id=self.tag2id,
+            trust_remote_code=True,
         )
 
         model.resize_token_embeddings(len(self.tokenizer))
@@ -570,22 +579,28 @@ class CantoPOSFineTuner(CantoFineTuningBase):
 
 
 
-class BertForDependencyParsing(BertPreTrainedModel):
+class EncoderForDependencyParsing(nn.Module):
     """
+    Architecture-agnostic encoder (BERT, XLM-R, ModernBERT, ...) with two token-level heads:
     head_classifier: predicts head index in [0..max_length-1] (we map ROOT -> [CLS] position 0)
     rel_classifier: predicts dependency relation label for each token
     """
-    def __init__(self, config, num_rel_labels):
-        super().__init__(config)
-        self.bert = BertModel(config)
-        self.dropout = nn.Dropout(config.hidden_dropout_prob)
+    def __init__(self, model_dir, num_rel_labels, max_length=128):
+        super().__init__()
+        self.encoder = AutoModel.from_pretrained(model_dir, trust_remote_code=True)
+        config = self.encoder.config
+        # Dropout config names differ across architectures (ModernBERT has no hidden_dropout_prob)
+        dropout = next(
+            (getattr(config, name) for name in ("classifier_dropout", "hidden_dropout_prob", "dropout")
+             if getattr(config, name, None) is not None),
+            0.1,
+        )
+        self.dropout = nn.Dropout(dropout)
 
         # Predict head index among max_length token positions
-        self.head_classifier = nn.Linear(config.hidden_size, config.max_position_embeddings)
+        self.head_classifier = nn.Linear(config.hidden_size, max_length)
         # Predict relation label
         self.rel_classifier = nn.Linear(config.hidden_size, num_rel_labels)
-
-        self.init_weights()
 
     def forward(
         self,
@@ -595,10 +610,10 @@ class BertForDependencyParsing(BertPreTrainedModel):
         labels_rel=None,    # [B, L] with rel ids, -100 to ignore
         **kwargs
     ):
-        outputs = self.bert(input_ids, attention_mask=attention_mask, **kwargs)
+        outputs = self.encoder(input_ids=input_ids, attention_mask=attention_mask, **kwargs)
         seq = self.dropout(outputs.last_hidden_state)  # [B, L, H]
 
-        head_logits = self.head_classifier(seq)  # [B, L, max_pos] (use as [B, L, L] effectively)
+        head_logits = self.head_classifier(seq)  # [B, L, max_length] (i.e. [B, L, L])
         rel_logits  = self.rel_classifier(seq)   # [B, L, R]
 
         loss = None
@@ -617,7 +632,7 @@ class CantoDEPSFineTuner(CantoFineTuningBase):
     def __init__(self, lang, model_dir):
         super().__init__(lang, model_dir)
         self.finetune_dataset = None
-        self.tokenizer = AutoTokenizer.from_pretrained(model_dir)
+        self.max_length = 128
 
         # You can expand/adjust to your UD label set (incl. language-specific subtypes like discourse:sp)
         self.dep_labels = [
@@ -653,7 +668,7 @@ class CantoDEPSFineTuner(CantoFineTuningBase):
                 is_split_into_words=True,
                 truncation=True,
                 padding="max_length",
-                max_length=128,
+                max_length=self.max_length,
                 return_offsets_mapping=False,
             )
 
@@ -735,12 +750,13 @@ class CantoDEPSFineTuner(CantoFineTuningBase):
     def finetune(self):
         self.preprocess_data()
 
-        model = BertForDependencyParsing.from_pretrained(
+        model = EncoderForDependencyParsing(
             self.model_dir,
             num_rel_labels=len(self.rel2id),
+            max_length=self.max_length,
         )
 
-        model.resize_token_embeddings(len(self.tokenizer))
+        model.encoder.resize_token_embeddings(len(self.tokenizer))
 
         args = TrainingArguments(
             output_dir=f"./models/{self.lang}-deps-{self.model_dir.strip('/').split('/')[-1]}",
@@ -826,9 +842,10 @@ class CantoDEPSFineTuner(CantoFineTuningBase):
 
 
 
-class CantoTokenClassificationFineTuner(CantoNLIFineTuner):
-    def __init__(self, lang="yue", model_dir="./yue-monolingual"):
+class CantoTokenClassificationFineTuner(CantoFineTuningBase):
+    def __init__(self, lang="yue", model_dir="./models/yue-monolingual"):
         super().__init__(lang, model_dir)
+        self.finetune_dataset = None
 
     def preprocess_data(self):
         nlu_data = load_from_disk('./data/nlptea_dataset')['train']
@@ -933,11 +950,12 @@ class CantoTokenClassificationFineTuner(CantoNLIFineTuner):
 
         for fold, dataset in enumerate(self.finetune_dataset):
             print(f"Training on fold {fold + 1}/{len(self.finetune_dataset)}")
-            model = BertForTokenClassification.from_pretrained(
+            model = AutoModelForTokenClassification.from_pretrained(
                 self.model_dir,
                 num_labels=2,
                 id2label=id2label,
-                label2id=label2id
+                label2id=label2id,
+                trust_remote_code=True,
             )
 
             trainer = Trainer(

@@ -1,4 +1,4 @@
-transformers
+transformers>=4.48  # ModernBERT support
 tensorboard
 datasets
 torch
