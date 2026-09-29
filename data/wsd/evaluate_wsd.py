@@ -37,11 +37,13 @@ for row in df.iter_rows(named=True):
     assert row["traditional"] in row["sentence1"]
     assert row["traditional"] in row["sentence2"]
 
+df.write_csv("data/wsd/senses-traditional.csv")
+
 
 model_path = args.model_dir
 
 model = AutoModel.from_pretrained(model_path)
-tokenizer = AutoTokenizer.from_pretrained(model_path)
+tokenizer = AutoTokenizer.from_pretrained(model_path, trust_remote_code=True)
 
 df = pl.read_csv("data/wsd/senses-traditional.csv")
 

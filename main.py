@@ -275,9 +275,11 @@ class CantoFineTuningBase:
     """Lightweight base for fine-tuning tasks: only needs a tokenizer and the base model
     directory, unlike CantoPreTrainer, which also requires the Cantonese Wikipedia corpus."""
 
-    def __init__(self, lang="yue", model_dir="./models/yue-monolingual"):
+    def __init__(self, lang="yue", model_dir="./models/yue-monolingual", per_device_batch_size=64):
         self.lang = lang
         self.model_dir = model_dir
+        # Default suits base-sized encoders; lower it for large models (e.g. 16 for ModernBERT-large)
+        self.per_device_batch_size = per_device_batch_size
         if not os.path.exists(self.model_dir):
             raise FileNotFoundError(
                 f"Model directory {self.model_dir} not found."
@@ -298,11 +300,10 @@ class CantoSequenceClassificationFineTuner(CantoFineTuningBase):
     split_paths = {}
     learning_rate = 2e-5
     num_train_epochs = 3
-    per_device_batch_size = 64
     max_length = 128
 
-    def __init__(self, lang="yue", model_dir="./models/yue-monolingual", eval_only=False):
-        super().__init__(lang, model_dir)
+    def __init__(self, lang="yue", model_dir="./models/yue-monolingual", eval_only=False, per_device_batch_size=64):
+        super().__init__(lang, model_dir, per_device_batch_size)
         self.label2id = {v: k for k, v in self.id2label.items()}
         self.num_labels = len(self.id2label)
         self.model = AutoModelForSequenceClassification.from_pretrained(
@@ -454,8 +455,8 @@ class CantoLAJFineTuner(CantoSequenceClassificationFineTuner):
 
 
 class CantoPOSFineTuner(CantoFineTuningBase):
-    def __init__(self, lang, model_dir):
-        super().__init__(lang, model_dir)
+    def __init__(self, lang, model_dir, per_device_batch_size=64):
+        super().__init__(lang, model_dir, per_device_batch_size)
         self.finetune_dataset = None
         self.pos_tags = ['ADJ', 'ADP', 'ADV', 'AUX', 'CCONJ', 'DET', 'INTJ', 'NOUN', 'NUM',
                     'PART', 'PRON', 'PROPN', 'PUNCT', 'SCONJ', 'SYM', 'VERB', 'X']
@@ -525,8 +526,8 @@ class CantoPOSFineTuner(CantoFineTuningBase):
             overwrite_output_dir=True,
             num_train_epochs=3,
             learning_rate=2e-5,
-            per_device_train_batch_size=64,
-            per_device_eval_batch_size=64,
+            per_device_train_batch_size=self.per_device_batch_size,
+            per_device_eval_batch_size=self.per_device_batch_size,
             eval_strategy="epoch",
             save_strategy="epoch",
             logging_dir="./logs",
@@ -629,8 +630,8 @@ class EncoderForDependencyParsing(nn.Module):
 
 
 class CantoDEPSFineTuner(CantoFineTuningBase):
-    def __init__(self, lang, model_dir):
-        super().__init__(lang, model_dir)
+    def __init__(self, lang, model_dir, per_device_batch_size=64):
+        super().__init__(lang, model_dir, per_device_batch_size)
         self.finetune_dataset = None
         self.max_length = 128
 
@@ -763,8 +764,8 @@ class CantoDEPSFineTuner(CantoFineTuningBase):
             overwrite_output_dir=True,
             num_train_epochs=3,
             learning_rate=2e-5,
-            per_device_train_batch_size=64,
-            per_device_eval_batch_size=64,
+            per_device_train_batch_size=self.per_device_batch_size,
+            per_device_eval_batch_size=self.per_device_batch_size,
             eval_strategy="epoch",
             save_strategy="epoch",
             logging_dir="./logs",
@@ -843,8 +844,8 @@ class CantoDEPSFineTuner(CantoFineTuningBase):
 
 
 class CantoTokenClassificationFineTuner(CantoFineTuningBase):
-    def __init__(self, lang="yue", model_dir="./models/yue-monolingual"):
-        super().__init__(lang, model_dir)
+    def __init__(self, lang="yue", model_dir="./models/yue-monolingual", per_device_batch_size=64):
+        super().__init__(lang, model_dir, per_device_batch_size)
         self.finetune_dataset = None
 
     def preprocess_data(self):
@@ -936,8 +937,8 @@ class CantoTokenClassificationFineTuner(CantoFineTuningBase):
             num_train_epochs=3,
             optim="adamw_torch",
             learning_rate=1e-5,
-            per_device_train_batch_size=64,
-            per_device_eval_batch_size=64,
+            per_device_train_batch_size=self.per_device_batch_size,
+            per_device_eval_batch_size=self.per_device_batch_size,
             logging_steps=50,
             report_to="tensorboard",
         )
