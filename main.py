@@ -1,4 +1,4 @@
-from datasets import load_from_disk, Dataset, load_dataset
+from datasets import load_from_disk, Dataset, load_dataset, disable_progress_bars
 from transformers import (
     Trainer,
     TrainingArguments,
@@ -10,13 +10,12 @@ from transformers import (
     AutoModelForTokenClassification,
     AutoTokenizer,
     AutoModelForMaskedLM,
-    DataCollatorForTokenClassification,
 )
 from transformers.modeling_outputs import TokenClassifierOutput
 import os
 import numpy as np
-from sklearn.metrics import accuracy_score, confusion_matrix, f1_score, precision_recall_fscore_support
-from sklearn.model_selection import KFold, train_test_split
+from sklearn.metrics import accuracy_score, confusion_matrix, f1_score
+from sklearn.model_selection import train_test_split
 import evaluate
 from utils import get_subset
 import torch.nn as nn
@@ -24,6 +23,12 @@ import re
 from tqdm import tqdm
 
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
+disable_progress_bars()
+
+# Pre-training logs training loss ~20 times per run regardless of dataset/batch size:
+# transformers reads a logging_steps value below 1 as a fraction of total training steps.
+# Fine-tuning logs once per epoch instead (logging_strategy="epoch").
+LOGGING_STEPS = 0.05
 
 class SiniticPreTrainer:
     def __init__(self, lang="", model_dir="./models/yue-monolingual", scratch=False, data=None):
@@ -35,32 +40,6 @@ class SiniticPreTrainer:
         self.lm_dataset = None
         self.from_scratch = scratch
         self.data = data
-
-    def preprocess_data(self):
-        self.ds = self.ds.filter(lambda x: len(x["text"]) > 100)  # Remove stubs/empty pages
-
-        def tokenize(example):
-            return self.tokenizer(example["text"], return_special_tokens_mask=True, truncation=False)
-
-        tokenized_ds = self.ds.map(tokenize, batched=True, remove_columns=["text", "title", "id", "url"])
-
-        # For example, into 512-token chunks
-        block_size = 512
-
-        def group_texts(examples):
-            concatenated = {k: sum(examples[k], []) for k in examples.keys()}
-            total_length = (len(concatenated["input_ids"]) // block_size) * block_size
-            result = {
-                k: [t[i:i + block_size] for i in range(0, total_length, block_size)]
-                for k, t in concatenated.items()
-            }
-            return result
-
-        train_dataset, validation_dataset = tokenized_ds["train"].train_test_split(test_size=0.1).values()
-        self.lm_dataset = {
-            "train": train_dataset.map(group_texts, batched=True),
-            "validation": validation_dataset.map(group_texts, batched=True)
-        }
 
     def train(self):
         self.preprocess_data()
@@ -116,7 +95,8 @@ class SiniticPreTrainer:
             weight_decay=0.01,
             save_steps=10000,
             save_total_limit=2,
-            logging_steps=100,
+            logging_steps=LOGGING_STEPS,
+            disable_tqdm=True,
             report_to="tensorboard",
             eval_strategy="steps",
             eval_steps=1000,
@@ -146,20 +126,23 @@ class CantoPreTrainer(SiniticPreTrainer):
         if data == "cantonese-sentences":
             if not os.path.exists("./data/cantonese-sentences"):
                 raise FileNotFoundError(
-                    "Cantonese Sentences dataset not found. Please first run `python download.py --lang=yue`."
+                    "Cantonese Sentences dataset not found at ./data/cantonese-sentences. Fetch it with "
+                    "`load_dataset('raptorkwok/cantonese_sentences').save_to_disk('./data/cantonese-sentences')`."
                 )
             self.ds = load_from_disk("./data/cantonese-sentences")
         else:
             if not os.path.exists("./data/yue-wiki-full-local"):
                 raise FileNotFoundError(
-                    "Cantonese Wiki dataset not found. Please first run `python download.py --lang=yue`."
+                    "Cantonese Wiki dataset not found at ./data/yue-wiki-full-local. Fetch it with "
+                    "`load_dataset('wikimedia/wikipedia', '20231101.zh-yue', split='train')"
+                    ".save_to_disk('./data/yue-wiki-full-local')`."
                 )
             self.ds = load_from_disk("./data/yue-wiki-full-local")
 
         if not os.path.exists(self.model_dir):
             raise FileNotFoundError(
-                f"Model directory {self.model_dir} not found."
-                f"Please first run `python download.py --lang=yue --model_dir={self.model_dir}`."
+                f"Model directory {self.model_dir} not found. "
+                f"Run `python download.py` to fetch the base models into ./models/."
             )
 
         self.tokenizer = AutoTokenizer.from_pretrained(self.model_dir,
@@ -229,23 +212,6 @@ class CantoPreTrainer(SiniticPreTrainer):
         tokenized.save_to_disk(f"data/pretokenized_{self.data}")
 
 
-class WuPreTrainer(SiniticPreTrainer):
-    def __init__(self, lang="wuu", model_dir="./models/yue-monolingual"):
-        super().__init__(lang, model_dir)
-        if not os.path.exists("./data/wuu-wiki-local"):
-            raise FileNotFoundError(
-                "Wu Wiki dataset not found. Please first run `python download.py --lang=wuu`."
-            )
-        if not os.path.exists(self.model_dir):
-            raise FileNotFoundError(
-                f"Model directory {self.model_dir} not found."
-                f"Please first run `python download.py --lang=wuu --model_dir={self.model_dir}`."
-            )
-        self.ds = load_from_disk("./data/wuu-wiki-local")
-        self.tokenizer = AutoTokenizer.from_pretrained(self.model_dir,
-            trust_remote_code=True,)
-
-
 def compute_classification_metrics(num_labels):
     """Shared accuracy/F1/confusion-matrix metrics for single-label sequence classification."""
     def compute_metrics(eval_pred):
@@ -282,8 +248,8 @@ class CantoFineTuningBase:
         self.per_device_batch_size = per_device_batch_size
         if not os.path.exists(self.model_dir):
             raise FileNotFoundError(
-                f"Model directory {self.model_dir} not found."
-                f"Please first run `python download.py --lang={lang} --model_dir={model_dir}`."
+                f"Model directory {self.model_dir} not found. "
+                f"Run `python download.py` to fetch the base models into ./models/."
             )
         self.tokenizer = AutoTokenizer.from_pretrained(self.model_dir,
             trust_remote_code=True,)
@@ -318,21 +284,19 @@ class CantoSequenceClassificationFineTuner(CantoFineTuningBase):
 
         model_basename = [f for f in self.model_dir.split('/') if f][-1]
         self.training_args = TrainingArguments(
-            output_dir=f"./models/{self.lang}-{self.task_name}-{model_basename}",
+            # Fine-tuned weights aren't saved; output_dir only holds TensorBoard logs
+            output_dir=f"./logs/{self.lang}-{self.task_name}-{model_basename}",
             overwrite_output_dir=True,
             num_train_epochs=self.num_train_epochs,
             optim="adamw_torch",
             learning_rate=self.learning_rate,
             per_device_train_batch_size=self.per_device_batch_size,
             per_device_eval_batch_size=self.per_device_batch_size,
-            logging_steps=100,
+            disable_tqdm=True,
             report_to="tensorboard",
             eval_strategy="epoch",
-            save_strategy="epoch",
-            save_total_limit=2,
-            load_best_model_at_end=True,
-            metric_for_best_model="eval_macro_f1",
-            greater_is_better=True,
+            logging_strategy="epoch",
+            save_strategy="no",
         )
 
     def load_raw_splits(self, eval_only=False):
@@ -384,16 +348,14 @@ class CantoSequenceClassificationFineTuner(CantoFineTuningBase):
         )
 
         trainer.train()
-        model_basename = [f for f in self.model_dir.split('/') if f][-1]
-        trainer.save_model(f"./models/{self.lang}-{self.task_name}-{model_basename}")
         self.eval(trainer)
 
     def eval(self, trainer):
         trainer.compute_metrics = compute_classification_metrics(self.num_labels)
         metrics = trainer.evaluate(eval_dataset=self.finetune_dataset["test"])
-        print(f"Accuracy: {metrics['eval_accuracy']}")
-        print(f"Macro F1: {metrics['eval_macro_f1']}")
-        print(f"Confusion matrix: {metrics['eval_confusion_matrix']}")
+        print(f"Final {self.task_name} test accuracy: {metrics['eval_accuracy']}")
+        print(f"Final {self.task_name} test macro F1: {metrics['eval_macro_f1']}")
+        print(f"Final {self.task_name} test confusion matrix: {metrics['eval_confusion_matrix']}")
 
 
 class CantoNLIFineTuner(CantoSequenceClassificationFineTuner):
@@ -458,8 +420,10 @@ class CantoPOSFineTuner(CantoFineTuningBase):
     def __init__(self, lang, model_dir, per_device_batch_size=64):
         super().__init__(lang, model_dir, per_device_batch_size)
         self.finetune_dataset = None
+        # The 15 UPOS tags attested in UD_Cantonese-HK (SYM and X are unused):
+        # https://universaldependencies.org/treebanks/yue_hk/index.html
         self.pos_tags = ['ADJ', 'ADP', 'ADV', 'AUX', 'CCONJ', 'DET', 'INTJ', 'NOUN', 'NUM',
-                    'PART', 'PRON', 'PROPN', 'PUNCT', 'SCONJ', 'SYM', 'VERB', 'X']
+                    'PART', 'PRON', 'PROPN', 'PUNCT', 'SCONJ', 'VERB']
         self.tag2id = {tag: i for i, tag in enumerate(self.pos_tags)}
         self.id2tag = {i: tag for tag, i in self.tag2id.items()}
 
@@ -522,20 +486,18 @@ class CantoPOSFineTuner(CantoFineTuningBase):
         model.resize_token_embeddings(len(self.tokenizer))
 
         training_args = TrainingArguments(
-            output_dir=f"./models/{self.lang}-pos-{self.model_dir.strip('/').split('/')[-1]}",
+            # Fine-tuned weights aren't saved; output_dir only holds TensorBoard logs
+            output_dir=f"./logs/{self.lang}-pos-{self.model_dir.strip('/').split('/')[-1]}",
             overwrite_output_dir=True,
             num_train_epochs=3,
             learning_rate=2e-5,
             per_device_train_batch_size=self.per_device_batch_size,
             per_device_eval_batch_size=self.per_device_batch_size,
             eval_strategy="epoch",
-            save_strategy="epoch",
-            logging_dir="./logs",
-            logging_steps=100,
+            logging_strategy="epoch",
+            save_strategy="no",
+            disable_tqdm=True,
             report_to="tensorboard",
-            load_best_model_at_end=True,
-            metric_for_best_model="eval_macro_f1",
-            greater_is_better=True,
         )
 
         def pos_compute_metrics(pred):
@@ -571,12 +533,11 @@ class CantoPOSFineTuner(CantoFineTuningBase):
         )
 
         trainer.train()
-        trainer.save_model(f"./models/{self.lang}-pos-{self.model_dir.strip('/').split('/')[-1]}")
 
         metrics = trainer.evaluate(self.finetune_dataset["test"])
-        print(f"Final test accuracy: {metrics['eval_accuracy']}")
-        print(f"Final test macro F1: {metrics['eval_macro_f1']}")
-        print(f"Final test micro F1: {metrics['eval_micro_f1']}")
+        print(f"Final pos test accuracy: {metrics['eval_accuracy']}")
+        print(f"Final pos test macro F1: {metrics['eval_macro_f1']}")
+        print(f"Final pos test micro F1: {metrics['eval_micro_f1']}")
 
 
 
@@ -635,13 +596,22 @@ class CantoDEPSFineTuner(CantoFineTuningBase):
         self.finetune_dataset = None
         self.max_length = 128
 
-        # You can expand/adjust to your UD label set (incl. language-specific subtypes like discourse:sp)
+        # The 49 relations attested in UD_Cantonese-HK: 31 universal relations (expl, fixed, list,
+        # orphan, goeswith and dep are unused) plus 18 language-specific subtypes. Relations missing
+        # here get label -100 and are dropped from the relation loss and from UAS/LAS.
+        # https://universaldependencies.org/treebanks/yue_hk/index.html
         self.dep_labels = [
-            "root","nsubj","obj","iobj","obl","vocative","expl","dislocated",
+            "root","nsubj","obj","iobj","obl","vocative","dislocated",
             "advcl","advmod","discourse","aux","cop","mark","nmod","appos",
-            "nummod","acl","amod","det","clf","case","conj","cc","fixed",
-            "flat","compound","list","parataxis","orphan","goeswith","reparandum",
-            "punct","dep","csubj","xcomp","ccomp"
+            "nummod","acl","amod","det","clf","case","conj","cc",
+            "flat","compound","parataxis","reparandum",
+            "punct","csubj","xcomp","ccomp",
+            # Language-specific subtypes
+            "advcl:coverb","advmod:df","case:loc","clf:det",
+            "compound:dir","compound:ext","compound:quant","compound:vo","compound:vv",
+            "discourse:sp","mark:adv","mark:rel",
+            "nsubj:pass","nsubj:periph","obj:periph",
+            "obl:agent","obl:patient","obl:tmod",
         ]
         self.rel2id = {r: i for i, r in enumerate(self.dep_labels)}
         self.id2rel = {i: r for r, i in self.rel2id.items()}
@@ -760,16 +730,17 @@ class CantoDEPSFineTuner(CantoFineTuningBase):
         model.encoder.resize_token_embeddings(len(self.tokenizer))
 
         args = TrainingArguments(
-            output_dir=f"./models/{self.lang}-deps-{self.model_dir.strip('/').split('/')[-1]}",
+            # Fine-tuned weights aren't saved; output_dir only holds TensorBoard logs
+            output_dir=f"./logs/{self.lang}-deps-{self.model_dir.strip('/').split('/')[-1]}",
             overwrite_output_dir=True,
-            num_train_epochs=3,
+            num_train_epochs=30,
             learning_rate=2e-5,
             per_device_train_batch_size=self.per_device_batch_size,
             per_device_eval_batch_size=self.per_device_batch_size,
             eval_strategy="epoch",
+            logging_strategy="epoch",
             save_strategy="epoch",
-            logging_dir="./logs",
-            logging_steps=50,
+            disable_tqdm=True,
             report_to="tensorboard",
             load_best_model_at_end=True,
             metric_for_best_model="eval_las",
@@ -836,156 +807,5 @@ class CantoDEPSFineTuner(CantoFineTuningBase):
         trainer.train()
 
         metrics = trainer.evaluate(self.finetune_dataset["test"])
-        print(f"Final UAS: {metrics['eval_uas']}")
-        print(f"Final LAS: {metrics['eval_las']}")
-
-        trainer.save_model(f"./models/{self.lang}-deps-{self.model_dir.strip('/').split('/')[-1]}")
-
-
-
-class CantoTokenClassificationFineTuner(CantoFineTuningBase):
-    def __init__(self, lang="yue", model_dir="./models/yue-monolingual", per_device_batch_size=64):
-        super().__init__(lang, model_dir, per_device_batch_size)
-        self.finetune_dataset = None
-
-    def preprocess_data(self):
-        nlu_data = load_from_disk('./data/nlptea_dataset')['train']
-        k_fold = KFold(n_splits=10, shuffle=True, random_state=42)
-        indices = list(k_fold.split(np.arange(len(nlu_data))))
-
-        def tokenize_and_align_labels(examples):
-            tokenized_inputs = self.tokenizer(examples["tokens"], truncation=True, is_split_into_words=True)
-
-            labels = []
-            for i, label in enumerate(examples[f"cantonese_tags"]):
-                word_ids = tokenized_inputs.word_ids(batch_index=i)  # Map tokens to their respective word.
-                previous_word_idx = None
-                label_ids = []
-                for word_idx in word_ids:  # Set the special tokens to -100.
-                    if word_idx is None:
-                        label_ids.append(-100)
-                    elif word_idx != previous_word_idx:  # Only label the first token of a given word.
-                        label_ids.append(label[word_idx])
-                    else:
-                        label_ids.append(-100)
-                    previous_word_idx = word_idx
-                labels.append(label_ids)
-
-            tokenized_inputs["labels"] = labels
-            return tokenized_inputs
-
-        self.finetune_dataset = []
-
-        for fold, (indices_train, indices_test) in enumerate(indices):
-            train_set = nlu_data.select(indices_train)
-            valid_set = nlu_data.select(indices_test)
-
-            train_set = train_set.map(tokenize_and_align_labels, batched=True)
-            valid_set = valid_set.map(tokenize_and_align_labels, batched=True)
-
-            self.finetune_dataset.append({
-                "train": train_set,
-                "validation": valid_set
-            })
-
-    def finetune(self):
-        self.preprocess_data()
-
-        data_collator = DataCollatorForTokenClassification(tokenizer=self.tokenizer)
-
-        seqeval = evaluate.load("seqeval")
-        label_list = ['Chinese', 'Cantonese']
-        id2label = {
-            0: 'Chinese',
-            1: 'Cantonese'
-        }
-        label2id = {
-            'Chinese': 0,
-            'Cantonese': 1
-        }
-
-        def compute_nlu_metrics(p):
-            predictions, labels = p
-            predictions = np.argmax(predictions, axis=2)
-
-            true_predictions = [
-                [label_list[p] for (p, l) in zip(prediction, label) if l != -100]
-                for prediction, label in zip(predictions, labels)
-            ]
-            true_labels = [
-                [label_list[l] for (p, l) in zip(prediction, label) if l != -100]
-                for prediction, label in zip(predictions, labels)
-            ]
-
-            results = seqeval.compute(predictions=true_predictions, references=true_labels)
-            _, _, f1_scores, _ = precision_recall_fscore_support(
-                [l for sublist in true_labels for l in sublist],
-                [p for sublist in true_predictions for p in sublist],
-                labels=["Cantonese"]
-            )
-            f1_positive = f1_scores[0]
-
-            return {
-                "f1_positive": f1_positive,
-                "f1": results["overall_f1"],
-                "accuracy": results["overall_accuracy"],
-            }
-
-        training_args = TrainingArguments(
-            output_dir=f"./models/{self.lang}-nlu-{[f for f in self.model_dir.split('/') if f][-1]}",
-            overwrite_output_dir=True,
-            num_train_epochs=3,
-            optim="adamw_torch",
-            learning_rate=1e-5,
-            per_device_train_batch_size=self.per_device_batch_size,
-            per_device_eval_batch_size=self.per_device_batch_size,
-            logging_steps=50,
-            report_to="tensorboard",
-        )
-
-        cross_validation_results = {
-            'f1_positive': [],
-            'f1': [],
-            'accuracy': [],
-        }
-
-        for fold, dataset in enumerate(self.finetune_dataset):
-            print(f"Training on fold {fold + 1}/{len(self.finetune_dataset)}")
-            model = AutoModelForTokenClassification.from_pretrained(
-                self.model_dir,
-                num_labels=2,
-                id2label=id2label,
-                label2id=label2id,
-                trust_remote_code=True,
-            )
-
-            trainer = Trainer(
-                model=model,
-                args=training_args,
-                train_dataset=dataset["train"],
-                eval_dataset=dataset["validation"],
-                processing_class=self.tokenizer,
-                data_collator=data_collator,
-                compute_metrics=compute_nlu_metrics,
-            )
-
-            trainer.train()
-            # trainer.save_model(f"./models/{self.lang}-nli-{[f for f in self.model_dir.split('/') if f][-1]}-fold-{fold}")
-
-            metrics = trainer.evaluate(
-                eval_dataset=dataset["validation"],
-            )
-            print(metrics)
-
-            cross_validation_results['accuracy'].append(metrics['eval_accuracy'])
-            cross_validation_results['f1_positive'].append(metrics['eval_f1_positive'])
-            cross_validation_results['f1'].append(metrics['eval_f1'])
-            print(f"Fold {fold + 1} - Accuracy: {metrics['eval_accuracy']}")
-            print(f"Fold {fold + 1} - F1: {metrics['eval_f1']}")
-            print(f"Fold {fold + 1} - F1 Positive: {metrics['eval_f1_positive']}")
-
-        print("Cross-validation results:")
-        print(f"Average Accuracy: {np.mean(cross_validation_results['accuracy'])}")
-        print(f"Average F1: {np.mean(cross_validation_results['f1'])}")
-        print(f"Average F1 Positive: {np.mean(cross_validation_results['f1_positive'])}")
-
+        print(f"Final deps test UAS: {metrics['eval_uas']}")
+        print(f"Final deps test LAS: {metrics['eval_las']}")

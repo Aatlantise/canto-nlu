@@ -32,7 +32,7 @@ All commands are run from the repository root.
 python run.py --task=sentiment --model_dir=./models/yue-monolingual
 ```
 
-`--task` is one of `nli`, `sentiment`, `ld`, `laj`, `pos`, `deps`. Fine-tuned models are saved to `./models/yue-{task}-{model}`.
+`--task` is one of `nli`, `sentiment`, `ld`, `laj`, `pos`, `deps`. Fine-tuned weights are not saved; test-set metrics are printed at the end of each run, and TensorBoard logs go to `./logs/yue-{task}-{model}`.
 Add `--eval_only` to evaluate a model on the test set without training (classification tasks only).
 
 **Zero-shot evaluation**:

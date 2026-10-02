@@ -1,5 +1,4 @@
 from main import (
-    WuPreTrainer,
     CantoPreTrainer,
     CantoSequenceClassificationFineTuner,
     CantoNLIFineTuner,
@@ -28,11 +27,8 @@ def run(args):
                                 "cantonese-sentences"], f"{args.data} is not a valid dataset. Choose between 'wiki', 'cantonese-sentences'"
             model = CantoPreTrainer(model_dir=args.model_dir, scratch=args.scratch, data=args.data)
             model.train()
-        elif args.lang == "wuu":
-            model = WuPreTrainer(model_dir=args.model_dir)
-            model.train()
         else:
-            print(f"{args.lang} pre-training is not supported. Please choose from: yue, wuu")
+            print(f"{args.lang} pre-training is not supported. Please choose from: yue")
     if args.finetune:
         if args.lang == "yue":
             fine_tuner_cls = FINETUNE_TASKS.get(args.task)
