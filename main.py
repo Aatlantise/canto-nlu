@@ -12,11 +12,19 @@ from transformers import (
     BertPreTrainedModel,
     BertModel,
     BertConfig,
+    ModernBertConfig,
+    ModernBertForMaskedLM,
+    AutoModelForMaskedLM,
+    AutoModelForSequenceClassification,
+    AutoModelForTokenClassification,
     AutoTokenizer,
+    AutoConfig,
     DataCollatorForTokenClassification,
     DebertaV2Tokenizer,
 )
 from transformers.modeling_outputs import TokenClassifierOutput
+from transformers.trainer_utils import get_last_checkpoint
+from accelerate import PartialState
 import os
 import numpy as np
 import pandas as pd
@@ -32,16 +40,25 @@ from tqdm import tqdm
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
 
+def load_tokenizer(model_dir, tokenizer_dir):
+    tokenizer = AutoTokenizer.from_pretrained(tokenizer_dir, trust_remote_code=True)
+    if AutoConfig.from_pretrained(model_dir).model_type == "modernbert":
+        tokenizer.model_input_names = ["input_ids", "attention_mask"]  # no segment embeddings
+    return tokenizer
+
+
 class SiniticPreTrainer:
-    def __init__(self, lang="", model_dir="./models/bert-base-chinese-local", scratch=False, data=None):
+    def __init__(self, lang="", model_dir="./models/bert-base-chinese-local", tokenizer_dir="./models/bert-base-chinese-local", scratch=False, data=None):
         self.ds = None
         self.tokenizer = None
         self.lang = lang
         self.model_dir = model_dir
+        self.tokenizer_dir = tokenizer_dir
         self.tokenized_ds = None
         self.lm_dataset = None
         self.from_scratch = scratch
         self.data = data
+        print(f'hehhhh!!!??? {self.data}')
 
     def preprocess_data(self):
         self.ds = self.ds.filter(lambda x: len(x["text"]) > 100)  # Remove stubs/empty pages
@@ -138,52 +155,61 @@ class CantoPreTrainer(SiniticPreTrainer):
     # `canto-corpus`: pre-training over corpus.py's corpus, weighted as in tokenizer.py
     CORPUS_FILE = "./data/canto-corpus.jsonl"
     VAL_INDICES_FILE = "./val_indices.txt"
-    TOKENIZER_DIR = "./cantonese_tokenizer/canto_tokenizer_hf"
-    MAX_LENGTH = 128
+    # each architecture trains at its own window; TOKENS_PER_STEP holds the token budget equal
+    ARCHITECTURES = {
+        "bert": {"max_length": 128, "mlm_probability": 0.15},
+        "modernbert": {"max_length": 1024, "mlm_probability": 0.30},
+    }
+    TOKENS_PER_STEP = 32768
     TEMPERATURE = 2.0  # t in tokenizer.py
     MAX_BOOST = 16  # r in tokenizer.py: no source is sampled past 16x its natural share
-    MAX_STEPS = 250000
-    BATCH_SIZE = 256
+    MAX_STEPS = 370000
     LEARNING_RATE = 1e-4
     WARMUP_STEPS = 10000
 
-    def __init__(self, lang="yue", model_dir="./models/bert-base-chinese-local", scratch=False, data=None):
-        super().__init__(lang, model_dir, scratch, data)
-        # checking data happens in run.py
-        if data == "canto-corpus":
-            for path, command in [(self.CORPUS_FILE, "python corpus.py --lang=yue"),
-                                  (self.TOKENIZER_DIR, "python tokenizer.py"),
-                                  (self.VAL_INDICES_FILE, "python tokenizer.py")]:
-                if not os.path.exists(path):
-                    raise FileNotFoundError(f"{path} not found. Please first run `{command}`.")
-            if not self.from_scratch and not os.path.exists(self.model_dir):
-                raise FileNotFoundError(
-                    f"Model directory {self.model_dir} not found."
-                    f"Please first run `python download.py --lang=yue --model_dir={self.model_dir}`."
-                )
-            self.tokenizer = AutoTokenizer.from_pretrained(self.TOKENIZER_DIR)
-            return
+    def __init__(self, lang="yue", model_dir="./models/bert-base-chinese-local", tokenizer_dir="./models/bert-base-chinese-local", scratch=False, data=None,
+                 arch="bert"):
+        print(f'what. {data}')
+        super().__init__(lang, model_dir, tokenizer_dir, scratch, data)
+        print(f'hehhhh??? {self.data}')
+        if arch not in self.ARCHITECTURES:
+            raise ValueError(f"{arch} is not supported. Choose between {sorted(self.ARCHITECTURES)}.")
+        self.arch = arch
+        self.MAX_LENGTH = self.ARCHITECTURES[arch]["max_length"]
+        self.MLM_PROBABILITY = self.ARCHITECTURES[arch]["mlm_probability"]
+        # per_device_train_batch_size is per GPU, so divide by the world size to hold the
+        # global budget at TOKENS_PER_STEP however many GPUs the job has: a 4-GPU run must
+        # take the same optimizer steps over the same tokens as the 1-GPU runs it is compared to
+        self.WORLD_SIZE = int(os.environ.get("WORLD_SIZE", 1))
+        blocks_per_step = self.TOKENS_PER_STEP // self.MAX_LENGTH
+        if blocks_per_step % self.WORLD_SIZE:
+            raise ValueError(
+                f"{blocks_per_step} blocks per step is not divisible by WORLD_SIZE="
+                f"{self.WORLD_SIZE}, so the global token budget would not match a 1-GPU run."
+            )
+        self.BATCH_SIZE = blocks_per_step // self.WORLD_SIZE
 
-        if data == "cantonese-sentences":
-            if not os.path.exists("./data/cantonese-sentences"):
-                raise FileNotFoundError(
-                    "Cantonese Sentences dataset not found. Please first run `python download.py --lang=yue`."
-                )
-            self.ds = load_from_disk("./data/cantonese-sentences")
-        else:
-            if not os.path.exists("./data/yue-wiki-full-local"):
-                raise FileNotFoundError(
-                    "Cantonese Wiki dataset not found. Please first run `python download.py --lang=yue`."
-                )
-            self.ds = load_from_disk("./data/yue-wiki-full-local")
+        # if data == "cantonese-sentences":
+        #     if not os.path.exists("./data/cantonese-sentences"):
+        #         raise FileNotFoundError(
+        #             "Cantonese Sentences dataset not found. Please first run `python download.py --lang=yue`."
+        #         )
+        #     self.ds = load_from_disk("./data/cantonese-sentences")
+        # else:
+        #     if not os.path.exists("./data/yue-wiki-full-local"):
+        #         raise FileNotFoundError(
+        #             "Cantonese Wiki dataset not found. Please first run `python download.py --lang=yue`."
+        #         )
+        #     self.ds = load_from_disk("./data/yue-wiki-full-local")
 
         if not os.path.exists(self.model_dir):
             raise FileNotFoundError(
                 f"Model directory {self.model_dir} not found."
                 f"Please first run `python download.py --lang=yue --model_dir={self.model_dir}`."
             )
+        print(f"!!!!!!{self.data}")
 
-        self.tokenizer = AutoTokenizer.from_pretrained(self.model_dir)
+        self.tokenizer = load_tokenizer(self.model_dir, self.tokenizer_dir)
 
     def preprocess_data(self):
         if self.data == "wiki":
@@ -296,7 +322,7 @@ class CantoPreTrainer(SiniticPreTrainer):
         return packed
 
     def canto_corpus_preprocess_data(self):
-        cache = f"data/pretokenized_{self.data}"
+        cache = f"data/pretokenized_{self.data}_{self.tokenizer_dir.split('/')[-1]}"
         if os.path.exists(cache):
             tokenized = load_from_disk(cache)
             print(f"Reusing {cache} ({len(tokenized):,} rows; delete it to rebuild).")
@@ -306,8 +332,7 @@ class CantoPreTrainer(SiniticPreTrainer):
 
             def tokenize_function(batch):
                 return {
-                    "input_ids": self.tokenizer(batch["text"], truncation=True,
-                                                max_length=self.MAX_LENGTH)["input_ids"],
+                    "input_ids": self.tokenizer(batch["text"], truncation=False)["input_ids"],
                     "n_chars": [len(text) for text in batch["text"]],
                 }
 
@@ -353,30 +378,49 @@ class CantoPreTrainer(SiniticPreTrainer):
     def train(self):
         if self.data != "canto-corpus":
             return super().train()
+        print(f"!!!!!!{self.data}")
 
-        self.preprocess_data()
+        # every rank reaches this before Trainer exists, so rank 0 tokenizes and packs
+        # while the others wait and then hit the cache -- otherwise all of them race to
+        # write data/pretokenized_* and the per-source pack fingerprints
+        with PartialState().main_process_first():
+            self.preprocess_data()
 
         data_collator = DataCollatorForLanguageModeling(
             tokenizer=self.tokenizer,
             mlm=True,
-            mlm_probability=0.15
+            mlm_probability=self.MLM_PROBABILITY
         )
 
-        config = BertConfig(
-            vocab_size=len(self.tokenizer),
-            pad_token_id=self.tokenizer.pad_token_id,
-        )
+        if self.arch == "modernbert":
+            config = ModernBertConfig(
+                vocab_size=len(self.tokenizer),
+                pad_token_id=self.tokenizer.pad_token_id,
+                cls_token_id=self.tokenizer.cls_token_id,
+                sep_token_id=self.tokenizer.sep_token_id,
+                max_position_embeddings=self.MAX_LENGTH,
+            )
+            model_class = ModernBertForMaskedLM
+        else:
+            config = BertConfig(
+                vocab_size=len(self.tokenizer),
+                pad_token_id=self.tokenizer.pad_token_id,
+                max_position_embeddings=self.MAX_LENGTH,
+            )
+            model_class = BertForMaskedLM
 
         if self.from_scratch:
-            model = BertForMaskedLM(config=config)
+            model = model_class(config=config)
         else:
-            model = BertForMaskedLM.from_pretrained(self.model_dir)
+            model = AutoModelForMaskedLM.from_pretrained(self.model_dir, sparse_prediction=True)
         model.resize_token_embeddings(len(self.tokenizer))
 
-        output_dir_name = f"./models/{self.lang}-canto-corpus"
+        output_dir_name = f"./models/{self.lang}-canto-corpus-{self.arch}-scratch{'Y' if self.from_scratch else 'N'}"
+        global_batch = self.BATCH_SIZE * self.WORLD_SIZE
         print(f"\n{model.num_parameters() / 1e6:.1f}M parameters, {self.MAX_STEPS:,} steps of "
-              f"{self.BATCH_SIZE} blocks, {self.MAX_STEPS * self.BATCH_SIZE * self.MAX_LENGTH / 1e9:.1f}B "
-              f"tokens (~{self.MAX_STEPS * self.BATCH_SIZE / len(self.lm_dataset['train']):.1f} "
+              f"{global_batch} blocks ({self.BATCH_SIZE} x {self.WORLD_SIZE} GPU(s)), "
+              f"{self.MAX_STEPS * global_batch * self.MAX_LENGTH / 1e9:.1f}B "
+              f"tokens (~{self.MAX_STEPS * global_batch / len(self.lm_dataset['train']):.1f} "
               f"epochs over the stream).")
 
         training_args = TrainingArguments(
@@ -388,12 +432,12 @@ class CantoPreTrainer(SiniticPreTrainer):
             learning_rate=self.LEARNING_RATE,
             warmup_steps=self.WARMUP_STEPS,
             weight_decay=0.01,
-            save_steps=10000,
+            save_steps=2500,
             save_total_limit=2,
             logging_steps=100,
             report_to="tensorboard",
             eval_strategy="steps",
-            eval_steps=5000,
+            eval_steps=2500,
             fp16=False,
             bf16=torch.cuda.is_available() and torch.cuda.is_bf16_supported(),
             load_best_model_at_end=False,
@@ -409,10 +453,273 @@ class CantoPreTrainer(SiniticPreTrainer):
             processing_class=self.tokenizer,
         )
 
-        trainer.train()
+        # a requeued job restarts this script from the top, so pick up the last checkpoint
+        last_checkpoint = get_last_checkpoint(output_dir_name) if os.path.isdir(output_dir_name) else None
+        if last_checkpoint:
+            print(f"Resuming from {last_checkpoint}.")
+
+        trainer.train(resume_from_checkpoint=last_checkpoint)
         trainer.save_model(output_dir_name)
         self.tokenizer.save_pretrained(output_dir_name)
         print(f"Saved the model and tokenizer to {output_dir_name}.")
+
+
+# Lives in the same module as SiniticPreTrainer / CantoPreTrainer.
+import os
+from collections import Counter
+
+import torch
+from accelerate import PartialState
+from transformers import (AutoModelForMaskedLM, AutoTokenizer, DataCollatorForLanguageModeling,
+                          Trainer, TrainingArguments, set_seed)
+from transformers.trainer_utils import get_last_checkpoint
+
+
+class CantoTransferPreTrainer(CantoPreTrainer):
+    """Tokenizer transfer + two-stage LAPT on canto-corpus, for BERT and ModernBERT.
+
+    Stage 1 (lexical): swap in the Cantonese tokenizer, initialise its embeddings from the source
+    model's (FVT: mean of source sub-token embeddings, optionally via a Traditional->Simplified
+    lookup), and train only the lexical layer -- input embeddings, MLM output weights and bias --
+    with the body frozen (Artetxe et al., 2020; de Vries & Nissim, 2021).
+    Stage 2 (full): unfreeze everything and continue MLM with a fresh warmup (Samuel et al., 2025;
+    cf. Downey et al., 2023, 2024, who freeze for the first 10k steps of a single schedule).
+
+    stage1_steps + stage-2 steps = MAX_STEPS, so the token budget matches CantoPreTrainer.
+    Ablation grid: init in {"fvt", "random"} x stage1_steps in {0, 10000}.
+    """
+    STAGE1_STEPS = 10000  # Downey et al. (2023, 2024)
+    STAGE1_LEARNING_RATE = 5e-4  # only fresh lexical params train; sweep cheaply on stage 1 alone
+    STAGE1_WARMUP_STEPS = 500
+    STAGE1_EVAL_STEPS = 1000  # dense enough to see where the frozen-body loss plateaus
+    PAD_VOCAB_TO = 64
+    SPECIAL_ROLES = ("cls_token", "sep_token", "mask_token", "pad_token", "unk_token")
+
+    def __init__(self, lang="yue", model_dir="./models/bert-base-chinese-local", tokenizer_dir=None,
+                 data="canto-corpus", arch="bert", init="fvt", stage1_steps=None, t2s=True):
+        if tokenizer_dir is None or os.path.abspath(tokenizer_dir) == os.path.abspath(model_dir):
+            raise ValueError("tokenizer_dir must point at the Cantonese tokenizer, not the source model.")
+        if init not in ("fvt", "random"):
+            raise ValueError(f"init must be 'fvt' or 'random', not {init!r}.")
+        if data != "canto-corpus":
+            raise ValueError("Tokenizer transfer is only wired up for data='canto-corpus'.")
+
+        # assumes load_tokenizer(model_dir, tokenizer_dir) returns the tokenizer at tokenizer_dir
+        super().__init__(lang, model_dir, tokenizer_dir, scratch=False, data=data, arch=arch)
+        self.src_tokenizer = AutoTokenizer.from_pretrained(model_dir, trust_remote_code=True)
+        if self.src_tokenizer.get_vocab() == self.tokenizer.get_vocab():
+            raise ValueError("load_tokenizer returned the source tokenizer; nothing would be transferred.")
+
+        self.init = init
+        self.stage1_steps = self.STAGE1_STEPS if stage1_steps is None else stage1_steps
+        if not 0 <= self.stage1_steps < self.MAX_STEPS:
+            raise ValueError(f"stage1_steps must be in [0, {self.MAX_STEPS}).")
+        self.t2s = t2s
+
+    # ------------------------------------------------------------------ initialisation
+
+    def _surface(self, token):
+        text = self.tokenizer.convert_tokens_to_string([token])
+        if text.startswith("##"):  # WordPiece continuation marker survives a single-token decode
+            text = text[2:]
+        return text.strip()
+
+    def _source_ids(self, text):
+        ids = self.src_tokenizer(text, add_special_tokens=False)["input_ids"]
+        unk = self.src_tokenizer.unk_token_id
+        return [] if not ids or (unk is not None and unk in ids) else ids
+
+    def build_mapping(self):
+        """For each target id, the source ids whose embeddings it is initialised from ([] = mean)."""
+        to_simplified = None
+        if self.t2s:
+            try:
+                import opencc
+                to_simplified = opencc.OpenCC("t2s").convert
+            except ImportError:
+                print("opencc not installed; skipping the Traditional->Simplified lookup.")
+
+        groups = [[] for _ in range(len(self.tokenizer))]
+        counts = Counter()
+        for token, idx in self.tokenizer.get_vocab().items():
+            if idx >= len(groups):
+                continue
+            text = self._surface(token)
+            if not text or "\ufffd" in text:  # partial UTF-8 byte tokens have no surface form
+                counts["mean (no surface form)"] += 1
+                continue
+            best, via = self._source_ids(text), "direct"
+            if to_simplified:
+                simplified = to_simplified(text)
+                if simplified != text:
+                    alt = self._source_ids(simplified)
+                    if alt and (not best or len(alt) < len(best)):
+                        best, via = alt, "t2s"
+            groups[idx] = best
+            if best:
+                counts[f"{'copied' if len(best) == 1 else 'averaged'} ({via})"] += 1
+            else:
+                counts["mean (unmappable)"] += 1
+
+        # special tokens map by role, not by string
+        for role in self.SPECIAL_ROLES:
+            tgt, src = getattr(self.tokenizer, f"{role}_id"), getattr(self.src_tokenizer, f"{role}_id")
+            if tgt is not None and src is not None:
+                groups[tgt] = [src]
+
+        print(f"\nEmbedding initialisation over {len(groups):,} target tokens:")
+        for kind, n in sorted(counts.items()):
+            print(f"  {kind:<26}{n:>8,}  ({n / len(groups):.1%})")
+        return groups
+
+    @staticmethod
+    def _remap(src, groups, rows):
+        src = src.float()
+        mean = src.mean(0)
+        out = mean.expand(rows, *src.shape[1:]).clone()  # padded / unmappable rows get the mean
+        for i, g in enumerate(groups):
+            if g:
+                out[i] = src[g].mean(0)
+        return out
+
+    @staticmethod
+    def _vocab_biases(model):
+        # BERT keeps a second handle on the MLM bias (cls.predictions.bias); dedupe by identity
+        head = getattr(getattr(model, "cls", None), "predictions", None)
+        found = [model.get_output_embeddings().bias, getattr(head, "bias", None)]
+        return list({id(b): b for b in found if b is not None}.values())
+
+    def transfer_model(self):
+        kwargs = {"sparse_prediction": True} if self.arch == "modernbert" else {}
+        model = AutoModelForMaskedLM.from_pretrained(self.model_dir, **kwargs)
+
+        inp, out = model.get_input_embeddings(), model.get_output_embeddings()
+        tied = out.weight is inp.weight
+        src_in = inp.weight.detach().clone()
+        src_out = None if tied else out.weight.detach().clone()
+        src_bias = out.bias.detach().clone() if out.bias is not None else None
+
+        model.resize_token_embeddings(len(self.tokenizer), pad_to_multiple_of=self.PAD_VOCAB_TO)
+        inp, out = model.get_input_embeddings(), model.get_output_embeddings()
+        rows = inp.weight.shape[0]
+
+        with torch.no_grad():
+            if self.init == "random":
+                std = model.config.initializer_range
+                inp.weight.normal_(0.0, std)
+                if not tied:
+                    out.weight.normal_(0.0, std)
+                new_bias = None if src_bias is None else torch.zeros(rows)
+            else:
+                groups = self.build_mapping()
+                inp.weight.copy_(self._remap(src_in, groups, rows))
+                if not tied:
+                    out.weight.copy_(self._remap(src_out, groups, rows))
+                new_bias = None if src_bias is None else self._remap(src_bias, groups, rows)
+            for bias in self._vocab_biases(model):
+                if bias.shape[0] != rows:
+                    raise RuntimeError(f"MLM bias has {bias.shape[0]} rows after resizing, expected {rows}.")
+                bias.copy_(new_bias)
+
+        # resize keeps the *source* padding_idx; if the [PAD] ids differ, a real token's row
+        # would silently get zero gradient
+        inp.padding_idx = self.tokenizer.pad_token_id
+        for name in ("pad_token_id", "cls_token_id", "sep_token_id"):
+            if hasattr(model.config, name):
+                setattr(model.config, name, getattr(self.tokenizer, name))
+        model.tie_weights()
+        return model
+
+    # ------------------------------------------------------------------ training
+
+    def lexical_parameters(self, model):
+        params = [model.get_input_embeddings().weight, model.get_output_embeddings().weight,
+                  *self._vocab_biases(model)]
+        return list({id(p): p for p in params}.values())
+
+    def set_stage(self, model, stage):
+        lexical = {id(p) for p in self.lexical_parameters(model)}
+        for p in model.parameters():
+            p.requires_grad = stage == 2 or id(p) in lexical
+        n = sum(p.numel() for p in model.parameters() if p.requires_grad)
+        print(f"\nStage {stage}: {n / 1e6:.1f}M of {model.num_parameters() / 1e6:.1f}M parameters trainable.")
+
+    def stage_args(self, output_dir, steps, lr, warmup, scheduler, data_seed, eval_steps):
+        return TrainingArguments(
+            output_dir=output_dir,
+            max_steps=steps,
+            per_device_train_batch_size=self.BATCH_SIZE,
+            per_device_eval_batch_size=self.BATCH_SIZE,
+            dataloader_num_workers=4,
+            learning_rate=lr,
+            lr_scheduler_type=scheduler,
+            warmup_steps=warmup,
+            weight_decay=0.01,
+            save_steps=2500,
+            save_total_limit=2,
+            logging_steps=100,
+            report_to="tensorboard",
+            eval_strategy="steps",
+            eval_steps=eval_steps,
+            eval_on_start=True,  # step-0 loss = how good the initialisation is
+            fp16=False,
+            bf16=torch.cuda.is_available() and torch.cuda.is_bf16_supported(),
+            load_best_model_at_end=False,
+            seed=42,
+            data_seed=data_seed,  # distinct per stage, or stage 2 replays stage 1's batch order
+        )
+
+    def run_stage(self, model, args, collator):
+        # Trainer builds its optimizer from params that require grad *now*, which is why each
+        # stage gets its own Trainer rather than unfreezing mid-run
+        trainer = Trainer(
+            model=model,
+            args=args,
+            train_dataset=self.lm_dataset["train"],
+            eval_dataset=self.lm_dataset["validation"],
+            data_collator=collator,
+            processing_class=self.tokenizer,
+        )
+        last = get_last_checkpoint(args.output_dir) if os.path.isdir(args.output_dir) else None
+        if last:
+            print(f"Resuming from {last}.")
+        trainer.train(resume_from_checkpoint=last)
+        return trainer
+
+    def train(self):
+        with PartialState().main_process_first():
+            self.preprocess_data()
+        collator = DataCollatorForLanguageModeling(
+            tokenizer=self.tokenizer, mlm=True, mlm_probability=self.MLM_PROBABILITY
+        )
+        set_seed(42)  # makes init="random" identical across ranks and reruns
+
+        name = f"./models/{self.lang}-canto-corpus-{self.arch}-tt-{self.init}-s1_{self.stage1_steps}"
+        stage1_dir, stage2_dir = f"{name}/stage1", f"{name}/stage2"
+        stage1_final = f"{stage1_dir}/final"
+
+        if self.stage1_steps == 0:
+            model = self.transfer_model()
+        elif os.path.isfile(f"{stage1_final}/config.json"):
+            print(f"Stage 1 already finished; loading {stage1_final}.")
+            model = AutoModelForMaskedLM.from_pretrained(stage1_final)
+        else:
+            model = self.transfer_model()
+            self.set_stage(model, 1)
+            trainer = self.run_stage(model, self.stage_args(
+                stage1_dir, self.stage1_steps, self.STAGE1_LEARNING_RATE, self.STAGE1_WARMUP_STEPS,
+                "constant_with_warmup", data_seed=42, eval_steps=self.STAGE1_EVAL_STEPS,
+            ), collator)
+            trainer.save_model(stage1_final)
+
+        self.set_stage(model, 2)
+        trainer = self.run_stage(model, self.stage_args(
+            stage2_dir, self.MAX_STEPS - self.stage1_steps, self.LEARNING_RATE, self.WARMUP_STEPS,
+            "linear", data_seed=43, eval_steps=2500,
+        ), collator)
+        trainer.save_model(name)
+        self.tokenizer.save_pretrained(name)
+        print(f"Saved the model and tokenizer to {name}.")
 
 
 class WuPreTrainer(SiniticPreTrainer):
@@ -449,25 +756,26 @@ def compute_nli_metrics(eval_pred):
 
 
 class CantoNLIFineTuner(CantoPreTrainer):
-    def __init__(self, lang, model_dir, eval_only=False):
-        super().__init__(lang, model_dir)
+    def __init__(self, lang, model_dir, tokenizer_dir, eval_only=False):
+        super().__init__(lang, model_dir, tokenizer_dir)
         self.finetune_dataset = None
         self.preprocess_data(eval_only=eval_only)
-        self.model = BertForSequenceClassification.from_pretrained(self.model_dir)
+        self.model = AutoModelForSequenceClassification.from_pretrained(self.model_dir)
+        self.tokenizer = load_tokenizer(self.model_dir, self.tokenizer_dir)
         self.training_args = TrainingArguments(
             output_dir=f"./models/{self.lang}-nlu-{[f for f in self.model_dir.split('/') if f][-1]}",
-            overwrite_output_dir=True,
+            # overwrite_output_dir=True,
             num_train_epochs=3,
             optim="adamw_torch",
             learning_rate=2e-5,
             per_device_train_batch_size=16,
             per_device_eval_batch_size=16,
-            save_steps=1000,
+            save_steps=10000,
             save_total_limit=2,
             logging_steps=100,
             report_to="tensorboard",
             eval_strategy="steps",
-            eval_steps=500,
+            eval_steps=1000,
             load_best_model_at_end=True,
             metric_for_best_model="loss",
             greater_is_better=False,
@@ -548,16 +856,10 @@ class CantoNLIFineTuner(CantoPreTrainer):
 
 
 class CantoPOSFineTuner(CantoPreTrainer):
-    def __init__(self, lang, model_dir):
-        super().__init__(lang, model_dir)
+    def __init__(self, lang, model_dir, tokenizer_dir):
+        super().__init__(lang, model_dir, tokenizer_dir)
         self.finetune_dataset = None
-        self.tokenizer = BertTokenizerFast.from_pretrained(model_dir,
-                                                           unk_token="[UNK]",
-                                                           pad_token="[PAD]",
-                                                           cls_token="[CLS]",
-                                                           sep_token="[SEP]",
-                                                           mask_token="[MASK]",
-                                                           )
+        self.tokenizer = load_tokenizer(self.model_dir, self.tokenizer_dir)
         self.pos_tags = ['ADJ', 'ADP', 'ADV', 'AUX', 'CCONJ', 'DET', 'INTJ', 'NOUN', 'NUM',
                     'PART', 'PRON', 'PROPN', 'PUNCT', 'SCONJ', 'SYM', 'VERB', 'X']
         self.tag2id = {tag: i for i, tag in enumerate(self.pos_tags)}
@@ -609,7 +911,7 @@ class CantoPOSFineTuner(CantoPreTrainer):
             raise ValueError(f"'train' and 'validation' splits must be present in finetune_dataset."
                              f"Found: {self.finetune_dataset.keys()}")
 
-        model = BertForTokenClassification.from_pretrained(
+        model = AutoModelForTokenClassification.from_pretrained(
             self.model_dir,
             num_labels=len(self.tag2id),
             id2label=self.id2tag,
@@ -618,14 +920,12 @@ class CantoPOSFineTuner(CantoPreTrainer):
 
         training_args = TrainingArguments(
             output_dir=f"./models/{self.lang}-pos-{self.model_dir.strip('/').split('/')[-1]}",
-            overwrite_output_dir=True,
             num_train_epochs=3,
             learning_rate=2e-5,
             per_device_train_batch_size=32,
             per_device_eval_batch_size=32,
             eval_strategy="epoch",
             save_strategy="epoch",
-            logging_dir="./logs",
             logging_steps=100,
             report_to="tensorboard",
             load_best_model_at_end=True,
@@ -661,7 +961,6 @@ class CantoPOSFineTuner(CantoPreTrainer):
             args=training_args,
             train_dataset=self.finetune_dataset["train"],
             eval_dataset=self.finetune_dataset["test"],
-            tokenizer=self.tokenizer,
             compute_metrics=pos_compute_metrics,
         )
 
@@ -690,7 +989,7 @@ class BertForDependencyParsing(BertPreTrainedModel):
         # Predict relation label
         self.rel_classifier = nn.Linear(config.hidden_size, num_rel_labels)
 
-        self.init_weights()
+        self.post_init()
 
     def forward(
         self,
@@ -719,10 +1018,10 @@ class BertForDependencyParsing(BertPreTrainedModel):
 
 
 class CantoDEPSFineTuner(CantoPreTrainer):
-    def __init__(self, lang, model_dir):
-        super().__init__(lang, model_dir)
+    def __init__(self, lang, model_dir, tokenizer_dir):
+        super().__init__(lang, model_dir, tokenizer_dir)
         self.finetune_dataset = None
-        self.tokenizer = BertTokenizerFast.from_pretrained(model_dir)
+        self.tokenizer = load_tokenizer(self.model_dir, self.tokenizer_dir)
 
         # You can expand/adjust to your UD label set (incl. language-specific subtypes like discourse:sp)
         self.dep_labels = [
@@ -844,14 +1143,12 @@ class CantoDEPSFineTuner(CantoPreTrainer):
 
         args = TrainingArguments(
             output_dir=f"./models/{self.lang}-deps-{self.model_dir.strip('/').split('/')[-1]}",
-            overwrite_output_dir=True,
-            num_train_epochs=3,
+            num_train_epochs=20,
             learning_rate=2e-5,
             per_device_train_batch_size=16,
             per_device_eval_batch_size=16,
             eval_strategy="epoch",
             save_strategy="epoch",
-            logging_dir="./logs",
             logging_steps=50,
             report_to="tensorboard",
             load_best_model_at_end=True,
@@ -1010,7 +1307,6 @@ class CantoTokenClassificationFineTuner(CantoNLIFineTuner):
 
         training_args = TrainingArguments(
             output_dir=f"./models/{self.lang}-nlu-{[f for f in self.model_dir.split('/') if f][-1]}",
-            overwrite_output_dir=True,
             num_train_epochs=3,
             optim="adamw_torch",
             learning_rate=1e-5,
@@ -1028,7 +1324,7 @@ class CantoTokenClassificationFineTuner(CantoNLIFineTuner):
 
         for fold, dataset in enumerate(self.finetune_dataset):
             print(f"Training on fold {fold + 1}/{len(self.finetune_dataset)}")
-            model = BertForTokenClassification.from_pretrained(
+            model = AutoModelForTokenClassification.from_pretrained(
                 self.model_dir,
                 num_labels=2,
                 id2label=id2label,
@@ -1069,7 +1365,7 @@ class CantoAcceptabilityFineTuner(CantoNLIFineTuner):
     def __init__(self, lang="yue", model_dir="./bert-base-chinese-local"):
         super().__init__(lang, model_dir)
 
-    def preprocess_data(self):
+    def preprocess_data(self, eval_only=False):
         data = load_from_disk('data/acceptability-dataset-2')
         data = data.shuffle(seed=42)
 
@@ -1090,7 +1386,7 @@ class CantoAcceptabilityFineTuner(CantoNLIFineTuner):
             "test": test_set
         }
           
-        model = BertForSequenceClassification.from_pretrained(
+        model = AutoModelForSequenceClassification.from_pretrained(
             self.model_dir,
             num_labels=3,
             id2label={0: "unacceptable", 1: "acceptable", 2: "mix"},
@@ -1131,7 +1427,7 @@ class CantoAcceptabilityFineTuner(CantoNLIFineTuner):
 
         training_args = TrainingArguments(
             output_dir=f"./models/{self.lang}-acceptability2-{[f for f in self.model_dir.split('/') if f][-1]}",
-            overwrite_output_dir=True,
+            # overwrite_output_dir=True,
             num_train_epochs=3,
             optim="adamw_torch",
             learning_rate=1e-5,
