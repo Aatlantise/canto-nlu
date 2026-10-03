@@ -1,6 +1,5 @@
 import argparse
 import warnings
-from hanziconv import HanziConv
 import polars as pl
 from itertools import combinations
 from torch import cosine_similarity
@@ -16,34 +15,12 @@ parser = argparse.ArgumentParser(description="Evaluate a (masked-LM) checkpoint 
 parser.add_argument("model_dir", help="HF hub model name or local checkpoint directory to evaluate")
 args = parser.parse_args()
 
-df = pl.read_csv("data/wsd/senses.csv")
-
-df = df.with_columns([
-    pl.col("traditional").map_elements(
-        lambda x: HanziConv.toTraditional(x) if x is not None else None,
-        return_dtype=pl.Utf8
-    ),
-    pl.col("sentence1").map_elements(
-        lambda x: HanziConv.toTraditional(x) if x is not None else None,
-        return_dtype=pl.Utf8
-    ),
-    pl.col("sentence2").map_elements(
-        lambda x: HanziConv.toTraditional(x) if x is not None else None,
-        return_dtype=pl.Utf8
-    )
-])
-
-for row in df.iter_rows(named=True):
-    assert row["traditional"] in row["sentence1"]
-    assert row["traditional"] in row["sentence2"]
-
-
 model_path = args.model_dir
 
 model = AutoModel.from_pretrained(model_path)
 tokenizer = AutoTokenizer.from_pretrained(model_path)
 
-df = pl.read_csv("data/wsd/senses-traditional.csv")
+df = pl.read_csv("data/wsd/senses.csv")
 
 total_pairs = 0
 
