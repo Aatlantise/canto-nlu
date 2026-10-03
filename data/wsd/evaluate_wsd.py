@@ -86,7 +86,7 @@ for word, group in df.with_row_index().group_by("traditional"):
             sentences = (def1_row["sentence1"], def1_row["sentence2"],
                          def2_row["sentence1"], def2_row["sentence2"])
             sentences = [s.replace(word[0], f"_[{word[0]}]_") for s in sentences]
-            print(sentences)
+            # print(sentences)
 
 # print(predictions)
 
@@ -94,4 +94,4 @@ for word, group in df.with_row_index().group_by("traditional"):
 
 result_counter = Counter(predictions)
 acc = result_counter["right"] / (result_counter["right"] + result_counter["wrong"])
-print(f"WSD Accuracy: {acc}")
+print(f"Final WSD Accuracy: {acc}")

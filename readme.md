@@ -32,7 +32,7 @@ All commands are run from the repository root.
 python run.py --task=sentiment --model_dir=./models/yue-monolingual
 ```
 
-`--task` is one of `nli`, `sentiment`, `ld`, `laj`, `pos`, `deps`. Fine-tuned weights are not saved; test-set metrics are printed at the end of each run, and TensorBoard logs go to `./logs/yue-{task}-{model}`.
+`--task` is one of `nli`, `sentiment`, `ld`, `laj`, `pos`, `deps`. Fine-tuned weights are not saved; neither are TensorBoard logs. Per-epoch validation metrics and final test-set metrics are printed to stdout.
 Add `--eval_only` to evaluate a model on the test set without training (classification tasks only).
 
 **Zero-shot evaluation**:
@@ -44,10 +44,13 @@ python data/laj/laj_comparison/evaluate_comparison_laj.py ./models/yue-monolingu
 
 ## Pre-trained model weights
 
-The monolingual and transfer models are available at the following Google Drive links.
+We offer the following pre-trained encoder-only models:
+* CantoBERT-mono: bert-base trained from scratch on monolingual Cantonese data
+* CantoBERT-transfer: bert-base-chinese additionally pre-trained on Cantonese data
+* CantoModernBERT-mono: modernbert-base trained from scratch on monolingual Cantonese data
+* CantoModernBERT-transfer: chinese-modernbert-large-wwm additionally pre-trained on Cantonese data
 
-* Monolingual model: https://drive.google.com/file/d/1wl4MYqPRxj5FPdHJR8SXC7Z7SZCFsLNw/view?usp=drive_link
-* Transfer model: https://drive.google.com/file/d/19QKyw-lzbNmU1_EcBUuDuO4TiEfFFuFF/view?usp=drive_link
+https://drive.google.com/drive/folders/1RBZIQD5ectfb9m5sHDN5TIALEREm-tfH
 
 ## Acknowledgment
 This readme.md has been drafted by Claude Code.

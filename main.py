@@ -12,7 +12,9 @@ from transformers import (
     AutoModelForMaskedLM,
 )
 from transformers.modeling_outputs import TokenClassifierOutput
+from transformers.utils import is_torch_bf16_gpu_available
 import os
+import tempfile
 import numpy as np
 from sklearn.metrics import accuracy_score, confusion_matrix, f1_score
 from sklearn.model_selection import train_test_split
@@ -27,11 +29,15 @@ disable_progress_bars()
 
 # Pre-training logs training loss ~20 times per run regardless of dataset/batch size:
 # transformers reads a logging_steps value below 1 as a fraction of total training steps.
-# Fine-tuning logs once per epoch instead (logging_strategy="epoch").
+# Fine-tuning prints metrics to stdout once per epoch instead (logging_strategy="epoch").
 LOGGING_STEPS = 0.05
 
+# Fine-tuning saves neither weights nor TensorBoard logs, but Trainer still requires an
+# output_dir and creates it on startup, so point every run at one shared temp directory.
+FINETUNE_OUTPUT_DIR = os.path.join(tempfile.gettempdir(), "sinitic-nlu-finetune")
+
 class SiniticPreTrainer:
-    def __init__(self, lang="", model_dir="./models/yue-monolingual", scratch=False, data=None):
+    def __init__(self, lang="", model_dir="./models/yue-monolingual", scratch=False, data=None, seed=42):
         self.ds = None
         self.tokenizer = None
         self.lang = lang
@@ -40,6 +46,7 @@ class SiniticPreTrainer:
         self.lm_dataset = None
         self.from_scratch = scratch
         self.data = data
+        self.seed = seed
 
     def train(self):
         self.preprocess_data()
@@ -84,9 +91,13 @@ class SiniticPreTrainer:
             )
         model.resize_token_embeddings(len(self.tokenizer))
 
-        output_dir_name = f"./{self.lang}-scratch" if self.from_scratch else f"./{self.lang}-transfer"
+        run_name = f"{self.lang}-scratch" if self.from_scratch else f"{self.lang}-transfer"
+        output_dir_name = f"./{run_name}"
 
         training_args = TrainingArguments(
+            # Checkpoints and the final model go to output_dir; TensorBoard logs go to ./logs
+            output_dir=output_dir_name,
+            logging_dir=f"./logs/{run_name}",
             num_train_epochs=2,
             per_device_train_batch_size=128,
             dataloader_num_workers=8,
@@ -98,10 +109,12 @@ class SiniticPreTrainer:
             logging_steps=LOGGING_STEPS,
             disable_tqdm=True,
             report_to="tensorboard",
+            seed=self.seed,
             eval_strategy="steps",
             eval_steps=1000,
             fp16=False,
-            bf16=True,
+            # bf16 needs an Ampere+ GPU (e.g. H100); fall back to fp32 elsewhere instead of crashing
+            bf16=is_torch_bf16_gpu_available(),
             load_best_model_at_end=True,
             metric_for_best_model="loss",
             greater_is_better=False,
@@ -120,8 +133,8 @@ class SiniticPreTrainer:
         trainer.save_model(output_dir_name)
 
 class CantoPreTrainer(SiniticPreTrainer):
-    def __init__(self, lang="yue", model_dir="./models/yue-monolingual", scratch=False, data=None):
-        super().__init__(lang, model_dir, scratch, data)
+    def __init__(self, lang="yue", model_dir="./models/yue-monolingual", scratch=False, data=None, seed=42):
+        super().__init__(lang, model_dir, scratch, data, seed)
         # checking data happens in run.py
         if data == "cantonese-sentences":
             if not os.path.exists("./data/cantonese-sentences"):
@@ -241,11 +254,16 @@ class CantoFineTuningBase:
     """Lightweight base for fine-tuning tasks: only needs a tokenizer and the base model
     directory, unlike CantoPreTrainer, which also requires the Cantonese Wikipedia corpus."""
 
-    def __init__(self, lang="yue", model_dir="./models/yue-monolingual", per_device_batch_size=64):
+    def __init__(self, lang="yue", model_dir="./models/yue-monolingual", per_device_batch_size=64, seed=42,
+                 gradient_accumulation_steps=1):
         self.lang = lang
         self.model_dir = model_dir
+        self.seed = seed
         # Default suits base-sized encoders; lower it for large models (e.g. 16 for ModernBERT-large)
         self.per_device_batch_size = per_device_batch_size
+        # Raise together with lowering per_device_batch_size to keep the effective batch size
+        # (and so the number of optimizer steps) comparable across models
+        self.gradient_accumulation_steps = gradient_accumulation_steps
         if not os.path.exists(self.model_dir):
             raise FileNotFoundError(
                 f"Model directory {self.model_dir} not found. "
@@ -268,8 +286,9 @@ class CantoSequenceClassificationFineTuner(CantoFineTuningBase):
     num_train_epochs = 3
     max_length = 128
 
-    def __init__(self, lang="yue", model_dir="./models/yue-monolingual", eval_only=False, per_device_batch_size=64):
-        super().__init__(lang, model_dir, per_device_batch_size)
+    def __init__(self, lang="yue", model_dir="./models/yue-monolingual", eval_only=False, per_device_batch_size=64,
+                 seed=42, gradient_accumulation_steps=1):
+        super().__init__(lang, model_dir, per_device_batch_size, seed, gradient_accumulation_steps)
         self.label2id = {v: k for k, v in self.id2label.items()}
         self.num_labels = len(self.id2label)
         self.model = AutoModelForSequenceClassification.from_pretrained(
@@ -282,18 +301,18 @@ class CantoSequenceClassificationFineTuner(CantoFineTuningBase):
         self.finetune_dataset = None
         self.preprocess_data(eval_only=eval_only)
 
-        model_basename = [f for f in self.model_dir.split('/') if f][-1]
         self.training_args = TrainingArguments(
-            # Fine-tuned weights aren't saved; output_dir only holds TensorBoard logs
-            output_dir=f"./logs/{self.lang}-{self.task_name}-{model_basename}",
+            output_dir=FINETUNE_OUTPUT_DIR,
             overwrite_output_dir=True,
             num_train_epochs=self.num_train_epochs,
             optim="adamw_torch",
             learning_rate=self.learning_rate,
             per_device_train_batch_size=self.per_device_batch_size,
             per_device_eval_batch_size=self.per_device_batch_size,
+            gradient_accumulation_steps=self.gradient_accumulation_steps,
             disable_tqdm=True,
-            report_to="tensorboard",
+            report_to="none",
+            seed=self.seed,
             eval_strategy="epoch",
             logging_strategy="epoch",
             save_strategy="no",
@@ -417,8 +436,8 @@ class CantoLAJFineTuner(CantoSequenceClassificationFineTuner):
 
 
 class CantoPOSFineTuner(CantoFineTuningBase):
-    def __init__(self, lang, model_dir, per_device_batch_size=64):
-        super().__init__(lang, model_dir, per_device_batch_size)
+    def __init__(self, lang, model_dir, per_device_batch_size=64, seed=42, gradient_accumulation_steps=1):
+        super().__init__(lang, model_dir, per_device_batch_size, seed, gradient_accumulation_steps)
         self.finetune_dataset = None
         # The 15 UPOS tags attested in UD_Cantonese-HK (SYM and X are unused):
         # https://universaldependencies.org/treebanks/yue_hk/index.html
@@ -486,18 +505,19 @@ class CantoPOSFineTuner(CantoFineTuningBase):
         model.resize_token_embeddings(len(self.tokenizer))
 
         training_args = TrainingArguments(
-            # Fine-tuned weights aren't saved; output_dir only holds TensorBoard logs
-            output_dir=f"./logs/{self.lang}-pos-{self.model_dir.strip('/').split('/')[-1]}",
+            output_dir=FINETUNE_OUTPUT_DIR,
             overwrite_output_dir=True,
-            num_train_epochs=3,
+            num_train_epochs=20,
             learning_rate=2e-5,
             per_device_train_batch_size=self.per_device_batch_size,
             per_device_eval_batch_size=self.per_device_batch_size,
+            gradient_accumulation_steps=self.gradient_accumulation_steps,
             eval_strategy="epoch",
             logging_strategy="epoch",
             save_strategy="no",
             disable_tqdm=True,
-            report_to="tensorboard",
+            report_to="none",
+            seed=self.seed,
         )
 
         def pos_compute_metrics(pred):
@@ -591,8 +611,8 @@ class EncoderForDependencyParsing(nn.Module):
 
 
 class CantoDEPSFineTuner(CantoFineTuningBase):
-    def __init__(self, lang, model_dir, per_device_batch_size=64):
-        super().__init__(lang, model_dir, per_device_batch_size)
+    def __init__(self, lang, model_dir, per_device_batch_size=64, seed=42, gradient_accumulation_steps=1):
+        super().__init__(lang, model_dir, per_device_batch_size, seed, gradient_accumulation_steps)
         self.finetune_dataset = None
         self.max_length = 128
 
@@ -730,21 +750,19 @@ class CantoDEPSFineTuner(CantoFineTuningBase):
         model.encoder.resize_token_embeddings(len(self.tokenizer))
 
         args = TrainingArguments(
-            # Fine-tuned weights aren't saved; output_dir only holds TensorBoard logs
-            output_dir=f"./logs/{self.lang}-deps-{self.model_dir.strip('/').split('/')[-1]}",
+            output_dir=FINETUNE_OUTPUT_DIR,
             overwrite_output_dir=True,
             num_train_epochs=30,
             learning_rate=2e-5,
             per_device_train_batch_size=self.per_device_batch_size,
             per_device_eval_batch_size=self.per_device_batch_size,
+            gradient_accumulation_steps=self.gradient_accumulation_steps,
             eval_strategy="epoch",
             logging_strategy="epoch",
-            save_strategy="epoch",
+            save_strategy="no",
             disable_tqdm=True,
-            report_to="tensorboard",
-            load_best_model_at_end=True,
-            metric_for_best_model="eval_las",
-            greater_is_better=True,
+            report_to="none",
+            seed=self.seed,
         )
 
         def compute_deps_metrics(eval_pred):
@@ -807,5 +825,5 @@ class CantoDEPSFineTuner(CantoFineTuningBase):
         trainer.train()
 
         metrics = trainer.evaluate(self.finetune_dataset["test"])
-        print(f"Final deps test UAS: {metrics['eval_uas']}")
-        print(f"Final deps test LAS: {metrics['eval_las']}")
+        print(f"Final deps UAS: {metrics['eval_uas']}")
+        print(f"Final deps LAS: {metrics['eval_las']}")
