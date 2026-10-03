@@ -2,7 +2,7 @@ import argparse
 import json
 
 import torch
-from transformers import AutoModelForCausalLM, AutoTokenizer
+from transformers import AutoModelForMaskedLM, AutoTokenizer
 from tqdm import tqdm
 
 parser = argparse.ArgumentParser(
@@ -18,9 +18,9 @@ model_path = args.model_dir
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-model = AutoModelForCausalLM.from_pretrained(model_path).to(device)
+model = AutoModelForMaskedLM.from_pretrained(model_path).to(device)
 model.eval()
-tokenizer = AutoTokenizer.from_pretrained(model_path)
+tokenizer = AutoTokenizer.from_pretrained(model_path, trust_remote_code=True)
 
 pairs = []
 with open("data/laj/laj_comparison/comparison_test.jsonl", "r", encoding="utf-8") as f:
