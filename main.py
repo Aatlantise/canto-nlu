@@ -20,6 +20,7 @@ from sklearn.metrics import accuracy_score, confusion_matrix, f1_score
 from sklearn.model_selection import train_test_split
 import evaluate
 from utils import get_subset
+import torch
 import torch.nn as nn
 import re
 from tqdm import tqdm
@@ -561,13 +562,42 @@ class CantoPOSFineTuner(CantoFineTuningBase):
 
 
 
+class Biaffine(nn.Module):
+    """Biaffine scorer (Dozat & Manning, 2017): x^T W y, with an optional constant 1 appended to
+    x and/or y so that the same weight tensor also holds the linear and bias terms."""
+    def __init__(self, in_dim, out_dim=1, bias_x=True, bias_y=True):
+        super().__init__()
+        self.bias_x = bias_x
+        self.bias_y = bias_y
+        # Zero init: every candidate starts with the same score
+        self.weight = nn.Parameter(torch.zeros(out_dim, in_dim + bias_x, in_dim + bias_y))
+
+    def _append_ones(self, t, bias):
+        return torch.cat([t, torch.ones_like(t[..., :1])], dim=-1) if bias else t
+
+    def forward(self, x, y):
+        """x: [B, L, D] dependents, y: [B, L, D] heads -> [B, out_dim, L, L] (dependent x head)."""
+        x = self._append_ones(x, self.bias_x)
+        y = self._append_ones(y, self.bias_y)
+        return torch.einsum("bxi,oij,byj->boxy", x, self.weight, y)
+
+    def pairwise(self, x, y):
+        """Score aligned pairs only: x, y: [B, L, D] -> [B, L, out_dim]."""
+        x = self._append_ones(x, self.bias_x)
+        y = self._append_ones(y, self.bias_y)
+        return torch.einsum("bxi,oij,bxj->bxo", x, self.weight, y)
+
+
 class EncoderForDependencyParsing(nn.Module):
     """
-    Architecture-agnostic encoder (BERT, XLM-R, ModernBERT, ...) with two token-level heads:
-    head_classifier: predicts head index in [0..max_length-1] (we map ROOT -> [CLS] position 0)
-    rel_classifier: predicts dependency relation label for each token
+    Architecture-agnostic encoder (BERT, XLM-R, ModernBERT, ...) with a biaffine parser on top
+    (Dozat & Manning, 2017). Each word is represented by its first subword; ROOT is the [CLS]
+    position. Arcs are scored for every (dependent, head) pair, and the relation label is scored
+    from the (dependent, head) pair: the gold head in training, the predicted head otherwise.
     """
-    def __init__(self, model_dir, num_rel_labels, max_length=128):
+    mlp_dropout = 0.33
+
+    def __init__(self, model_dir, num_rel_labels, arc_dim=500, rel_dim=100):
         super().__init__()
         self.encoder = AutoModel.from_pretrained(model_dir, trust_remote_code=True)
         config = self.encoder.config
@@ -579,38 +609,59 @@ class EncoderForDependencyParsing(nn.Module):
         )
         self.dropout = nn.Dropout(dropout)
 
-        # Predict head index among max_length token positions
-        self.head_classifier = nn.Linear(config.hidden_size, max_length)
-        # Predict relation label
-        self.rel_classifier = nn.Linear(config.hidden_size, num_rel_labels)
+        def mlp(out_dim):
+            return nn.Sequential(nn.Linear(config.hidden_size, out_dim), nn.LeakyReLU(0.1),
+                                 nn.Dropout(self.mlp_dropout))
+
+        # Separate "as dependent" and "as head" views of each token
+        self.arc_dep, self.arc_head = mlp(arc_dim), mlp(arc_dim)
+        self.rel_dep, self.rel_head = mlp(rel_dim), mlp(rel_dim)
+        # Arc score = dep^T U head + u^T head (no head-independent dependent term)
+        self.arc_attn = Biaffine(arc_dim, 1, bias_x=True, bias_y=False)
+        self.rel_attn = Biaffine(rel_dim, num_rel_labels, bias_x=True, bias_y=True)
 
     def forward(
         self,
         input_ids=None,
         attention_mask=None,
-        labels_head=None,   # [B, L] with indices in [0..L-1], -100 to ignore
-        labels_rel=None,    # [B, L] with rel ids, -100 to ignore
+        head_candidates=None,  # [B, L] 1 where a token may be a head ([CLS]/ROOT and first subwords)
+        labels_head=None,      # [B, L] with indices in [0..L-1], -100 to ignore
+        labels_rel=None,       # [B, L] with rel ids, -100 to ignore
         **kwargs
     ):
         outputs = self.encoder(input_ids=input_ids, attention_mask=attention_mask, **kwargs)
         seq = self.dropout(outputs.last_hidden_state)  # [B, L, H]
 
-        head_logits = self.head_classifier(seq)  # [B, L, max_length] (i.e. [B, L, L])
-        rel_logits  = self.rel_classifier(seq)   # [B, L, R]
+        arc_scores = self.arc_attn(self.arc_dep(seq), self.arc_head(seq)).squeeze(1)  # [B, L, L]
+        # Only ROOT and first subwords can be heads, and no token heads itself
+        invalid = ~head_candidates.bool().unsqueeze(1).expand_as(arc_scores)
+        invalid = invalid | torch.eye(arc_scores.size(-1), dtype=torch.bool, device=arc_scores.device)
+        arc_scores = arc_scores.masked_fill(invalid, torch.finfo(arc_scores.dtype).min)
+
+        # Score relations against the gold head when training, the predicted head otherwise
+        if labels_head is not None and self.training:
+            heads = labels_head.clamp(min=0)
+        else:
+            heads = arc_scores.argmax(-1)
+        rel_dep, rel_head = self.rel_dep(seq), self.rel_head(seq)
+        rel_head = rel_head.gather(1, heads.unsqueeze(-1).expand(-1, -1, rel_head.size(-1)))
+        rel_logits = self.rel_attn.pairwise(rel_dep, rel_head)  # [B, L, R]
 
         loss = None
         if labels_head is not None and labels_rel is not None:
             ce = nn.CrossEntropyLoss(ignore_index=-100)
-            # Flatten over tokens
-            head_loss = ce(head_logits.view(-1, head_logits.size(-1)), labels_head.view(-1))
+            head_loss = ce(arc_scores.view(-1, arc_scores.size(-1)), labels_head.view(-1))
             rel_loss  = ce(rel_logits.view(-1, rel_logits.size(-1)), labels_rel.view(-1))
             loss = head_loss + rel_loss
 
         # Return a tuple so Trainer hands both logits to compute_metrics
-        return {"loss": loss, "logits": (head_logits, rel_logits)}
+        return {"loss": loss, "logits": (arc_scores, rel_logits)}
 
 
 class CantoDEPSFineTuner(CantoFineTuningBase):
+    encoder_learning_rate = 2e-5
+    parser_learning_rate = 1e-3
+
     def __init__(self, lang, model_dir, per_device_batch_size=64, seed=42, gradient_accumulation_steps=1):
         super().__init__(lang, model_dir, per_device_batch_size, seed, gradient_accumulation_steps)
         self.finetune_dataset = None
@@ -666,6 +717,7 @@ class CantoDEPSFineTuner(CantoFineTuningBase):
             B = len(examples["tokens"])
             labels_head = []
             labels_rel  = []
+            head_candidates = []
 
             for i in range(B):
                 word_ids = enc.word_ids(batch_index=i)  # len = seq_len (incl CLS/SEP/PAD)
@@ -683,6 +735,7 @@ class CantoDEPSFineTuner(CantoFineTuningBase):
                     if w != prev_w:
                         first_tok_idx_of_word[w] = tok_idx
                         prev_w = w
+                first_tok_idx_set = set(first_tok_idx_of_word.values())
 
                 # Choose a ROOT anchor: map to [CLS] token's position
                 # Typically [CLS] is at index 0 with BERT tokenizers
@@ -727,9 +780,12 @@ class CantoDEPSFineTuner(CantoFineTuningBase):
 
                 labels_head.append(seq_heads)
                 labels_rel.append(seq_rels)
+                head_candidates.append([int(tok_idx == root_tok_idx or tok_idx in first_tok_idx_set)
+                                        for tok_idx in range(len(word_ids))])
 
             enc["labels_head"] = labels_head
             enc["labels_rel"]  = labels_rel
+            enc["head_candidates"] = head_candidates
             return enc
 
         tokenized = {split: ds.map(align, batched=True) for split, ds in raw.items()}
@@ -744,7 +800,6 @@ class CantoDEPSFineTuner(CantoFineTuningBase):
         model = EncoderForDependencyParsing(
             self.model_dir,
             num_rel_labels=len(self.rel2id),
-            max_length=self.max_length,
         )
 
         model.encoder.resize_token_embeddings(len(self.tokenizer))
@@ -753,7 +808,8 @@ class CantoDEPSFineTuner(CantoFineTuningBase):
             output_dir=FINETUNE_OUTPUT_DIR,
             overwrite_output_dir=True,
             num_train_epochs=30,
-            learning_rate=2e-5,
+            learning_rate=self.encoder_learning_rate,
+            warmup_ratio=0.1,
             per_device_train_batch_size=self.per_device_batch_size,
             per_device_eval_batch_size=self.per_device_batch_size,
             gradient_accumulation_steps=self.gradient_accumulation_steps,
@@ -764,6 +820,15 @@ class CantoDEPSFineTuner(CantoFineTuningBase):
             report_to="none",
             seed=self.seed,
         )
+
+        # The randomly initialized parser layers need a far higher learning rate than the
+        # pre-trained encoder; Trainer applies its linear warmup/decay schedule to both groups.
+        encoder_params = [p for n, p in model.named_parameters() if n.startswith("encoder.")]
+        parser_params = [p for n, p in model.named_parameters() if not n.startswith("encoder.")]
+        optimizer = torch.optim.AdamW([
+            {"params": encoder_params, "lr": self.encoder_learning_rate},
+            {"params": parser_params, "lr": self.parser_learning_rate},
+        ], weight_decay=0.0)  # Trainer's own default; torch's AdamW would otherwise use 0.01
 
         def compute_deps_metrics(eval_pred):
             """
@@ -820,6 +885,7 @@ class CantoDEPSFineTuner(CantoFineTuningBase):
             eval_dataset=self.finetune_dataset["test"],
             tokenizer=self.tokenizer,
             compute_metrics=compute_deps_metrics,
+            optimizers=(optimizer, None),
         )
 
         trainer.train()

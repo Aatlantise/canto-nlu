@@ -48,7 +48,7 @@ def run(args):
                 print(f"{args.task} fine-tuning is not supported. Please choose from: {', '.join(FINETUNE_TASKS)}")
             else:
                 model = fine_tuner_cls(args.lang, model_dir=args.model_dir, per_device_batch_size=args.batch_size,
-                                       seed=args.seed, gradient_accumulation_steps=args.grad_accum)
+                                       seed=args.seed, gradient_accumulation_steps=args.grad_acc)
                 model.finetune()
         else:
             print(f"{args.lang} fine-tuning is not supported. Please choose from: yue")
@@ -107,8 +107,8 @@ if __name__ == "__main__":
     modernbert = is_modernbert(args.model_dir)
     if args.batch_size is None:
         args.batch_size = 32 if modernbert else 64
-    if args.grad_accum is None:
-        args.grad_accum = 2 if modernbert else 1
+    if args.grad_acc is None:
+        args.grad_acc = 2 if modernbert else 1
 
     print(args)
     run(args)
