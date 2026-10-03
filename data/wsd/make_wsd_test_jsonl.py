@@ -5,6 +5,18 @@ from collections import defaultdict
 from itertools import combinations
 
 
+def validate_senses(input_csv):
+    """Check that each sense's target word appears in both example sentences."""
+    with open(input_csv, newline='', encoding='utf-8') as f:
+        rows = list(csv.DictReader(f))
+
+    for row in rows:
+        assert row['traditional'] in row['sentence1'], row
+        assert row['traditional'] in row['sentence2'], row
+
+    return len(rows)
+
+
 def build_wsd_test_jsonl(input_csv, output_jsonl):
     """
     Rules:
@@ -75,6 +87,9 @@ if __name__ == '__main__':
     parser.add_argument('--output', default='test.jsonl', help='Output JSONL')
     args = parser.parse_args()
     
+    n_senses = validate_senses(args.input)
+    print(f'Validated {n_senses} senses in {args.input}')
+
     total, pos, neg = build_wsd_test_jsonl(args.input, args.output)
     print(f'Generated {total} examples to {args.output}')
     print(f'  Positive (similar):     {pos}')
