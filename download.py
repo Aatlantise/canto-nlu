@@ -9,6 +9,8 @@ MODELS = {
     "google-bert/bert-base-chinese": "bert-base-chinese",
     "hon9kon9ize/bert-base-cantonese": "bert-base-cantonese",
     "feynmanzhao/chinese-modernbert-large-wwm": "chinese-modernbert",
+    "google-bert/bert-base-multilingual-cased": "mbert-cased",
+    "google-bert/bert-base-multilingual-uncased": "mbert-uncased",
 }
 
 

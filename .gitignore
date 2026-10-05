@@ -1,9 +1,12 @@
 # IDE artifacts
 .idea/*
-*.sh
 models/*
 yue-*/*
 *.zip
 */__pycache__/*
 *.pyc
 logs/*
+*.sh
+*.o*
+# Downloaded inputs for the tokenizer analysis
+appendix/tokenizer_analysis/resources/
