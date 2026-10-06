@@ -1,0 +1,34 @@
+{
+  "task": "Cantonese/Mandarin/mixed language detection",
+  "label_mapping": {
+    "0": "cantonese",
+    "1": "mandarin",
+    "2": "mixed"
+  },
+  "primary_metric": "macro_f1",
+  "splits": {
+    "ld_train.jsonl": {
+      "rows": 42753,
+      "source_ids": 8196,
+      "sha256": "3bb990ebc17927290c516d8feaaeab58bc5576c70a83fe1d9d4da226814034a4"
+    },
+    "ld_val.jsonl": {
+      "rows": 2425,
+      "source_ids": 455,
+      "sha256": "d6fdd177a5801d91920cba141b755744aeed2025f4255bf31d360e57d9adee83"
+    },
+    "ld_test.jsonl": {
+      "rows": 2341,
+      "source_ids": 456,
+      "sha256": "3220bc2ab99c66426c67140dc9685db95dea1ae4cd14e8cd2de227343682f020"
+    }
+  },
+  "source_id_overlap_between_splits": 0,
+  "models": [
+    "google-bert/bert-base-multilingual-cased",
+    "Qwen/Qwen2.5-7B-Instruct",
+    "google/gemma-3-12b-it",
+    "deepseek-v4-flash",
+    "meta-llama/Meta-Llama-3.1-8B-Instruct"
+  ]
+}

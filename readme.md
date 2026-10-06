@@ -42,6 +42,12 @@ python data/wsd/evaluate_wsd.py ./models/yue-monolingual
 python data/laj/laj_comparison/evaluate_comparison_laj.py ./models/yue-monolingual
 ```
 
+## Multi-model evaluation suite
+
+Additional evaluation code is available under [`evaluation/`](evaluation/README.md) for all seven tasks across six model families: mBERT, XLM-R-base, Qwen2.5-7B-Instruct, Gemma-3-12B-it, DeepSeek, and Llama-3.1-8B-Instruct.
+
+The suite includes Python evaluators, task-specific dependencies, and Slurm launchers. See the [`7 x 6 coverage matrix`](evaluation/COVERAGE_MATRIX.md) for the evaluator used by each task/model combination and the methodology caveats. Datasets, model weights, checkpoints, raw predictions, and credentials are not included.
+
 ## Pre-trained model weights
 
 We offer the following pre-trained encoder-only models:

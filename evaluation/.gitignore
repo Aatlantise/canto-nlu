@@ -1,0 +1,54 @@
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+venv/
+
+# Node
+node_modules/
+
+# Secrets and local configuration
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Model and experiment artifacts
+models/
+checkpoints/
+outputs/
+results/
+logs/
+wandb/
+*.out
+*.err
+*.pt
+*.pth
+*.ckpt
+*.safetensors
+
+# Datasets and archive bundles
+data/
+datasets/
+*.jsonl
+*.csv
+*.tsv
+*.zip
+*.tar
+*.tar.gz
+!reports/*.csv
+
+# Editors and operating systems
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Kept locally for provenance, excluded from the canonical 7 x 6 code release
+tasks/sa/legacy/
+tasks/deps/legacy/
+reports/

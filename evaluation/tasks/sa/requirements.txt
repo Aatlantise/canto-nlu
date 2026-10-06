@@ -1,0 +1,10 @@
+torch>=2.3
+transformers>=4.46,<5
+datasets>=2.19
+accelerate>=0.30
+numpy>=1.26
+pandas>=2.0
+scikit-learn>=1.4
+tqdm>=4.66
+openai>=1.0
+bitsandbytes>=0.43; platform_system == "Linux"
