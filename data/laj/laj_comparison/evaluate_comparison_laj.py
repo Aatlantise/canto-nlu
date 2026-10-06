@@ -19,7 +19,13 @@ model_path = args.model_dir
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-model = AutoModelForMaskedLM.from_pretrained(model_path).to(device)
+model, loading_info = AutoModelForMaskedLM.from_pretrained(model_path, output_loading_info=True)
+# PLL scoring is meaningless with a randomly initialized MLM head, e.g. for a checkpoint saved
+# from AutoModel or published encoder-only. Fail loudly instead of reporting chance-level scores.
+if loading_info["missing_keys"]:
+    raise ValueError(f"{model_path} has no pre-trained MLM head; these weights would be randomly "
+                     f"initialized: {loading_info['missing_keys']}")
+model = model.to(device)
 model.eval()
 tokenizer = AutoTokenizer.from_pretrained(model_path, trust_remote_code=True)
 
