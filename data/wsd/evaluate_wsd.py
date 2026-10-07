@@ -3,11 +3,9 @@ import warnings
 import polars as pl
 from itertools import combinations
 from torch import cosine_similarity
-from termcolor import colored
 from collections import Counter
 import torch
 from transformers import AutoModel, AutoTokenizer
-from sklearn.metrics import f1_score
 
 warnings.filterwarnings('ignore')
 
@@ -17,8 +15,10 @@ args = parser.parse_args()
 
 model_path = args.model_dir
 
-model = AutoModel.from_pretrained(model_path)
+model = AutoModel.from_pretrained(model_path, trust_remote_code=True).eval()
 tokenizer = AutoTokenizer.from_pretrained(model_path, trust_remote_code=True)
+if tokenizer.mask_token is None:
+    raise ValueError(f"{model_path} does not define a mask token required for WSD")
 
 df = pl.read_csv("data/wsd/senses.csv")
 
@@ -29,7 +29,7 @@ predictions = []
 
 def get_embedding(sentence, word, tokenizer, model):
     """Extract BERT embedding for a masked word in a sentence."""
-    sentence = sentence.replace(word, "[MASK]")
+    sentence = sentence.replace(word, tokenizer.mask_token)
     input_ids = tokenizer.encode(sentence, return_tensors='pt')
 
     mask_token_indices = torch.where(input_ids == tokenizer.mask_token_id)[1]
