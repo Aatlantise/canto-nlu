@@ -288,8 +288,10 @@ class CantoSequenceClassificationFineTuner(CantoFineTuningBase):
     max_length = 128
 
     def __init__(self, lang="yue", model_dir="./models/yue-monolingual", eval_only=False, per_device_batch_size=64,
-                 seed=42, gradient_accumulation_steps=1):
+                 seed=42, gradient_accumulation_steps=1, num_train_epochs=None):
         super().__init__(lang, model_dir, per_device_batch_size, seed, gradient_accumulation_steps)
+        if num_train_epochs is not None:
+            self.num_train_epochs = num_train_epochs
         self.label2id = {v: k for k, v in self.id2label.items()}
         self.num_labels = len(self.id2label)
         self.model = AutoModelForSequenceClassification.from_pretrained(
