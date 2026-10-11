@@ -46,4 +46,4 @@ def extract_balanced_samples(jsonl_path, csv_path, total_samples=101):
         print("No items were selected.")
 
 # Example execution:
-extract_balanced_samples('ld_test.jsonl', 'ld.csv', total_samples=101)
+extract_balanced_samples('lid_test.jsonl', 'sample_lid.csv', total_samples=101)
