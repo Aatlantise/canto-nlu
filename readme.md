@@ -45,6 +45,43 @@ python data/wsd/evaluate_wsd.py ./models/yue-monolingual
 python data/laj/laj_comparison/evaluate_comparison_laj.py ./models/yue-monolingual
 ```
 
+For the completed pairwise LAJ evaluation of causal instruction-tuned models,
+use the surprisal evaluator. It scores both sentences and predicts the one with
+lower mean token surprisal as more acceptable:
+
+```bash
+# Qwen2.5-7B-Instruct
+python data/laj/laj_comparison/evaluate_causal_comparison_laj.py \
+  --pairs data/laj/laj_comparison/comparison_test.jsonl \
+  --source data/laj/cantonese.jsonl \
+  --model Qwen/Qwen2.5-7B-Instruct \
+  --batch-size 4 \
+  --output-dir results/laj-qwen
+
+# Gemma-3-12B-it
+python data/laj/laj_comparison/evaluate_causal_comparison_laj.py \
+  --pairs data/laj/laj_comparison/comparison_test.jsonl \
+  --source data/laj/cantonese.jsonl \
+  --model google/gemma-3-12b-it \
+  --family gemma3 --load-in-4bit \
+  --batch-size 4 \
+  --output-dir results/laj-gemma
+
+# DeepSeek-R1-Distill-Qwen-14B
+python data/laj/laj_comparison/evaluate_causal_comparison_laj.py \
+  --pairs data/laj/laj_comparison/comparison_test.jsonl \
+  --source data/laj/cantonese.jsonl \
+  --model deepseek-ai/DeepSeek-R1-Distill-Qwen-14B \
+  --load-in-4bit \
+  --batch-size 4 \
+  --output-dir results/laj-deepseek
+```
+
+The `cantonese.jsonl` source file is required to reproduce the reported
+1,400-pair evaluation; see `data/laj/readme.md` for its download location.
+The `evaluate_llm.py --task laj` route is the separate single-sentence LAJ
+formulation and was not used for these pairwise results.
+
 For mBERT and XLM-R-base WSD, use the same encoder evaluator with either model ID:
 
 ```bash
