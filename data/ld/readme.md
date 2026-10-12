@@ -33,5 +33,5 @@ The script requires only the Python standard library.
 ## Artifacts
 `lid_train.jsonl` and `lid_test.jsonl`, with sizes as defined by the `--n_train` and `--n_test` flags. All sentences in the test set are constructed using at least one held out rule (defined in `HOLDOUT_RULES`) and at least one held out lexical item (defined in `HOLDOUT_LEX`). Conversely, sentences in the train set do not contain held out rules nor held out lexical items.
 
-`sample_lid.py` extracts a class-balanced sample (`lid_sample.csv`, 101 rows)
+`sample_lid.py` extracts a class-balanced sample (`sample_lid.csv`, 101 rows)
 from `lid_test.jsonl` for spot-checking/human annotation.

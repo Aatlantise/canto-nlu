@@ -47,8 +47,12 @@ def run(args):
             if fine_tuner_cls is None:
                 print(f"{args.task} fine-tuning is not supported. Please choose from: {', '.join(FINETUNE_TASKS)}")
             else:
+                kwargs = {}
+                # POS and DEPS keep their own, much longer, training schedules
+                if issubclass(fine_tuner_cls, CantoSequenceClassificationFineTuner):
+                    kwargs["num_train_epochs"] = args.epochs
                 model = fine_tuner_cls(args.lang, model_dir=args.model_dir, per_device_batch_size=args.batch_size,
-                                       seed=args.seed, gradient_accumulation_steps=args.grad_acc)
+                                       seed=args.seed, gradient_accumulation_steps=args.grad_acc, **kwargs)
                 model.finetune()
         else:
             print(f"{args.lang} fine-tuning is not supported. Please choose from: yue")
@@ -88,6 +92,10 @@ if __name__ == "__main__":
     parser.add_argument("--grad_acc", type=int, default=None,
                         help="Gradient accumulation steps. Defaults to 1, or 2 for ModernBERT, keeping the "
                              "effective batch size at 64 so every model gets the same number of optimizer steps.")
+    parser.add_argument("--epochs", type=int, default=None,
+                        help="Number of fine-tuning epochs for sequence classification tasks (nli, sentiment, "
+                             "ld, laj). Defaults to 1 for ModernBERT, else 3. Ignored by pos and deps, which "
+                             "keep their own schedules.")
     parser.add_argument("--seed", type=int, default=42,
                         help="Random seed for model head initialization, data shuffling and dropout. "
                              "Run with several seeds to measure cross-seed variance.")
@@ -109,6 +117,8 @@ if __name__ == "__main__":
         args.batch_size = 32 if modernbert else 64
     if args.grad_acc is None:
         args.grad_acc = 2 if modernbert else 1
+    if args.epochs is None:
+        args.epochs = 1 if modernbert else 3
 
     print(args)
     run(args)

@@ -11,6 +11,7 @@ MODELS = {
     "feynmanzhao/chinese-modernbert-large-wwm": "chinese-modernbert",
     "google-bert/bert-base-multilingual-cased": "mbert-cased",
     "google-bert/bert-base-multilingual-uncased": "mbert-uncased",
+    "FacebookAI/xlm-roberta-base": "xlmr-base",
 }
 
 
