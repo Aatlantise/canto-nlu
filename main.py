@@ -265,11 +265,6 @@ class CantoFineTuningBase:
         # Raise together with lowering per_device_batch_size to keep the effective batch size
         # (and so the number of optimizer steps) comparable across models
         self.gradient_accumulation_steps = gradient_accumulation_steps
-        if not os.path.exists(self.model_dir):
-            raise FileNotFoundError(
-                f"Model directory {self.model_dir} not found. "
-                f"Run `python download.py` to fetch the base models into ./models/."
-            )
         self.tokenizer = AutoTokenizer.from_pretrained(self.model_dir,
             trust_remote_code=True,)
 

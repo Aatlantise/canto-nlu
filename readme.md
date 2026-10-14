@@ -34,6 +34,9 @@ python run.py --task=sentiment --model_dir=./models/yue-monolingual
 
 `--task` is one of `nli`, `sentiment`, `ld`, `laj`, `pos`, `deps`. Fine-tuned weights are not saved; neither are TensorBoard logs. Per-epoch validation metrics and final test-set metrics are printed to stdout.
 Add `--eval_only` to evaluate a model on the test set without training (classification tasks only).
+`--model_dir` accepts either a local checkpoint or a Hugging Face model ID, so the same
+entry point can evaluate mBERT (`google-bert/bert-base-multilingual-cased`) and XLM-R-base
+(`FacebookAI/xlm-roberta-base`) without task-specific scripts.
 
 **Zero-shot evaluation**:
 
@@ -41,6 +44,91 @@ Add `--eval_only` to evaluate a model on the test set without training (classifi
 python data/wsd/evaluate_wsd.py ./models/yue-monolingual
 python data/laj/laj_comparison/evaluate_comparison_laj.py ./models/yue-monolingual
 ```
+
+For the completed pairwise LAJ evaluation of causal instruction-tuned models,
+use the surprisal evaluator. It scores both sentences and predicts the one with
+lower mean token surprisal as more acceptable:
+
+```bash
+# Qwen2.5-7B-Instruct
+python data/laj/laj_comparison/evaluate_causal_comparison_laj.py \
+  --pairs data/laj/laj_comparison/comparison_test.jsonl \
+  --source data/laj/cantonese.jsonl \
+  --model Qwen/Qwen2.5-7B-Instruct \
+  --batch-size 4 \
+  --output-dir results/laj-qwen
+
+# Gemma-3-12B-it
+python data/laj/laj_comparison/evaluate_causal_comparison_laj.py \
+  --pairs data/laj/laj_comparison/comparison_test.jsonl \
+  --source data/laj/cantonese.jsonl \
+  --model google/gemma-3-12b-it \
+  --family gemma3 --load-in-4bit \
+  --batch-size 4 \
+  --output-dir results/laj-gemma
+
+# DeepSeek-R1-Distill-Qwen-14B
+python data/laj/laj_comparison/evaluate_causal_comparison_laj.py \
+  --pairs data/laj/laj_comparison/comparison_test.jsonl \
+  --source data/laj/cantonese.jsonl \
+  --model deepseek-ai/DeepSeek-R1-Distill-Qwen-14B \
+  --load-in-4bit \
+  --batch-size 4 \
+  --output-dir results/laj-deepseek
+```
+
+The `cantonese.jsonl` source file is required to reproduce the reported
+1,400-pair evaluation; see `data/laj/readme.md` for its download location.
+The `evaluate_llm.py --task laj` route is the separate single-sentence LAJ
+formulation and was not used for these pairwise results.
+
+For mBERT and XLM-R-base WSD, use the same encoder evaluator with either model ID:
+
+```bash
+python data/wsd/evaluate_wsd.py FacebookAI/xlm-roberta-base
+```
+
+**Instruction-tuned LMs** use one shared zero-shot entry point for all seven tasks:
+
+```bash
+# Qwen2.5, Llama 3.1, or another text-only Hugging Face chat model
+python evaluate_llm.py --task sentiment \
+  --model Qwen/Qwen2.5-7B-Instruct \
+  --output results/qwen-sentiment.jsonl
+
+# Gemma 3 is detected automatically and loaded with its processor
+python evaluate_llm.py --task wsd \
+  --model google/gemma-3-12b-it \
+  --output results/gemma-wsd.jsonl
+
+# DeepSeek API (reads the key from DEEPSEEK_API_KEY)
+python evaluate_llm.py --task deps --backend deepseek \
+  --model deepseek-chat \
+  --output results/deepseek-deps.jsonl
+```
+
+`--task` accepts `nli`, `sentiment`, `ld`, `laj`, `pos`, `deps`, or `wsd`.
+The runner reuses the checked-in files under `data/`, writes resumable JSONL
+predictions, and writes aggregate metrics beside them as `*.summary.json`.
+Use `--max-samples` for a smoke test and `--load-in-4bit` for local CUDA inference
+(the latter additionally requires `bitsandbytes`).
+
+| Model family | Evaluation route |
+|---|---|
+| mBERT, XLM-R-base | `run.py` for supervised tasks; `data/wsd/evaluate_wsd.py` for WSD |
+| Qwen2.5-7B-Instruct, Gemma-3-12B-it, Llama-3.1-8B-Instruct | `evaluate_llm.py --backend local` |
+| DeepSeek | `evaluate_llm.py --backend deepseek` |
+
+Encoder scores use supervised fine-tuning while instruction-tuned LM scores use
+zero-shot prompting, so compare the two protocols with that distinction in mind.
+No model weights, credentials, predictions, or duplicate dataset copies are stored
+in the repository.
+
+## AI assistance disclosure
+
+The multi-model evaluation integration was developed with assistance from OpenAI
+Codex. The generated changes were checked with syntax and data/parser smoke tests;
+the contributor remains responsible for reviewing the code and reported results.
 
 ## Pre-trained model weights
 

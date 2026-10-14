@@ -6,6 +6,7 @@ yue-*/*
 */__pycache__/*
 *.pyc
 logs/*
+results/*
 *.sh
 *.o*
 # Downloaded inputs for the tokenizer analysis
