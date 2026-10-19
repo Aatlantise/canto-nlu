@@ -6,6 +6,9 @@ yue-*/*
 */__pycache__/*
 *.pyc
 logs/*
+results/*
+data/nli/full_test.jsonl
+data/nli/full_test.metadata.json
 *.sh
 *.o*
 # Downloaded inputs for the tokenizer analysis
