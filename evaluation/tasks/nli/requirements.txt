@@ -1,0 +1,6 @@
+torch>=2.3
+transformers>=4.51
+datasets>=3.0
+accelerate>=1.0
+numpy>=1.26
+bitsandbytes>=0.43; platform_system != "Windows"

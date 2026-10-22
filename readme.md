@@ -8,6 +8,25 @@ This repository accompanies our preprint: ["CantoNLU: A benchmark for Cantonese 
 pip install -r requirements.txt
 ```
 
+## Reproducing the open-source model evaluations
+
+The complete training and evaluation code used for the seven-task,
+six-model-family comparison is available in [`evaluation/`](evaluation/README.md).
+It includes task-specific dependency files, data-preparation scripts, smoke tests,
+full-run commands, Slurm launchers, and English reproducibility documentation.
+
+Run the evaluation commands from that directory so the documented relative paths
+resolve correctly:
+
+```bash
+cd evaluation
+```
+
+Start with the [evaluation-suite README](evaluation/README.md), then follow the
+README inside the relevant task directory. Datasets, model weights, credentials,
+checkpoints, caches, and raw predictions are intentionally excluded; the data
+preparation sections document how to obtain or reconstruct the required inputs.
+
 ## Tasks
 
 Each task has its own directory under `data/` with a readme that explains how the data is built.
