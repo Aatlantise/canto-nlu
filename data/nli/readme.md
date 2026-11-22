@@ -22,6 +22,20 @@ Run `python3 sample_nli.py`. The script downloads the `test` split of
 premise-hypothesis pairs, and samples 50 `entailment` + 50 `not_entailment`
 examples (fixed `random_state=42`).
 
+For a complete model evaluation, export every row from the upstream test split:
+
+```bash
+python data/nli/export_full_test.py
+```
+
+This creates ignored local files `full_test.jsonl` and
+`full_test.metadata.json`. The metadata records the Hugging Face dataset
+fingerprint, source and output row counts, label counts, and output SHA-256.
+The full export, rather than `sample_nli.jsonl`, must be passed to model
+evaluation jobs.
+
 ## Artifacts
-`sample_nli.jsonl` and `nli_sample.csv`: the same 100 balanced examples, one
-per format.
+* `sample_nli.jsonl` and `nli_sample.csv`: the same 100 balanced examples, one
+  per format.
+* `full_test.jsonl` and `full_test.metadata.json`: generated, ignored artifacts
+  for complete model evaluation.

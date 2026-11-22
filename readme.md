@@ -1,7 +1,5 @@
 # CantoNLU
 
-This repository accompanies our preprint: ["CantoNLU: A benchmark for Cantonese natural language understanding"](https://arxiv.org/html/2510.20670v1), where we introduce a general language understanding benchmark in Cantonese, in a collaboration with York Hay Ng, Sophia Chan, Helena Zhao, and Annie En-Shiun Lee.
-
 ## Setup
 
 ```bash
@@ -42,6 +40,14 @@ python data/wsd/evaluate_wsd.py ./models/yue-monolingual
 python data/laj/laj_comparison/evaluate_comparison_laj.py ./models/yue-monolingual
 ```
 
+## Open-weight full-test evaluation
+
+The reproducible Qwen, Gemma, and Llama evaluation covers all seven complete test
+sets (21 model-task runs). See [`OPEN_WEIGHT_FULL_EVAL.md`](OPEN_WEIGHT_FULL_EVAL.md)
+for the prompt-design rationale, pinned environment, data export, portable run
+commands, resume behavior, and built-in completeness checks. Generated predictions
+and logs are intentionally excluded from Git.
+
 ## Pre-trained model weights
 
 We offer the following pre-trained encoder-only models:
@@ -53,8 +59,8 @@ We offer the following pre-trained encoder-only models:
 https://drive.google.com/drive/folders/1RBZIQD5ectfb9m5sHDN5TIALEREm-tfH
 
 ## Acknowledgment
+
 This readme.md has been drafted by Claude Code.
-Please contact Junghyun Min for any questions, comments, or feedback.
 
 ## License
 MIT
