@@ -19,7 +19,6 @@ import numpy as np
 from sklearn.metrics import accuracy_score, confusion_matrix, f1_score
 from sklearn.model_selection import train_test_split
 import evaluate
-from utils import get_subset
 import torch
 import torch.nn as nn
 import re
@@ -386,7 +385,10 @@ class CantoNLIFineTuner(CantoSequenceClassificationFineTuner):
     id2label = {0: "entailment", 1: "not_entailment"}
 
     def load_raw_splits(self, eval_only=False):
-        nli_data = load_from_disk("./data/yue-nli-local")
+        """Train: yue-all-nli triplets (Gemini-translated), unrolled into an entailing and a
+        contradicting pair. Validation/test: Canto-XNLI (aatlantise/canto-xnli, Fable-translated
+        XNLI dev/test), with `neutral` dropped so the label space matches training
+        (entailment vs contradiction). Both are downloaded by download.py."""
 
         def unroll(split):
             rows = []
@@ -395,12 +397,20 @@ class CantoNLIFineTuner(CantoSequenceClassificationFineTuner):
                 rows.append({"premise": s["anchor"], "hypothesis": s["negative"], "label": 1})
             return Dataset.from_list(rows)
 
-        test = unroll(get_subset(nli_data["test"]))
+        def to_binary(split):
+            split = split.filter(lambda x: x["label"] != "neutral")
+            # columns are removed before the mapped output is written, so `label` is replaced
+            return split.map(lambda x: {"premise": x["yue_premise"], "hypothesis": x["yue_hypothesis"],
+                                        "label": 0 if x["label"] == "entailment" else 1},
+                             remove_columns=split.column_names)
+
+        canto_xnli = load_from_disk("./data/canto-xnli-local")
+        test = to_binary(canto_xnli["test"])
         if eval_only:
             return {"train": None, "validation": None, "test": test}
         return {
-            "train": unroll(nli_data["train"]),
-            "validation": unroll(nli_data["dev"]),
+            "train": unroll(load_from_disk("./data/yue-nli-local")["train"]),
+            "validation": to_binary(canto_xnli["validation"]),
             "test": test,
         }
 

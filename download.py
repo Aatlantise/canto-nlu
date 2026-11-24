@@ -15,10 +15,19 @@ MODELS = {
 }
 
 
+# Canto-XNLI (NLI validation/test), pinned to a fixed commit so reported results stay reproducible.
+CANTO_XNLI_ID = "aatlantise/canto-xnli"
+CANTO_XNLI_REVISION = "a4146b47902ee02cb1abc5d78879173389ce6fdf"
+
+
 def download_datasets():
-    print("Downloading Cantonese NLI dataset...")
+    print("Downloading Cantonese NLI training data (yue-all-nli)...")
     ds = load_dataset("hon9kon9ize/yue-all-nli")
     ds.save_to_disk("./data/yue-nli-local")
+
+    print("Downloading Cantonese NLI evaluation data (canto-xnli)...")
+    ds = load_dataset(CANTO_XNLI_ID, revision=CANTO_XNLI_REVISION)
+    ds.save_to_disk("./data/canto-xnli-local")
 
 
 def download_models(models_root):

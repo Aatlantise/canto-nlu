@@ -1,6 +1,5 @@
 from datasets import load_from_disk, Dataset, DatasetDict
 from collections import Counter
-from tqdm import tqdm
 import pandas as pd
 import os
 import torch
@@ -35,30 +34,6 @@ def lexical_similarity(s1: str, s2: str) -> float:
     if union == 0:
         return 0.0
     return intersection / union
-
-
-def get_subset(ds) -> list:
-    """
-    Get the n-most lexically dissimilar (anchor-negative similarity minus anchor-positive similarity)
-    examples from the test split of the Yue NLI dataset.
-    :return: list of examples where the negative sentence is more similar to anchor than positive sentence.
-    """
-
-    def compute_lexical_similarity(ex):
-        positive_similarity = lexical_similarity(ex['anchor'], ex['positive'])
-        negative_similarity = lexical_similarity(ex['anchor'], ex['negative'])
-        return negative_similarity - positive_similarity
-
-    results = []
-    for example in tqdm(ds):
-        similarity = compute_lexical_similarity(example)
-        results.append({
-            'anchor': example['anchor'],
-            'positive': example['positive'],
-            'negative': example['negative'],
-            'similarity': similarity
-        })
-    return [r for r in results if r['similarity'] > 0]
 
 
 def parse_conllu(file_path):

@@ -11,3 +11,4 @@ logs/*
 # Downloaded inputs for the tokenizer analysis
 appendix/tokenizer_analysis/resources/
 llm_eval/*
+canto-xnli-local/
