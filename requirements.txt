@@ -1,8 +1,8 @@
-transformers>=4.48  # ModernBERT support
+transformers>=5.24.1,<6  # v5 API (processing_class, float warmup_steps); tested against 5.24.1
 tensorboard
 datasets
-torch
-accelerate>=0.26.0
+torch>=2.6  # required by transformers v5
+accelerate>=1.1.0  # required by transformers v5
 scikit-learn
 numpy
 evaluate

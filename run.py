@@ -69,7 +69,9 @@ def run(args):
                 trainer = Trainer(
                     model=model.model,
                     args=model.training_args,
-                    eval_dataset=model.finetune_dataset["test"]
+                    eval_dataset=model.finetune_dataset["test"],
+                    data_collator=model.data_collator,  # examples are unpadded; pad per batch
+                    processing_class=model.tokenizer,
                 )
 
                 model.eval(trainer)

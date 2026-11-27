@@ -3,6 +3,7 @@ from transformers import (
     Trainer,
     TrainingArguments,
     DataCollatorForLanguageModeling,
+    DataCollatorWithPadding,
     EarlyStoppingCallback,
     AutoConfig,
     AutoModel,
@@ -29,7 +30,7 @@ disable_progress_bars()
 
 # Pre-training logs training loss ~20 times per run regardless of dataset/batch size:
 # transformers reads a logging_steps value below 1 as a fraction of total training steps.
-# Fine-tuning prints metrics to stdout once per epoch instead (logging_strategy="epoch").
+# Sequence-classification fine-tuning uses the same value; POS/DEPS log once per epoch.
 LOGGING_STEPS = 0.05
 
 # Fine-tuning saves neither weights nor TensorBoard logs, but Trainer still requires an
@@ -93,11 +94,13 @@ class SiniticPreTrainer:
 
         run_name = f"{self.lang}-scratch" if self.from_scratch else f"{self.lang}-transfer"
         output_dir_name = f"./{run_name}"
+        # transformers v5 dropped TrainingArguments.logging_dir; the TensorBoard callback reads
+        # this env var instead (falling back to <output_dir>/runs/... when unset).
+        os.environ["TENSORBOARD_LOGGING_DIR"] = f"./logs/{run_name}"
 
         training_args = TrainingArguments(
             # Checkpoints and the final model go to output_dir; TensorBoard logs go to ./logs
             output_dir=output_dir_name,
-            logging_dir=f"./logs/{run_name}",
             num_train_epochs=2,
             per_device_train_batch_size=128,
             dataloader_num_workers=8,
@@ -302,21 +305,30 @@ class CantoSequenceClassificationFineTuner(CantoFineTuningBase):
         )
         self.finetune_dataset = None
         self.preprocess_data(eval_only=eval_only)
+        # Examples are tokenized without padding; each batch is padded to its own longest example
+        # (to a multiple of 8 for tensor cores). Padded positions are masked, so this only saves compute.
+        self.data_collator = DataCollatorWithPadding(self.tokenizer, pad_to_multiple_of=8)
 
         self.training_args = TrainingArguments(
             output_dir=FINETUNE_OUTPUT_DIR,
-            overwrite_output_dir=True,
             num_train_epochs=self.num_train_epochs,
             optim="adamw_torch",
             learning_rate=self.learning_rate,
             per_device_train_batch_size=self.per_device_batch_size,
             per_device_eval_batch_size=self.per_device_batch_size,
             gradient_accumulation_steps=self.gradient_accumulation_steps,
+            # Batch examples of similar length together, so dynamic padding adds little padding
+            train_sampling_strategy="group_by_length",
+            # bf16 mixed precision on Ampere+ GPUs (e.g. L4, H100); fp32 elsewhere
+            bf16=is_torch_bf16_gpu_available(),
             disable_tqdm=True,
             report_to="none",
             seed=self.seed,
             eval_strategy="epoch",
-            logging_strategy="epoch",
+            # Print training loss ~20 times per run (a fraction below 1 = share of total steps),
+            # so long runs such as nli show progress before the first epoch ends
+            logging_strategy="steps",
+            logging_steps=LOGGING_STEPS,
             save_strategy="no",
         )
 
@@ -333,25 +345,24 @@ class CantoSequenceClassificationFineTuner(CantoFineTuningBase):
             raw.setdefault(split, None)
         return raw
 
-    def _map_label(self, example):
-        label = example["label"]
-        if isinstance(label, str):
-            example["label"] = self.label2id[label]
-        return example
+    def _map_labels(self, batch):
+        batch["label"] = [self.label2id[l] if isinstance(l, str) else l for l in batch["label"]]
+        return batch
 
     def preprocess_data(self, eval_only=False):
         raw = self.load_raw_splits(eval_only=eval_only)
 
         def tokenize(examples):
             args = [examples[field] for field in self.text_fields]
-            return self.tokenizer(*args, truncation=True, padding="max_length", max_length=self.max_length)
+            # No padding here: DataCollatorWithPadding pads per batch
+            return self.tokenizer(*args, truncation=True, max_length=self.max_length)
 
         self.finetune_dataset = {}
         for split, ds in raw.items():
             if ds is None:
                 self.finetune_dataset[split] = None
                 continue
-            ds = ds.map(self._map_label)
+            ds = ds.map(self._map_labels, batched=True)
             ds = ds.map(tokenize, batched=True)
             self.finetune_dataset[split] = ds
 
@@ -365,6 +376,8 @@ class CantoSequenceClassificationFineTuner(CantoFineTuningBase):
             args=self.training_args,
             train_dataset=self.finetune_dataset["train"],
             eval_dataset=eval_dataset,
+            data_collator=self.data_collator,
+            processing_class=self.tokenizer,
             compute_metrics=compute_classification_metrics(self.num_labels),
         )
 
@@ -519,7 +532,6 @@ class CantoPOSFineTuner(CantoFineTuningBase):
 
         training_args = TrainingArguments(
             output_dir=FINETUNE_OUTPUT_DIR,
-            overwrite_output_dir=True,
             num_train_epochs=20,
             learning_rate=2e-5,
             per_device_train_batch_size=self.per_device_batch_size,
@@ -561,7 +573,7 @@ class CantoPOSFineTuner(CantoFineTuningBase):
             args=training_args,
             train_dataset=self.finetune_dataset["train"],
             eval_dataset=self.finetune_dataset["test"],
-            tokenizer=self.tokenizer,
+            processing_class=self.tokenizer,
             compute_metrics=pos_compute_metrics,
         )
 
@@ -608,6 +620,10 @@ class EncoderForDependencyParsing(nn.Module):
     from the (dependent, head) pair: the gold head in training, the predicted head otherwise.
     """
     mlp_dropout = 0.33
+    # forward() takes **kwargs (passed on to the encoder), which Trainer would otherwise read as
+    # "the model normalizes its loss by num_items_in_batch" and skip dividing the loss by
+    # gradient_accumulation_steps. Our loss is a plain per-batch mean, so opt out explicitly.
+    accepts_loss_kwargs = False
 
     def __init__(self, model_dir, num_rel_labels, arc_dim=500, rel_dim=100):
         super().__init__()
@@ -818,10 +834,9 @@ class CantoDEPSFineTuner(CantoFineTuningBase):
 
         args = TrainingArguments(
             output_dir=FINETUNE_OUTPUT_DIR,
-            overwrite_output_dir=True,
             num_train_epochs=30,
             learning_rate=self.encoder_learning_rate,
-            warmup_ratio=0.1,
+            warmup_steps=0.1,  # a float in [0, 1) is a ratio of total steps (replaces v4's warmup_ratio)
             per_device_train_batch_size=self.per_device_batch_size,
             per_device_eval_batch_size=self.per_device_batch_size,
             gradient_accumulation_steps=self.gradient_accumulation_steps,
@@ -895,7 +910,7 @@ class CantoDEPSFineTuner(CantoFineTuningBase):
             args=args,
             train_dataset=self.finetune_dataset["train"],
             eval_dataset=self.finetune_dataset["test"],
-            tokenizer=self.tokenizer,
+            processing_class=self.tokenizer,
             compute_metrics=compute_deps_metrics,
             optimizers=(optimizer, None),
         )
